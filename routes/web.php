@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProviderController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -13,6 +15,9 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/providers/{slug}', [ProviderController::class, 'show'])->name('providers.show');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
