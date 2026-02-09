@@ -19,10 +19,8 @@
 - [x] Fix OfferPolicy logic to not rely on unloaded relationships (avoid false-deny on create)
 - [x] Update docs/dev-setup.md to include Sail run + tests commands
 - [x] Localize provider cabinet UI copy to Ukrainian (strings on new pages + nav)
+- [x] Add success/error flash messages (Inertia shared props) + show them in AuthenticatedLayout
 
 ## TODO (next session)
 1) Merge `feature/domain-models` → `main` (Serj does via GitKraken).
 2) Consider enforcing one BusinessProfile per user at DB level (unique index) OR plan for multiple profiles (later).
-
-## Done
-- [x] Add success/error flash messages (Inertia shared props) + show them in AuthenticatedLayout
