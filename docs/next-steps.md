@@ -15,12 +15,12 @@
   - [x] Offer CRUD (service|product)
   - [x] Authorization: only owner can edit their profile/offers
 - [x] Add basic navigation links in UI (Dashboard → Provider cabinet)
-- [x] Add feature tests for provider cabinet authorization + basic happy paths:
-  - [x] only owner can edit BusinessProfile
-  - [x] only owner can edit/delete Offer
+- [x] Add feature tests for provider cabinet authorization + basic happy paths
 - [x] Fix OfferPolicy logic to not rely on unloaded relationships (avoid false-deny on create)
 - [x] Update docs/dev-setup.md to include Sail run + tests commands
+- [x] Localize provider cabinet UI copy to Ukrainian (strings on new pages + nav)
 
 ## TODO (next session)
 1) Merge `feature/domain-models` → `main` (Serj does via GitKraken).
-2) (Optional) Localize provider cabinet UI copy to Ukrainian (strings on new pages + nav).
+2) Add success/error flash messages on provider cabinet pages (Inertia shared props) + show them in layout.
+3) Consider enforcing one BusinessProfile per user at DB level (unique index) OR plan for multiple profiles (later).
