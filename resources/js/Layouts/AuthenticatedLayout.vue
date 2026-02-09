@@ -37,19 +37,19 @@ const showingNavigationDropdown = ref(false);
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
-                                    Dashboard
+                                    Дашборд
                                 </NavLink>
                                 <NavLink
                                     :href="route('dashboard.business-profile.edit')"
                                     :active="route().current('dashboard.business-profile.*')"
                                 >
-                                    Business profile
+                                    Профіль бізнесу
                                 </NavLink>
                                 <NavLink
                                     :href="route('dashboard.offers.index')"
                                     :active="route().current('dashboard.offers.*')"
                                 >
-                                    Offers
+                                    Пропозиції
                                 </NavLink>
                             </div>
                         </div>
@@ -156,19 +156,19 @@ const showingNavigationDropdown = ref(false);
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
                         >
-                            Dashboard
+                            Дашборд
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('dashboard.business-profile.edit')"
                             :active="route().current('dashboard.business-profile.*')"
                         >
-                            Business profile
+                            Профіль бізнесу
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('dashboard.offers.index')"
                             :active="route().current('dashboard.offers.*')"
                         >
-                            Offers
+                            Пропозиції
                         </ResponsiveNavLink>
                     </div>
 

@@ -10,16 +10,16 @@ const props = defineProps({
 </script>
 
 <template>
-    <Head title="Offers" />
+    <Head title="Пропозиції" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">Offers</h2>
+                <h2 class="text-xl font-semibold leading-tight text-gray-800">Пропозиції</h2>
                 <div class="flex gap-3">
-                    <Link :href="route('dashboard.business-profile.edit')" class="text-sm text-indigo-600 hover:underline">Business profile</Link>
+                    <Link :href="route('dashboard.business-profile.edit')" class="text-sm text-indigo-600 hover:underline">Профіль бізнесу</Link>
                     <Link v-if="hasBusinessProfile" :href="route('dashboard.offers.create')">
-                        <PrimaryButton>Create offer</PrimaryButton>
+                        <PrimaryButton>Створити пропозицію</PrimaryButton>
                     </Link>
                 </div>
             </div>
@@ -29,12 +29,12 @@ const props = defineProps({
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
                     <div v-if="!hasBusinessProfile" class="text-sm text-gray-700">
-                        First create your business profile.
-                        <Link :href="route('dashboard.business-profile.create')" class="text-indigo-600 hover:underline">Create profile</Link>
+                        Спочатку створіть профіль бізнесу.
+                        <Link :href="route('dashboard.business-profile.create')" class="text-indigo-600 hover:underline">Створити профіль</Link>
                     </div>
 
                     <div v-else>
-                        <div v-if="offers.length === 0" class="text-sm text-gray-700">No offers yet.</div>
+                        <div v-if="offers.length === 0" class="text-sm text-gray-700">Поки що немає пропозицій.</div>
 
                         <ul v-else class="divide-y divide-gray-200">
                             <li v-for="offer in offers" :key="offer.id" class="py-3 flex items-center justify-between">
@@ -46,7 +46,7 @@ const props = defineProps({
                                         <span v-if="offer.currency">· {{ offer.currency }}</span>
                                     </div>
                                 </div>
-                                <Link :href="route('dashboard.offers.edit', offer.id)" class="text-sm text-indigo-600 hover:underline">Edit</Link>
+                                <Link :href="route('dashboard.offers.edit', offer.id)" class="text-sm text-indigo-600 hover:underline">Редагувати</Link>
                             </li>
                         </ul>
                     </div>

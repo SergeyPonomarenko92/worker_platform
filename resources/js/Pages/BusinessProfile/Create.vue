@@ -23,12 +23,12 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Business profile" />
+    <Head title="Профіль бізнесу" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Create business profile
+                Створити профіль бізнесу
             </h2>
         </template>
 
@@ -37,52 +37,52 @@ const submit = () => {
                 <div class="bg-white p-6 shadow sm:rounded-lg">
                     <form @submit.prevent="submit" class="space-y-6">
                         <div>
-                            <InputLabel for="name" value="Name" />
+                            <InputLabel for="name" value="Назва" />
                             <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required />
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
 
                         <div>
-                            <InputLabel for="about" value="About" />
+                            <InputLabel for="about" value="Про нас" />
                             <textarea id="about" v-model="form.about" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="5" />
                             <InputError class="mt-2" :message="form.errors.about" />
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <InputLabel for="country_code" value="Country code" />
+                                <InputLabel for="country_code" value="Код країни" />
                                 <TextInput id="country_code" v-model="form.country_code" type="text" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.country_code" />
                             </div>
                             <div>
-                                <InputLabel for="city" value="City" />
+                                <InputLabel for="city" value="Місто" />
                                 <TextInput id="city" v-model="form.city" type="text" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.city" />
                             </div>
                         </div>
 
                         <div>
-                            <InputLabel for="address" value="Address" />
+                            <InputLabel for="address" value="Адреса" />
                             <TextInput id="address" v-model="form.address" type="text" class="mt-1 block w-full" />
                             <InputError class="mt-2" :message="form.errors.address" />
                         </div>
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <InputLabel for="phone" value="Phone" />
+                                <InputLabel for="phone" value="Телефон" />
                                 <TextInput id="phone" v-model="form.phone" type="text" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.phone" />
                             </div>
                             <div>
-                                <InputLabel for="website" value="Website" />
+                                <InputLabel for="website" value="Сайт" />
                                 <TextInput id="website" v-model="form.website" type="text" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.website" />
                             </div>
                         </div>
 
                         <div class="flex items-center gap-4">
-                            <PrimaryButton :disabled="form.processing">Create</PrimaryButton>
-                            <span v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</span>
+                            <PrimaryButton :disabled="form.processing">Створити</PrimaryButton>
+                            <span v-if="form.recentlySuccessful" class="text-sm text-gray-600">Збережено.</span>
                         </div>
                     </form>
                 </div>
