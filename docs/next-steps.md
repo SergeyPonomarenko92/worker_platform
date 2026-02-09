@@ -20,7 +20,7 @@
 - [x] Update docs/dev-setup.md to include Sail run + tests commands
 - [x] Localize provider cabinet UI copy to Ukrainian (strings on new pages + nav)
 - [x] Add success/error flash messages (Inertia shared props) + show them in AuthenticatedLayout
+- [x] Support multiple BusinessProfiles per user: add profiles list + scope offers under selected business profile
 
 ## TODO (next session)
 1) Merge `feature/domain-models` → `main` (Serj does via GitKraken).
-2) Implement multiple BusinessProfiles per user (remove one-profile assumption): add profiles list + make offers scoped to selected profile.
