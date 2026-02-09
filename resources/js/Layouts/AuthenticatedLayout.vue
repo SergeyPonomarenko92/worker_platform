@@ -39,6 +39,18 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink
+                                    :href="route('dashboard.business-profile.edit')"
+                                    :active="route().current('dashboard.business-profile.*')"
+                                >
+                                    Business profile
+                                </NavLink>
+                                <NavLink
+                                    :href="route('dashboard.offers.index')"
+                                    :active="route().current('dashboard.offers.*')"
+                                >
+                                    Offers
+                                </NavLink>
                             </div>
                         </div>
 
@@ -145,6 +157,18 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('dashboard')"
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('dashboard.business-profile.edit')"
+                            :active="route().current('dashboard.business-profile.*')"
+                        >
+                            Business profile
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('dashboard.offers.index')"
+                            :active="route().current('dashboard.offers.*')"
+                        >
+                            Offers
                         </ResponsiveNavLink>
                     </div>
 
