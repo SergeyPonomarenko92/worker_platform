@@ -12,6 +12,25 @@ use Inertia\Response;
 
 class BusinessProfileController extends Controller
 {
+    private function uniqueSlug(string $name, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($name);
+        $slug = $base;
+
+        $i = 2;
+        while (
+            BusinessProfile::query()
+                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+                ->where('slug', $slug)
+                ->exists()
+        ) {
+            $slug = $base.'-'.$i;
+            $i++;
+        }
+
+        return $slug;
+    }
+
     public function index(Request $request): Response
     {
         $profiles = $request->user()
@@ -45,7 +64,7 @@ class BusinessProfileController extends Controller
         ]);
 
         $data['user_id'] = $user->id;
-        $data['slug'] = Str::slug($data['name']);
+        $data['slug'] = $this->uniqueSlug($data['name']);
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
         $profile = BusinessProfile::create($data);
@@ -77,7 +96,7 @@ class BusinessProfileController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $data['slug'] = Str::slug($data['name']);
+        $data['slug'] = $this->uniqueSlug($data['name'], $businessProfile->id);
         if (array_key_exists('is_active', $data)) {
             $data['is_active'] = (bool)$data['is_active'];
         }
