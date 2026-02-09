@@ -12,26 +12,26 @@ use Inertia\Response;
 
 class BusinessProfileController extends Controller
 {
-    public function create(Request $request): Response|RedirectResponse
+    public function index(Request $request): Response
     {
-        $user = $request->user();
+        $profiles = $request->user()
+            ->businessProfiles()
+            ->latest()
+            ->get();
 
-        $existing = $user->businessProfiles()->first();
-        if ($existing) {
-            return redirect()->route('dashboard.business-profile.edit');
-        }
+        return Inertia::render('BusinessProfiles/Index', [
+            'profiles' => $profiles,
+        ]);
+    }
 
+    public function create(): Response
+    {
         return Inertia::render('BusinessProfile/Create');
     }
 
     public function store(Request $request): RedirectResponse
     {
         $user = $request->user();
-
-        // For MVP: one business profile per user.
-        if ($user->businessProfiles()->exists()) {
-            return redirect()->route('dashboard.business-profile.edit');
-        }
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -50,31 +50,21 @@ class BusinessProfileController extends Controller
 
         $profile = BusinessProfile::create($data);
 
-        return redirect()->route('dashboard.business-profile.edit')->with('success', 'Business profile created.');
+        return redirect()->route('dashboard.business-profiles.edit', $profile)->with('success', 'Business profile created.');
     }
 
-    public function edit(Request $request): Response|RedirectResponse
+    public function edit(Request $request, BusinessProfile $businessProfile): Response
     {
-        $user = $request->user();
-
-        $profile = $user->businessProfiles()->first();
-        if (! $profile) {
-            return redirect()->route('dashboard.business-profile.create');
-        }
-
-        $this->authorize('update', $profile);
+        $this->authorize('update', $businessProfile);
 
         return Inertia::render('BusinessProfile/Edit', [
-            'profile' => $profile,
+            'profile' => $businessProfile,
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, BusinessProfile $businessProfile): RedirectResponse
     {
-        $user = $request->user();
-
-        $profile = $user->businessProfiles()->firstOrFail();
-        $this->authorize('update', $profile);
+        $this->authorize('update', $businessProfile);
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -92,7 +82,7 @@ class BusinessProfileController extends Controller
             $data['is_active'] = (bool)$data['is_active'];
         }
 
-        $profile->update($data);
+        $businessProfile->update($data);
 
         return back()->with('success', 'Business profile updated.');
     }

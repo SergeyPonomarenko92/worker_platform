@@ -5,9 +5,11 @@
 - Postgres configured and working locally.
 - Migrations and seeders run successfully.
 - Pages working: `/catalog`, `/providers/demo-provider`.
-- Provider cabinet pages added:
-  - `/dashboard/business-profile` (create/edit)
-  - `/dashboard/offers` (CRUD)
+- Provider cabinet pages added (multiple business profiles):
+  - `/dashboard/business-profiles` (list)
+  - `/dashboard/business-profiles/create` (create)
+  - `/dashboard/business-profiles/{businessProfile}/edit` (edit)
+  - `/dashboard/business-profiles/{businessProfile}/offers` (offers CRUD)
 
 ## Done
 - [x] Stage 2: Provider cabinet (CRUD)
@@ -20,7 +22,7 @@
 - [x] Update docs/dev-setup.md to include Sail run + tests commands
 - [x] Localize provider cabinet UI copy to Ukrainian (strings on new pages + nav)
 - [x] Add success/error flash messages (Inertia shared props) + show them in AuthenticatedLayout
+- [x] Support multiple BusinessProfiles per user: add profiles list + scope offers under selected business profile
 
 ## TODO (next session)
 1) Merge `feature/domain-models` → `main` (Serj does via GitKraken).
-2) Consider enforcing one BusinessProfile per user at DB level (unique index) OR plan for multiple profiles (later).

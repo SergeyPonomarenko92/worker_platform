@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\BusinessProfile;
 use App\Models\Offer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,38 +13,33 @@ use Inertia\Response;
 
 class OfferController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request, BusinessProfile $businessProfile): Response
     {
-        $profile = $request->user()->businessProfiles()->first();
+        $this->authorize('update', $businessProfile);
 
-        $offers = collect();
-        if ($profile) {
-            $offers = $profile->offers()->with('category')->latest()->get();
-        }
+        $offers = $businessProfile->offers()->with('category')->latest()->get();
 
         return Inertia::render('Offers/Index', [
-            'hasBusinessProfile' => (bool)$profile,
+            'businessProfile' => $businessProfile,
             'offers' => $offers,
         ]);
     }
 
-    public function create(Request $request): Response|RedirectResponse
+    public function create(Request $request, BusinessProfile $businessProfile): Response
     {
-        $profile = $request->user()->businessProfiles()->first();
-        if (! $profile) {
-            return redirect()->route('dashboard.business-profile.create');
-        }
+        $this->authorize('update', $businessProfile);
 
         $categories = Category::query()->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Offers/Create', [
+            'businessProfile' => $businessProfile,
             'categories' => $categories,
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, BusinessProfile $businessProfile): RedirectResponse
     {
-        $profile = $request->user()->businessProfiles()->firstOrFail();
+        $this->authorize('update', $businessProfile);
 
         $data = $request->validate([
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
@@ -56,30 +52,31 @@ class OfferController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $data['business_profile_id'] = $profile->id;
+        $data['business_profile_id'] = $businessProfile->id;
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
-        $offer = Offer::create($data);
+        Offer::create($data);
 
-        $this->authorize('update', $offer);
-
-        return redirect()->route('dashboard.offers.index')->with('success', 'Offer created.');
+        return redirect()->route('dashboard.offers.index', $businessProfile)->with('success', 'Offer created.');
     }
 
-    public function edit(Request $request, Offer $offer): Response
+    public function edit(Request $request, BusinessProfile $businessProfile, Offer $offer): Response
     {
+        $this->authorize('update', $businessProfile);
         $this->authorize('update', $offer);
 
         $categories = Category::query()->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Offers/Edit', [
+            'businessProfile' => $businessProfile,
             'offer' => $offer->load('category'),
             'categories' => $categories,
         ]);
     }
 
-    public function update(Request $request, Offer $offer): RedirectResponse
+    public function update(Request $request, BusinessProfile $businessProfile, Offer $offer): RedirectResponse
     {
+        $this->authorize('update', $businessProfile);
         $this->authorize('update', $offer);
 
         $data = $request->validate([
@@ -102,12 +99,13 @@ class OfferController extends Controller
         return back()->with('success', 'Offer updated.');
     }
 
-    public function destroy(Request $request, Offer $offer): RedirectResponse
+    public function destroy(Request $request, BusinessProfile $businessProfile, Offer $offer): RedirectResponse
     {
+        $this->authorize('update', $businessProfile);
         $this->authorize('delete', $offer);
 
         $offer->delete();
 
-        return redirect()->route('dashboard.offers.index')->with('success', 'Offer deleted.');
+        return redirect()->route('dashboard.offers.index', $businessProfile)->with('success', 'Offer deleted.');
     }
 }

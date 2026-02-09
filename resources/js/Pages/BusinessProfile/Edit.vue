@@ -22,7 +22,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.patch(route('dashboard.business-profile.update'));
+    form.patch(route('dashboard.business-profiles.update', props.profile.id));
 };
 </script>
 
@@ -36,7 +36,8 @@ const submit = () => {
                     Профіль бізнесу
                 </h2>
                 <div class="flex gap-3">
-                    <Link :href="route('dashboard.offers.index')" class="text-sm text-indigo-600 hover:underline">Пропозиції</Link>
+                    <Link :href="route('dashboard.offers.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline">Пропозиції</Link>
+                    <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">До списку</Link>
                 </div>
             </div>
         </template>

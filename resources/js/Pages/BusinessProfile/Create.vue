@@ -4,7 +4,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, Link } from '@inertiajs/vue3';
 
 const form = useForm({
     name: '',
@@ -18,7 +18,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('dashboard.business-profile.store'));
+    form.post(route('dashboard.business-profiles.store'));
 };
 </script>
 
@@ -27,9 +27,12 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                Створити профіль бізнесу
-            </h2>
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                    Створити профіль бізнесу
+                </h2>
+                <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">До списку</Link>
+            </div>
         </template>
 
         <div class="py-12">

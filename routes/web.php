@@ -32,18 +32,21 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
-    // Provider cabinet (separate pages)
-    Route::get('/business-profile/create', [BusinessProfileController::class, 'create'])->name('business-profile.create');
-    Route::post('/business-profile', [BusinessProfileController::class, 'store'])->name('business-profile.store');
-    Route::get('/business-profile', [BusinessProfileController::class, 'edit'])->name('business-profile.edit');
-    Route::patch('/business-profile', [BusinessProfileController::class, 'update'])->name('business-profile.update');
+    // Provider cabinet (multiple business profiles)
+    Route::get('/business-profiles', [BusinessProfileController::class, 'index'])->name('business-profiles.index');
+    Route::get('/business-profiles/create', [BusinessProfileController::class, 'create'])->name('business-profiles.create');
+    Route::post('/business-profiles', [BusinessProfileController::class, 'store'])->name('business-profiles.store');
+    Route::get('/business-profiles/{businessProfile}/edit', [BusinessProfileController::class, 'edit'])->name('business-profiles.edit');
+    Route::patch('/business-profiles/{businessProfile}', [BusinessProfileController::class, 'update'])->name('business-profiles.update');
 
-    Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
-    Route::get('/offers/create', [OfferController::class, 'create'])->name('offers.create');
-    Route::post('/offers', [OfferController::class, 'store'])->name('offers.store');
-    Route::get('/offers/{offer}/edit', [OfferController::class, 'edit'])->name('offers.edit');
-    Route::patch('/offers/{offer}', [OfferController::class, 'update'])->name('offers.update');
-    Route::delete('/offers/{offer}', [OfferController::class, 'destroy'])->name('offers.destroy');
+    Route::scopeBindings()->group(function () {
+        Route::get('/business-profiles/{businessProfile}/offers', [OfferController::class, 'index'])->name('offers.index');
+        Route::get('/business-profiles/{businessProfile}/offers/create', [OfferController::class, 'create'])->name('offers.create');
+        Route::post('/business-profiles/{businessProfile}/offers', [OfferController::class, 'store'])->name('offers.store');
+        Route::get('/business-profiles/{businessProfile}/offers/{offer}/edit', [OfferController::class, 'edit'])->name('offers.edit');
+        Route::patch('/business-profiles/{businessProfile}/offers/{offer}', [OfferController::class, 'update'])->name('offers.update');
+        Route::delete('/business-profiles/{businessProfile}/offers/{offer}', [OfferController::class, 'destroy'])->name('offers.destroy');
+    });
 });
 
 require __DIR__.'/auth.php';

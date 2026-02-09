@@ -7,6 +7,7 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
+    businessProfile: Object,
     categories: Array,
 });
 
@@ -22,7 +23,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('dashboard.offers.store'));
+    form.post(route('dashboard.offers.store', props.businessProfile.id));
 };
 </script>
 
@@ -33,7 +34,7 @@ const submit = () => {
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Створити пропозицію</h2>
-                <Link :href="route('dashboard.offers.index')" class="text-sm text-indigo-600 hover:underline">Назад</Link>
+                <Link :href="route('dashboard.offers.index', props.businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Назад</Link>
             </div>
         </template>
 
