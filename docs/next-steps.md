@@ -5,9 +5,11 @@
 - Postgres configured and working locally.
 - Migrations and seeders run successfully.
 - Pages working: `/catalog`, `/providers/demo-provider`.
-- Provider cabinet pages added:
-  - `/dashboard/business-profile` (create/edit)
-  - `/dashboard/offers` (CRUD)
+- Provider cabinet pages added (multiple business profiles):
+  - `/dashboard/business-profiles` (list)
+  - `/dashboard/business-profiles/create` (create)
+  - `/dashboard/business-profiles/{businessProfile}/edit` (edit)
+  - `/dashboard/business-profiles/{businessProfile}/offers` (offers CRUD)
 
 ## Done
 - [x] Stage 2: Provider cabinet (CRUD)
