@@ -22,5 +22,7 @@
 
 ## TODO (next session)
 1) Merge `feature/domain-models` → `main` (Serj does via GitKraken).
-2) Add success/error flash messages on provider cabinet pages (Inertia shared props) + show them in layout.
-3) Consider enforcing one BusinessProfile per user at DB level (unique index) OR plan for multiple profiles (later).
+2) Consider enforcing one BusinessProfile per user at DB level (unique index) OR plan for multiple profiles (later).
+
+## Done
+- [x] Add success/error flash messages (Inertia shared props) + show them in AuthenticatedLayout
