@@ -22,15 +22,14 @@ class ProviderCabinetAuthorizationTest extends TestCase
         ]);
 
         $this->actingAs($intruder)
-            ->get(route('dashboard.business-profile.edit'))
-            ->assertRedirect(route('dashboard.business-profile.create'));
+            ->get(route('dashboard.business-profiles.edit', $profile))
+            ->assertForbidden();
 
-        // Intruder creates their own profile instead; can't patch owner's profile.
         $this->actingAs($intruder)
-            ->patch(route('dashboard.business-profile.update'), [
+            ->patch(route('dashboard.business-profiles.update', $profile), [
                 'name' => 'Hacked',
             ])
-            ->assertNotFound();
+            ->assertForbidden();
     }
 
     public function test_user_cannot_edit_or_delete_someone_elses_offer(): void
@@ -47,11 +46,11 @@ class ProviderCabinetAuthorizationTest extends TestCase
         ]);
 
         $this->actingAs($intruder)
-            ->get(route('dashboard.offers.edit', $offer))
+            ->get(route('dashboard.offers.edit', [$profile, $offer]))
             ->assertForbidden();
 
         $this->actingAs($intruder)
-            ->patch(route('dashboard.offers.update', $offer), [
+            ->patch(route('dashboard.offers.update', [$profile, $offer]), [
                 'type' => 'service',
                 'title' => 'Nope',
                 'currency' => 'UAH',
@@ -59,7 +58,7 @@ class ProviderCabinetAuthorizationTest extends TestCase
             ->assertForbidden();
 
         $this->actingAs($intruder)
-            ->delete(route('dashboard.offers.destroy', $offer))
+            ->delete(route('dashboard.offers.destroy', [$profile, $offer]))
             ->assertForbidden();
     }
 }

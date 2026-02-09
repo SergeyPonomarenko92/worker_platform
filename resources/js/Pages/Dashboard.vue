@@ -19,11 +19,8 @@ import { Head, Link } from '@inertiajs/vue3';
                     <div class="p-6 text-gray-900 space-y-3">
                         <div>Ви увійшли в систему.</div>
                         <div class="flex gap-4 text-sm">
-                            <Link :href="route('dashboard.business-profile.edit')" class="text-indigo-600 hover:underline">
-                                Профіль бізнесу
-                            </Link>
-                            <Link :href="route('dashboard.offers.index')" class="text-indigo-600 hover:underline">
-                                Пропозиції
+                            <Link :href="route('dashboard.business-profiles.index')" class="text-indigo-600 hover:underline">
+                                Профілі бізнесу
                             </Link>
                         </div>
                     </div>

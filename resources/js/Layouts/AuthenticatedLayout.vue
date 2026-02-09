@@ -41,16 +41,10 @@ const showingNavigationDropdown = ref(false);
                                     Дашборд
                                 </NavLink>
                                 <NavLink
-                                    :href="route('dashboard.business-profile.edit')"
-                                    :active="route().current('dashboard.business-profile.*')"
+                                    :href="route('dashboard.business-profiles.index')"
+                                    :active="route().current('dashboard.business-profiles.*')"
                                 >
-                                    Профіль бізнесу
-                                </NavLink>
-                                <NavLink
-                                    :href="route('dashboard.offers.index')"
-                                    :active="route().current('dashboard.offers.*')"
-                                >
-                                    Пропозиції
+                                    Профілі бізнесу
                                 </NavLink>
                             </div>
                         </div>
@@ -160,16 +154,10 @@ const showingNavigationDropdown = ref(false);
                             Дашборд
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
-                            :href="route('dashboard.business-profile.edit')"
-                            :active="route().current('dashboard.business-profile.*')"
+                            :href="route('dashboard.business-profiles.index')"
+                            :active="route().current('dashboard.business-profiles.*')"
                         >
-                            Профіль бізнесу
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            :href="route('dashboard.offers.index')"
-                            :active="route().current('dashboard.offers.*')"
-                        >
-                            Пропозиції
+                            Профілі бізнесу
                         </ResponsiveNavLink>
                     </div>
 

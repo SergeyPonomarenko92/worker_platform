@@ -8,6 +8,7 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
+    businessProfile: Object,
     offer: Object,
     categories: Array,
 });
@@ -24,12 +25,12 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.patch(route('dashboard.offers.update', props.offer.id));
+    form.patch(route('dashboard.offers.update', [props.businessProfile.id, props.offer.id]));
 };
 
 const destroy = () => {
     if (!confirm('Видалити цю пропозицію?')) return;
-    form.delete(route('dashboard.offers.destroy', props.offer.id));
+    form.delete(route('dashboard.offers.destroy', [props.businessProfile.id, props.offer.id]));
 };
 </script>
 
@@ -40,7 +41,7 @@ const destroy = () => {
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Редагувати пропозицію</h2>
-                <Link :href="route('dashboard.offers.index')" class="text-sm text-indigo-600 hover:underline">Назад</Link>
+                <Link :href="route('dashboard.offers.index', props.businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Назад</Link>
             </div>
         </template>
 

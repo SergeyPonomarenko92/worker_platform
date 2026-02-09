@@ -23,4 +23,4 @@
 
 ## TODO (next session)
 1) Merge `feature/domain-models` → `main` (Serj does via GitKraken).
-2) Consider enforcing one BusinessProfile per user at DB level (unique index) OR plan for multiple profiles (later).
+2) Implement multiple BusinessProfiles per user (remove one-profile assumption): add profiles list + make offers scoped to selected profile.
