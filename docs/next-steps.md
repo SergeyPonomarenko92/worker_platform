@@ -1,7 +1,7 @@
 # Next steps
 
 ## Current status
-- Branch: `feature/domain-models`
+- Branch: `main`
 - Postgres configured and working locally.
 - Migrations and seeders run successfully.
 - Pages working: `/catalog`, `/providers/demo-provider`.
@@ -24,9 +24,11 @@
 - [x] Add success/error flash messages (Inertia shared props) + show them in AuthenticatedLayout
 - [x] Support multiple BusinessProfiles per user: add profiles list + scope offers under selected business profile
 
+## Done
+- [x] Merge `feature/domain-models` → `main` (Serj via GitKraken).
+
 ## TODO (next session)
-1) Merge `feature/domain-models` → `main` (Serj does via GitKraken).
-2) Stage 3 (Content): Provider cabinet CRUD for:
+1) Stage 3 (Content): Provider cabinet CRUD for:
    - PortfolioPost (create/edit, list)
    - Story (create, list, expire handling)
-3) Public provider page: ensure stories/portfolio show only published/active content (define rules).
+2) Public provider page: ensure stories/portfolio show only published/active content (define rules).
