@@ -6,6 +6,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import FlashMessages from '@/Components/FlashMessages.vue';
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -37,19 +38,19 @@ const showingNavigationDropdown = ref(false);
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
-                                    Dashboard
+                                    Дашборд
                                 </NavLink>
                                 <NavLink
                                     :href="route('dashboard.business-profile.edit')"
                                     :active="route().current('dashboard.business-profile.*')"
                                 >
-                                    Business profile
+                                    Профіль бізнесу
                                 </NavLink>
                                 <NavLink
                                     :href="route('dashboard.offers.index')"
                                     :active="route().current('dashboard.offers.*')"
                                 >
-                                    Offers
+                                    Пропозиції
                                 </NavLink>
                             </div>
                         </div>
@@ -156,19 +157,19 @@ const showingNavigationDropdown = ref(false);
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
                         >
-                            Dashboard
+                            Дашборд
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('dashboard.business-profile.edit')"
                             :active="route().current('dashboard.business-profile.*')"
                         >
-                            Business profile
+                            Профіль бізнесу
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('dashboard.offers.index')"
                             :active="route().current('dashboard.offers.*')"
                         >
-                            Offers
+                            Пропозиції
                         </ResponsiveNavLink>
                     </div>
 
@@ -215,6 +216,10 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Content -->
             <main>
+                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
+                    <FlashMessages />
+                </div>
+
                 <slot />
             </main>
         </div>

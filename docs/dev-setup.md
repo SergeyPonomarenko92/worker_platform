@@ -1,10 +1,8 @@
 # Dev setup
 
 ## 1) Requirements
-- PHP 8.2+
-- Composer
-- Node + npm
-- Postgres (recommended) or MySQL
+- Docker + Docker Compose (recommended via Laravel Sail)
+- or: PHP 8.2+, Composer, Node + npm, Postgres (recommended) or MySQL
 
 ## 2) Install
 ```bash
@@ -15,8 +13,27 @@ php artisan key:generate
 npm install
 ```
 
-## 3) Database
-### Option A: Postgres (recommended)
+## 3) Run with Sail (recommended)
+> Use Sail to avoid local PHP extensions / DB differences.
+
+```bash
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan db:seed
+./vendor/bin/sail npm run dev
+```
+
+Open:
+- http://localhost/catalog
+
+### Run tests (Sail)
+```bash
+./vendor/bin/sail test
+```
+
+## 4) Run without Sail (local)
+### Database
+#### Option A: Postgres (recommended)
 Create DB/user:
 - db: `worker_platform`
 - user: `worker`
@@ -30,10 +47,10 @@ php artisan migrate
 php artisan db:seed
 ```
 
-### Option B: MySQL
+#### Option B: MySQL
 Configure `.env` and run the same migrate/seed commands.
 
-## 4) Run
+### Run
 ```bash
 npm run dev
 php artisan serve
