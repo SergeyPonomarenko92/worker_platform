@@ -1,5 +1,8 @@
 # Next steps
 
+## Changelog (коротко)
+- 2026-02-12: Stage 3 (Content) — CRUD PortfolioPost/Story у кабінеті + фільтрація портфоліо на public provider page + статуси в UI.
+
 ## Current status
 - Branch: `main`
 - Postgres configured and working locally.
