@@ -2,6 +2,7 @@
 
 ## Changelog (коротко)
 - 2026-02-12: Stage 3 (Content) — CRUD PortfolioPost/Story у кабінеті + фільтрація портфоліо на public provider page + статуси в UI.
+- 2026-02-12: Tests — додано feature happy-path тести для PortfolioPost/Story.
 
 ## Current status
 - Branch: `main`
@@ -42,7 +43,8 @@
 
 ## TODO (next session)
 1) Finish Stage 3 polish:
-   - add more feature tests for PortfolioPost/Story (happy path create/update/delete)
    - verify UI in browser (links, flash messages, validations)
-2) Public provider page: ensure stories show only active (already filtered by `expires_at > now()`), and decide whether to hide expired stories in cabinet or show with status (now shows status).
+2) Public provider page:
+   - stories: already filtered by `expires_at > now()`
+   - portfolio: filtered by `published_at` (draft/scheduled hidden)
 3) Stage 4 (Deals + Reviews): start CRUD/flows.
