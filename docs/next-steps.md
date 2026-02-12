@@ -3,6 +3,7 @@
 ## Changelog (коротко)
 - 2026-02-12: Stage 3 (Content) — CRUD PortfolioPost/Story у кабінеті + фільтрація портфоліо на public provider page + статуси в UI.
 - 2026-02-12: Tests — додано feature happy-path тести для PortfolioPost/Story.
+- 2026-02-12: Stage 4 (Deals) — додано кабінет угод (створення вручну + зміна статусів) + тести.
 
 ## Current status
 - Branch: `main`
@@ -47,4 +48,6 @@
 2) Public provider page:
    - stories: already filtered by `expires_at > now()`
    - portfolio: filtered by `published_at` (draft/scheduled hidden)
-3) Stage 4 (Deals + Reviews): start CRUD/flows.
+3) Stage 4 (Deals + Reviews):
+   - reviews flow after deal completed (policy + UI + tests)
+   - (optional) deal details: note/description fields if needed
