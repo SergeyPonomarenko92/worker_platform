@@ -1,7 +1,7 @@
 # Next steps
 
 ## Current status
-- Branch: `feature/content-crud`
+- Branch: `main`
 - Postgres configured and working locally.
 - Migrations and seeders run successfully.
 - Pages working: `/catalog`, `/providers/demo-provider`.
@@ -10,6 +10,8 @@
   - `/dashboard/business-profiles/create` (create)
   - `/dashboard/business-profiles/{businessProfile}/edit` (edit)
   - `/dashboard/business-profiles/{businessProfile}/offers` (offers CRUD)
+  - `/dashboard/business-profiles/{businessProfile}/portfolio-posts` (portfolio posts CRUD)
+  - `/dashboard/business-profiles/{businessProfile}/stories` (stories CRUD)
 
 ## Done
 - [x] Stage 2: Provider cabinet (CRUD)
@@ -27,14 +29,17 @@
 ## Done
 - [x] Merge `feature/domain-models` → `main` (Serj via GitKraken).
 
-## In progress
+## Done
 - Stage 3 (Content): Provider cabinet pages/routes/policies for:
   - PortfolioPost (list/create/edit/delete)
-  - Story (list/create/delete)
+  - Story (list/create/edit/delete)
+- Public provider page: portfolio posts filtered by `published_at`:
+  - `published_at` is not null
+  - `published_at <= now()`
 
 ## TODO (next session)
-1) Finish Stage 3:
-   - add feature tests for new cabinet sections
+1) Finish Stage 3 polish:
+   - add more feature tests for PortfolioPost/Story (happy path create/update/delete)
    - verify UI in browser (links, flash messages, validations)
-   - decide правила публікації портфоліо (published_at) і фільтрації на public provider page
-2) Public provider page: ensure stories/portfolio show only published/active content (define rules).
+2) Public provider page: ensure stories show only active (already filtered by `expires_at > now()`), and decide whether to hide expired stories in cabinet or show with status (now shows status).
+3) Stage 4 (Deals + Reviews): start CRUD/flows.
