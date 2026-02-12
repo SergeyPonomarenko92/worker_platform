@@ -23,6 +23,7 @@ class StoryController extends Controller
         return Inertia::render('Stories/Index', [
             'businessProfile' => $businessProfile,
             'stories' => $stories,
+            'now' => now()->toIso8601String(),
         ]);
     }
 

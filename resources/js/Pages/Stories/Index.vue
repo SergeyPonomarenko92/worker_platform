@@ -7,6 +7,7 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 const props = defineProps({
     businessProfile: Object,
     stories: Array,
+    now: String,
 });
 
 const form = useForm({});
@@ -14,6 +15,17 @@ const form = useForm({});
 const formatDate = (value) => {
     if (!value) return '—';
     return new Date(value).toLocaleString();
+};
+
+const statusFor = (story) => {
+    const expiresAt = new Date(story.expires_at);
+    const now = new Date(props.now);
+
+    if (expiresAt.getTime() <= now.getTime()) {
+        return { label: 'Протерміновано', cls: 'bg-gray-100 text-gray-700' };
+    }
+
+    return { label: 'Активна', cls: 'bg-green-100 text-green-800' };
 };
 
 const destroy = (storyId) => {
@@ -50,7 +62,15 @@ const destroy = (storyId) => {
                     <ul v-else class="divide-y divide-gray-200">
                         <li v-for="story in stories" :key="story.id" class="py-3 flex items-start justify-between">
                             <div>
-                                <div class="font-medium text-gray-900">{{ story.caption || story.media_path }}</div>
+                                <div class="flex items-center gap-2">
+                                    <div class="font-medium text-gray-900">{{ story.caption || story.media_path }}</div>
+                                    <span
+                                        class="text-xs px-2 py-0.5 rounded"
+                                        :class="statusFor(story).cls"
+                                    >
+                                        {{ statusFor(story).label }}
+                                    </span>
+                                </div>
                                 <div class="text-sm text-gray-600">Діє до: {{ formatDate(story.expires_at) }}</div>
                             </div>
                             <div class="flex items-center gap-3">
