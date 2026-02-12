@@ -4,6 +4,7 @@ namespace Tests\Feature\Dashboard;
 
 use App\Models\BusinessProfile;
 use App\Models\Offer;
+use App\Models\Deal;
 use App\Models\PortfolioPost;
 use App\Models\Story;
 use App\Models\User;
@@ -118,6 +119,24 @@ class ProviderCabinetAuthorizationTest extends TestCase
 
         $this->actingAs($intruder)
             ->delete(route('dashboard.stories.destroy', [$profile, $story]))
+            ->assertForbidden();
+    }
+
+    public function test_user_cannot_view_someone_elses_deal(): void
+    {
+        $owner = User::factory()->create();
+        $intruder = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $owner->id,
+        ]);
+
+        $deal = Deal::factory()->create([
+            'business_profile_id' => $profile->id,
+        ]);
+
+        $this->actingAs($intruder)
+            ->get(route('dashboard.deals.show', [$profile, $deal]))
             ->assertForbidden();
     }
 }
