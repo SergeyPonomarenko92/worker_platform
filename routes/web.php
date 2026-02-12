@@ -62,6 +62,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         Route::get('/business-profiles/{businessProfile}/stories', [StoryController::class, 'index'])->name('stories.index');
         Route::get('/business-profiles/{businessProfile}/stories/create', [StoryController::class, 'create'])->name('stories.create');
         Route::post('/business-profiles/{businessProfile}/stories', [StoryController::class, 'store'])->name('stories.store');
+        Route::get('/business-profiles/{businessProfile}/stories/{story}/edit', [StoryController::class, 'edit'])->name('stories.edit');
+        Route::patch('/business-profiles/{businessProfile}/stories/{story}', [StoryController::class, 'update'])->name('stories.update');
         Route::delete('/business-profiles/{businessProfile}/stories/{story}', [StoryController::class, 'destroy'])->name('stories.destroy');
     });
 });

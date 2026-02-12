@@ -92,7 +92,7 @@ class ProviderCabinetAuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_user_cannot_delete_someone_elses_story(): void
+    public function test_user_cannot_edit_or_delete_someone_elses_story(): void
     {
         $owner = User::factory()->create();
         $intruder = User::factory()->create();
@@ -104,6 +104,17 @@ class ProviderCabinetAuthorizationTest extends TestCase
         $story = Story::factory()->create([
             'business_profile_id' => $profile->id,
         ]);
+
+        $this->actingAs($intruder)
+            ->get(route('dashboard.stories.edit', [$profile, $story]))
+            ->assertForbidden();
+
+        $this->actingAs($intruder)
+            ->patch(route('dashboard.stories.update', [$profile, $story]), [
+                'media_path' => 'hacked.jpg',
+                'expires_at' => now()->addDay()->toDateTimeString(),
+            ])
+            ->assertForbidden();
 
         $this->actingAs($intruder)
             ->delete(route('dashboard.stories.destroy', [$profile, $story]))

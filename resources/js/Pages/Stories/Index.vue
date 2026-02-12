@@ -48,12 +48,15 @@ const destroy = (storyId) => {
                     <div v-if="stories.length === 0" class="text-sm text-gray-700">Поки що немає історій.</div>
 
                     <ul v-else class="divide-y divide-gray-200">
-                        <li v-for="story in stories" :key="story.id" class="py-3 flex items-center justify-between">
+                        <li v-for="story in stories" :key="story.id" class="py-3 flex items-start justify-between">
                             <div>
                                 <div class="font-medium text-gray-900">{{ story.caption || story.media_path }}</div>
                                 <div class="text-sm text-gray-600">Діє до: {{ formatDate(story.expires_at) }}</div>
                             </div>
-                            <DangerButton type="button" @click="destroy(story.id)">Видалити</DangerButton>
+                            <div class="flex items-center gap-3">
+                                <Link :href="route('dashboard.stories.edit', [businessProfile.id, story.id])" class="text-sm text-indigo-600 hover:underline">Редагувати</Link>
+                                <DangerButton type="button" @click="destroy(story.id)">Видалити</DangerButton>
+                            </div>
                         </li>
                     </ul>
                 </div>

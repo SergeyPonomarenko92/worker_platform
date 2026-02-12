@@ -55,6 +55,33 @@ class StoryController extends Controller
             ->with('success', 'Історію створено.');
     }
 
+    public function edit(Request $request, BusinessProfile $businessProfile, Story $story): Response
+    {
+        $this->authorize('update', $businessProfile);
+        $this->authorize('update', $story);
+
+        return Inertia::render('Stories/Edit', [
+            'businessProfile' => $businessProfile,
+            'story' => $story,
+        ]);
+    }
+
+    public function update(Request $request, BusinessProfile $businessProfile, Story $story): RedirectResponse
+    {
+        $this->authorize('update', $businessProfile);
+        $this->authorize('update', $story);
+
+        $data = $request->validate([
+            'media_path' => ['required', 'string', 'max:2048'],
+            'caption' => ['nullable', 'string', 'max:1000'],
+            'expires_at' => ['required', 'date'],
+        ]);
+
+        $story->update($data);
+
+        return back()->with('success', 'Історію оновлено.');
+    }
+
     public function destroy(Request $request, BusinessProfile $businessProfile, Story $story): RedirectResponse
     {
         $this->authorize('update', $businessProfile);
