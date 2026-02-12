@@ -37,6 +37,8 @@ const submit = () => {
                 </h2>
                 <div class="flex gap-3">
                     <Link :href="route('dashboard.offers.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline">Пропозиції</Link>
+                    <Link :href="route('dashboard.portfolio-posts.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline">Портфоліо</Link>
+                    <Link :href="route('dashboard.stories.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline">Історії</Link>
                     <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">До списку</Link>
                 </div>
             </div>
