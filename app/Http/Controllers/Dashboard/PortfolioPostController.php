@@ -24,6 +24,7 @@ class PortfolioPostController extends Controller
         return Inertia::render('PortfolioPosts/Index', [
             'businessProfile' => $businessProfile,
             'posts' => $posts,
+            'now' => now()->toIso8601String(),
         ]);
     }
 

@@ -6,11 +6,27 @@ import { Head, Link } from '@inertiajs/vue3';
 const props = defineProps({
     businessProfile: Object,
     posts: Array,
+    now: String,
 });
 
 const formatDate = (value) => {
     if (!value) return '—';
     return new Date(value).toLocaleString();
+};
+
+const statusFor = (post) => {
+    if (!post.published_at) {
+        return { label: 'Чернетка', cls: 'bg-gray-100 text-gray-700' };
+    }
+
+    const publishedAt = new Date(post.published_at);
+    const now = new Date(props.now);
+
+    if (publishedAt.getTime() > now.getTime()) {
+        return { label: 'Заплановано', cls: 'bg-yellow-100 text-yellow-800' };
+    }
+
+    return { label: 'Опубліковано', cls: 'bg-green-100 text-green-800' };
 };
 </script>
 
@@ -39,9 +55,17 @@ const formatDate = (value) => {
                     <div v-if="posts.length === 0" class="text-sm text-gray-700">Поки що немає постів у портфоліо.</div>
 
                     <ul v-else class="divide-y divide-gray-200">
-                        <li v-for="post in posts" :key="post.id" class="py-3 flex items-center justify-between">
+                        <li v-for="post in posts" :key="post.id" class="py-3 flex items-start justify-between">
                             <div>
-                                <div class="font-medium text-gray-900">{{ post.title }}</div>
+                                <div class="flex items-center gap-2">
+                                    <div class="font-medium text-gray-900">{{ post.title }}</div>
+                                    <span
+                                        class="text-xs px-2 py-0.5 rounded"
+                                        :class="statusFor(post).cls"
+                                    >
+                                        {{ statusFor(post).label }}
+                                    </span>
+                                </div>
                                 <div class="text-sm text-gray-600">
                                     Опубліковано: {{ formatDate(post.published_at) }}
                                 </div>
