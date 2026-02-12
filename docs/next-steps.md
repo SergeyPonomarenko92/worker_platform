@@ -1,7 +1,7 @@
 # Next steps
 
 ## Current status
-- Branch: `main`
+- Branch: `feature/content-crud`
 - Postgres configured and working locally.
 - Migrations and seeders run successfully.
 - Pages working: `/catalog`, `/providers/demo-provider`.
@@ -27,8 +27,14 @@
 ## Done
 - [x] Merge `feature/domain-models` → `main` (Serj via GitKraken).
 
+## In progress
+- Stage 3 (Content): Provider cabinet pages/routes/policies for:
+  - PortfolioPost (list/create/edit/delete)
+  - Story (list/create/delete)
+
 ## TODO (next session)
-1) Stage 3 (Content): Provider cabinet CRUD for:
-   - PortfolioPost (create/edit, list)
-   - Story (create, list, expire handling)
+1) Finish Stage 3:
+   - add feature tests for new cabinet sections
+   - verify UI in browser (links, flash messages, validations)
+   - decide правила публікації портфоліо (published_at) і фільтрації на public provider page
 2) Public provider page: ensure stories/portfolio show only published/active content (define rules).

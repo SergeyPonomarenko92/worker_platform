@@ -3,6 +3,8 @@
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\Dashboard\BusinessProfileController;
 use App\Http\Controllers\Dashboard\OfferController;
+use App\Http\Controllers\Dashboard\PortfolioPostController;
+use App\Http\Controllers\Dashboard\StoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProviderController;
 use Illuminate\Foundation\Application;
@@ -40,12 +42,27 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     Route::patch('/business-profiles/{businessProfile}', [BusinessProfileController::class, 'update'])->name('business-profiles.update');
 
     Route::scopeBindings()->group(function () {
+        // Offers
         Route::get('/business-profiles/{businessProfile}/offers', [OfferController::class, 'index'])->name('offers.index');
         Route::get('/business-profiles/{businessProfile}/offers/create', [OfferController::class, 'create'])->name('offers.create');
         Route::post('/business-profiles/{businessProfile}/offers', [OfferController::class, 'store'])->name('offers.store');
         Route::get('/business-profiles/{businessProfile}/offers/{offer}/edit', [OfferController::class, 'edit'])->name('offers.edit');
         Route::patch('/business-profiles/{businessProfile}/offers/{offer}', [OfferController::class, 'update'])->name('offers.update');
         Route::delete('/business-profiles/{businessProfile}/offers/{offer}', [OfferController::class, 'destroy'])->name('offers.destroy');
+
+        // Portfolio posts
+        Route::get('/business-profiles/{businessProfile}/portfolio-posts', [PortfolioPostController::class, 'index'])->name('portfolio-posts.index');
+        Route::get('/business-profiles/{businessProfile}/portfolio-posts/create', [PortfolioPostController::class, 'create'])->name('portfolio-posts.create');
+        Route::post('/business-profiles/{businessProfile}/portfolio-posts', [PortfolioPostController::class, 'store'])->name('portfolio-posts.store');
+        Route::get('/business-profiles/{businessProfile}/portfolio-posts/{portfolioPost}/edit', [PortfolioPostController::class, 'edit'])->name('portfolio-posts.edit');
+        Route::patch('/business-profiles/{businessProfile}/portfolio-posts/{portfolioPost}', [PortfolioPostController::class, 'update'])->name('portfolio-posts.update');
+        Route::delete('/business-profiles/{businessProfile}/portfolio-posts/{portfolioPost}', [PortfolioPostController::class, 'destroy'])->name('portfolio-posts.destroy');
+
+        // Stories
+        Route::get('/business-profiles/{businessProfile}/stories', [StoryController::class, 'index'])->name('stories.index');
+        Route::get('/business-profiles/{businessProfile}/stories/create', [StoryController::class, 'create'])->name('stories.create');
+        Route::post('/business-profiles/{businessProfile}/stories', [StoryController::class, 'store'])->name('stories.store');
+        Route::delete('/business-profiles/{businessProfile}/stories/{story}', [StoryController::class, 'destroy'])->name('stories.destroy');
     });
 });
 
