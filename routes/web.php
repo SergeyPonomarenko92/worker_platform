@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\Dashboard\BusinessProfileController;
+use App\Http\Controllers\Dashboard\DealController;
 use App\Http\Controllers\Dashboard\OfferController;
 use App\Http\Controllers\Dashboard\PortfolioPostController;
 use App\Http\Controllers\Dashboard\StoryController;
@@ -65,6 +66,15 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         Route::get('/business-profiles/{businessProfile}/stories/{story}/edit', [StoryController::class, 'edit'])->name('stories.edit');
         Route::patch('/business-profiles/{businessProfile}/stories/{story}', [StoryController::class, 'update'])->name('stories.update');
         Route::delete('/business-profiles/{businessProfile}/stories/{story}', [StoryController::class, 'destroy'])->name('stories.destroy');
+
+        // Deals
+        Route::get('/business-profiles/{businessProfile}/deals', [DealController::class, 'index'])->name('deals.index');
+        Route::get('/business-profiles/{businessProfile}/deals/create', [DealController::class, 'create'])->name('deals.create');
+        Route::post('/business-profiles/{businessProfile}/deals', [DealController::class, 'store'])->name('deals.store');
+        Route::get('/business-profiles/{businessProfile}/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+        Route::patch('/business-profiles/{businessProfile}/deals/{deal}/in-progress', [DealController::class, 'markInProgress'])->name('deals.in-progress');
+        Route::patch('/business-profiles/{businessProfile}/deals/{deal}/completed', [DealController::class, 'markCompleted'])->name('deals.completed');
+        Route::patch('/business-profiles/{businessProfile}/deals/{deal}/cancelled', [DealController::class, 'markCancelled'])->name('deals.cancelled');
     });
 });
 

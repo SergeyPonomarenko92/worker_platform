@@ -39,6 +39,7 @@ const submit = () => {
                     <Link :href="route('dashboard.offers.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline">Пропозиції</Link>
                     <Link :href="route('dashboard.portfolio-posts.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline">Портфоліо</Link>
                     <Link :href="route('dashboard.stories.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline">Історії</Link>
+                    <Link :href="route('dashboard.deals.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline">Угоди</Link>
                     <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">До списку</Link>
                 </div>
             </div>
