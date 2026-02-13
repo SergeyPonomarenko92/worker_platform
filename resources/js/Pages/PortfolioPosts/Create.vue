@@ -16,6 +16,16 @@ const form = useForm({
     published_at: '',
 });
 
+const publishNow = () => {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    form.published_at = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+};
+
+const makeDraft = () => {
+    form.published_at = '';
+};
+
 const submit = () => {
     form.post(route('dashboard.portfolio-posts.store', props.businessProfile.id));
 };
@@ -55,8 +65,12 @@ const submit = () => {
                         <div>
                             <InputLabel for="published_at" value="Дата публікації (необов'язково)" />
                             <TextInput id="published_at" v-model="form.published_at" type="datetime-local" class="mt-1 block w-full" />
-                            <div class="mt-1 text-xs text-gray-500">Час береться з вашого браузера.</div>
                             <InputError class="mt-2" :message="form.errors.published_at" />
+                            <div class="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                <span>Час береться з вашого браузера.</span>
+                                <button type="button" class="text-indigo-600 hover:underline" @click="publishNow">Опублікувати зараз</button>
+                                <button type="button" class="text-indigo-600 hover:underline" @click="makeDraft">Зробити чернеткою</button>
+                            </div>
                             <div class="mt-1 text-xs text-gray-500">Якщо не вказати — пост вважається чернеткою.</div>
                         </div>
 

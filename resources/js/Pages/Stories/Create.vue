@@ -17,6 +17,13 @@ const form = useForm({
     expires_at: props.defaultExpiresAt ? props.defaultExpiresAt.slice(0, 16) : '',
 });
 
+const setExpiresInDays = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    const pad = (n) => String(n).padStart(2, '0');
+    form.expires_at = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 const submit = () => {
     form.post(route('dashboard.stories.store', props.businessProfile.id));
 };
@@ -56,8 +63,12 @@ const submit = () => {
                         <div>
                             <InputLabel for="expires_at" value="Дата завершення" />
                             <TextInput id="expires_at" v-model="form.expires_at" type="datetime-local" class="mt-1 block w-full" required />
-                            <div class="mt-1 text-xs text-gray-500">Час береться з вашого браузера.</div>
                             <InputError class="mt-2" :message="form.errors.expires_at" />
+                            <div class="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                                <span>Час береться з вашого браузера.</span>
+                                <button type="button" class="text-indigo-600 hover:underline" @click="setExpiresInDays(1)">+1 день</button>
+                                <button type="button" class="text-indigo-600 hover:underline" @click="setExpiresInDays(7)">+7 днів</button>
+                            </div>
                         </div>
 
                         <div class="flex items-center gap-4">
