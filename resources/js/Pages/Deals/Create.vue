@@ -19,7 +19,12 @@ const form = useForm({
     status: 'draft',
 });
 
+const normalizeCurrency = () => {
+    form.currency = (form.currency || '').toUpperCase().slice(0, 3);
+};
+
 const submit = () => {
+    normalizeCurrency();
     form.post(route('dashboard.deals.store', props.businessProfile.id));
 };
 </script>
@@ -66,8 +71,9 @@ const submit = () => {
                             </div>
                             <div>
                                 <InputLabel for="currency" value="Валюта" />
-                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" required />
+                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" @blur="normalizeCurrency" required />
                                 <InputError class="mt-2" :message="form.errors.currency" />
+                            <div class="mt-1 text-xs text-gray-500">Напр.: UAH</div>
                             </div>
                         </div>
 

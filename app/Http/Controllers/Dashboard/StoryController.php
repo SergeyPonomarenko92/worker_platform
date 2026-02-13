@@ -75,7 +75,7 @@ class StoryController extends Controller
         $data = $request->validate([
             'media_path' => ['required', 'string', 'max:2048'],
             'caption' => ['nullable', 'string', 'max:1000'],
-            'expires_at' => ['required', 'date'],
+            'expires_at' => ['required', 'date', 'after:now'],
         ]);
 
         $story->update($data);
