@@ -51,3 +51,5 @@
 3) Stage 4 (Deals + Reviews):
    - [x] reviews flow after deal completed (policy + UI + tests) — PR: feature/reviews
    - (optional) deal details: note/description fields if needed
+4) Stage 5 (Polish):
+   - [ ] catalog filters/sorting (type/category/city + sort) — PR: feature/catalog-filters
