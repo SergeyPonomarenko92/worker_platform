@@ -6,11 +6,13 @@ use App\Models\BusinessProfile;
 use App\Models\Deal;
 use App\Models\Offer;
 use App\Models\PortfolioPost;
+use App\Models\Review;
 use App\Models\Story;
 use App\Policies\BusinessProfilePolicy;
 use App\Policies\DealPolicy;
 use App\Policies\OfferPolicy;
 use App\Policies\PortfolioPostPolicy;
+use App\Policies\ReviewPolicy;
 use App\Policies\StoryPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
@@ -39,5 +41,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(PortfolioPost::class, PortfolioPostPolicy::class);
         Gate::policy(Story::class, StoryPolicy::class);
         Gate::policy(Deal::class, DealPolicy::class);
+        Gate::policy(Review::class, ReviewPolicy::class);
     }
 }
