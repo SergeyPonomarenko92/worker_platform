@@ -20,7 +20,7 @@ class ProviderController extends Controller
                     ->latest('published_at')
                     ->limit(12),
                 'stories' => fn ($q) => $q->where('expires_at', '>', now())->latest()->limit(20),
-                'reviews' => fn ($q) => $q->latest()->limit(20),
+                'reviews' => fn ($q) => $q->with(['client:id,name'])->latest()->limit(20),
             ])
             ->firstOrFail();
 

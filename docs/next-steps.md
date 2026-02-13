@@ -49,5 +49,5 @@
    - stories: already filtered by `expires_at > now()`
    - portfolio: filtered by `published_at` (draft/scheduled hidden)
 3) Stage 4 (Deals + Reviews):
-   - reviews flow after deal completed (policy + UI + tests)
+   - [x] reviews flow after deal completed (policy + UI + tests) — PR: feature/reviews
    - (optional) deal details: note/description fields if needed

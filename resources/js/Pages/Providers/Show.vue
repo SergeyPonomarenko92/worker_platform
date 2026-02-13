@@ -101,7 +101,16 @@ defineProps({
             :key="review.id"
             class="rounded-lg border border-gray-200 bg-white p-4"
           >
-            <div class="text-sm text-gray-500">Оцінка: {{ review.rating }}/5</div>
+            <div class="flex items-center justify-between gap-3">
+              <div class="text-sm text-gray-500">
+                <span v-if="review.client" class="font-medium text-gray-700">{{ review.client.name }}</span>
+                <span v-else>Клієнт</span>
+                — Оцінка: {{ review.rating }}/5
+              </div>
+              <div v-if="review.created_at" class="text-xs text-gray-400">
+                {{ new Date(review.created_at).toLocaleDateString('uk-UA') }}
+              </div>
+            </div>
             <div v-if="review.body" class="mt-2 text-sm text-gray-700">{{ review.body }}</div>
           </div>
           <div v-if="!provider.reviews?.length" class="text-sm text-gray-500">Поки що немає відгуків</div>
