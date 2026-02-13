@@ -65,7 +65,7 @@ class DealController extends Controller
             $offerOk = $businessProfile->offers()->whereKey($data['offer_id'])->exists();
             if (!$offerOk) {
                 return back()->withErrors([
-                    'offer_id' => 'Offer must belong to selected business profile.',
+                    'offer_id' => 'Офер має належати вибраному профілю бізнесу.',
                 ]);
             }
         }
