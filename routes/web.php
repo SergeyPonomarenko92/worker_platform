@@ -8,6 +8,7 @@ use App\Http\Controllers\Dashboard\PortfolioPostController;
 use App\Http\Controllers\Dashboard\StoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProviderController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +33,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Reviews (client flow)
+    Route::get('/deals/{deal}/review/create', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/deals/{deal}/review', [ReviewController::class, 'store'])->name('reviews.store');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {

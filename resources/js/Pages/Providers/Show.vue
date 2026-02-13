@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 
 defineProps({
   provider: Object,
+  eligibleDealId: Number,
 })
 </script>
 
@@ -84,7 +85,16 @@ defineProps({
 
       <!-- Reviews -->
       <div class="mt-8">
-        <h2 class="text-lg font-semibold">Відгуки</h2>
+        <div class="flex items-center justify-between gap-4">
+          <h2 class="text-lg font-semibold">Відгуки</h2>
+          <Link
+            v-if="eligibleDealId"
+            :href="route('reviews.create', eligibleDealId)"
+            class="text-sm text-blue-600 hover:underline"
+          >
+            Залишити відгук
+          </Link>
+        </div>
         <div class="mt-3 space-y-3">
           <div
             v-for="review in provider.reviews"

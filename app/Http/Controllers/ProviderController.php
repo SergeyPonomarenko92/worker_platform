@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BusinessProfile;
+use App\Models\Deal;
 use Inertia\Inertia;
 
 class ProviderController extends Controller
@@ -23,8 +24,20 @@ class ProviderController extends Controller
             ])
             ->firstOrFail();
 
+        $eligibleDealId = null;
+        if (auth()->check()) {
+            $eligibleDealId = Deal::query()
+                ->where('business_profile_id', $provider->id)
+                ->where('client_user_id', auth()->id())
+                ->where('status', 'completed')
+                ->whereDoesntHave('review')
+                ->latest('completed_at')
+                ->value('id');
+        }
+
         return Inertia::render('Providers/Show', [
             'provider' => $provider,
+            'eligibleDealId' => $eligibleDealId,
         ]);
     }
 }
