@@ -65,7 +65,7 @@ class DealController extends Controller
             $offerOk = $businessProfile->offers()->whereKey($data['offer_id'])->exists();
             if (!$offerOk) {
                 return back()->withErrors([
-                    'offer_id' => 'Offer must belong to selected business profile.',
+                    'offer_id' => 'Офер має належати вибраному профілю бізнесу.',
                 ]);
             }
         }
@@ -101,6 +101,10 @@ class DealController extends Controller
         $this->authorize('update', $businessProfile);
         $this->authorize('update', $deal);
 
+        if (in_array($deal->status, ['completed', 'cancelled'], true)) {
+            return back()->with('error', 'Неможливо змінити статус: угода вже завершена або скасована.');
+        }
+
         $deal->update([
             'status' => 'in_progress',
             'completed_at' => null,
@@ -114,6 +118,14 @@ class DealController extends Controller
         $this->authorize('update', $businessProfile);
         $this->authorize('update', $deal);
 
+        if ($deal->status === 'cancelled') {
+            return back()->with('error', 'Неможливо завершити скасовану угоду.');
+        }
+
+        if ($deal->status === 'completed') {
+            return back()->with('success', 'Угоду вже завершено.');
+        }
+
         $deal->update([
             'status' => 'completed',
             'completed_at' => now(),
@@ -126,6 +138,14 @@ class DealController extends Controller
     {
         $this->authorize('update', $businessProfile);
         $this->authorize('update', $deal);
+
+        if ($deal->status === 'completed') {
+            return back()->with('error', 'Неможливо скасувати завершену угоду.');
+        }
+
+        if ($deal->status === 'cancelled') {
+            return back()->with('success', 'Угоду вже скасовано.');
+        }
 
         $deal->update([
             'status' => 'cancelled',
