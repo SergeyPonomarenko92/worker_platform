@@ -63,6 +63,7 @@ const destroy = () => {
                         <div>
                             <InputLabel for="expires_at" value="Дата завершення" />
                             <TextInput id="expires_at" v-model="form.expires_at" type="datetime-local" class="mt-1 block w-full" required />
+                            <div class="mt-1 text-xs text-gray-500">Час береться з вашого браузера.</div>
                             <InputError class="mt-2" :message="form.errors.expires_at" />
                         </div>
 

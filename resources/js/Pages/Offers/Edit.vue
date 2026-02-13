@@ -51,9 +51,9 @@ const destroy = () => {
                     <form @submit.prevent="submit" class="space-y-6">
                         <div>
                             <InputLabel for="type" value="Тип" />
-                            <select id="type" v-model="form.type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                                <option value="service">service</option>
-                                <option value="product">product</option>
+                            <select id="type" v-model="form.type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" required>
+                                <option value="service">Послуга</option>
+                                <option value="product">Товар</option>
                             </select>
                             <InputError class="mt-2" :message="form.errors.type" />
                         </div>
@@ -82,12 +82,12 @@ const destroy = () => {
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div>
                                 <InputLabel for="price_from" value="Ціна від" />
-                                <TextInput id="price_from" v-model="form.price_from" type="number" step="0.01" class="mt-1 block w-full" />
+                                <TextInput id="price_from" v-model.number="form.price_from" type="number" step="1" min="0" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.price_from" />
                             </div>
                             <div>
                                 <InputLabel for="price_to" value="Ціна до" />
-                                <TextInput id="price_to" v-model="form.price_to" type="number" step="0.01" class="mt-1 block w-full" />
+                                <TextInput id="price_to" v-model.number="form.price_to" type="number" step="1" min="0" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.price_to" />
                             </div>
                             <div>
@@ -95,6 +95,13 @@ const destroy = () => {
                                 <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" required />
                                 <InputError class="mt-2" :message="form.errors.currency" />
                             </div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                                <input type="checkbox" v-model="form.is_active" class="rounded border-gray-300" />
+                                Активна
+                            </label>
                         </div>
 
                         <div class="flex items-center justify-between">

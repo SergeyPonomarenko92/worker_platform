@@ -61,12 +61,12 @@ const submit = () => {
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
                                 <InputLabel for="agreed_price" value="Узгоджена ціна (необов'язково)" />
-                                <TextInput id="agreed_price" v-model="form.agreed_price" type="number" min="0" class="mt-1 block w-full" />
+                                <TextInput id="agreed_price" v-model.number="form.agreed_price" type="number" min="0" step="1" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.agreed_price" />
                             </div>
                             <div>
                                 <InputLabel for="currency" value="Валюта" />
-                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" required />
+                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" required />
                                 <InputError class="mt-2" :message="form.errors.currency" />
                             </div>
                         </div>

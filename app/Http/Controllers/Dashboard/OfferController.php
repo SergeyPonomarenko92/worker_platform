@@ -41,23 +41,31 @@ class OfferController extends Controller
     {
         $this->authorize('update', $businessProfile);
 
+        // Normalize optional numeric/select fields from HTML forms ("" -> null)
+        $request->merge([
+            'category_id' => $request->input('category_id') ?: null,
+            'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
+            'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
+        ]);
+
         $data = $request->validate([
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'type' => ['required', 'in:service,product'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'price_from' => ['nullable', 'numeric', 'min:0'],
-            'price_to' => ['nullable', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'max:3'],
+            'price_to' => ['nullable', 'numeric', 'min:0', 'gte:price_from'],
+            'currency' => ['required', 'string', 'size:3'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         $data['business_profile_id'] = $businessProfile->id;
+        $data['currency'] = strtoupper($data['currency']);
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
         Offer::create($data);
 
-        return redirect()->route('dashboard.offers.index', $businessProfile)->with('success', 'Offer created.');
+        return redirect()->route('dashboard.offers.index', $businessProfile)->with('success', 'Пропозицію створено.');
     }
 
     public function edit(Request $request, BusinessProfile $businessProfile, Offer $offer): Response
@@ -79,24 +87,33 @@ class OfferController extends Controller
         $this->authorize('update', $businessProfile);
         $this->authorize('update', $offer);
 
+        // Normalize optional numeric/select fields from HTML forms ("" -> null)
+        $request->merge([
+            'category_id' => $request->input('category_id') ?: null,
+            'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
+            'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
+        ]);
+
         $data = $request->validate([
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'type' => ['required', 'in:service,product'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'price_from' => ['nullable', 'numeric', 'min:0'],
-            'price_to' => ['nullable', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'max:3'],
+            'price_to' => ['nullable', 'numeric', 'min:0', 'gte:price_from'],
+            'currency' => ['required', 'string', 'size:3'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
+        $data['currency'] = strtoupper($data['currency']);
+
         if (array_key_exists('is_active', $data)) {
-            $data['is_active'] = (bool)$data['is_active'];
+            $data['is_active'] = (bool) $data['is_active'];
         }
 
         $offer->update($data);
 
-        return back()->with('success', 'Offer updated.');
+        return back()->with('success', 'Пропозицію оновлено.');
     }
 
     public function destroy(Request $request, BusinessProfile $businessProfile, Offer $offer): RedirectResponse
@@ -106,6 +123,6 @@ class OfferController extends Controller
 
         $offer->delete();
 
-        return redirect()->route('dashboard.offers.index', $businessProfile)->with('success', 'Offer deleted.');
+        return redirect()->route('dashboard.offers.index', $businessProfile)->with('success', 'Пропозицію видалено.');
     }
 }
