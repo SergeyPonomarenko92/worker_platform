@@ -39,9 +39,12 @@ const statusFor = (post) => {
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
                     Портфоліо — {{ businessProfile.name }}
                 </h2>
-                <div class="flex gap-3">
+                <div class="flex gap-3 flex-wrap justify-end">
                     <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">Профілі бізнесу</Link>
                     <Link :href="route('dashboard.business-profiles.edit', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Профіль</Link>
+                    <Link :href="route('dashboard.offers.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Пропозиції</Link>
+                    <Link :href="route('dashboard.stories.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Історії</Link>
+                    <Link :href="route('dashboard.deals.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Угоди</Link>
                     <Link :href="route('dashboard.portfolio-posts.create', businessProfile.id)">
                         <PrimaryButton>Створити пост</PrimaryButton>
                     </Link>
