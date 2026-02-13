@@ -84,6 +84,13 @@ const submit = () => {
                         </div>
 
                         <div class="flex items-center gap-4">
+                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                                <input type="checkbox" v-model="form.is_active" class="rounded border-gray-300" />
+                                Активний профіль
+                            </label>
+                        </div>
+
+                        <div class="flex items-center gap-4">
                             <PrimaryButton :disabled="form.processing">Створити</PrimaryButton>
                             <span v-if="form.recentlySuccessful" class="text-sm text-gray-600">Збережено.</span>
                         </div>

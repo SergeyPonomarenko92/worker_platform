@@ -69,7 +69,7 @@ class BusinessProfileController extends Controller
 
         $profile = BusinessProfile::create($data);
 
-        return redirect()->route('dashboard.business-profiles.edit', $profile)->with('success', 'Business profile created.');
+        return redirect()->route('dashboard.business-profiles.edit', $profile)->with('success', 'Профіль бізнесу створено.');
     }
 
     public function edit(Request $request, BusinessProfile $businessProfile): Response
@@ -103,6 +103,6 @@ class BusinessProfileController extends Controller
 
         $businessProfile->update($data);
 
-        return back()->with('success', 'Business profile updated.');
+        return back()->with('success', 'Профіль бізнесу оновлено.');
     }
 }
