@@ -34,8 +34,11 @@ const props = defineProps({
                                 <div class="font-medium text-gray-900">{{ p.name }}</div>
                                 <div class="text-sm text-gray-600">/{{ p.slug }}</div>
                             </div>
-                            <div class="flex items-center gap-4 text-sm">
+                            <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm">
                                 <Link :href="route('dashboard.offers.index', p.id)" class="text-indigo-600 hover:underline">Пропозиції</Link>
+                                <Link :href="route('dashboard.portfolio-posts.index', p.id)" class="text-indigo-600 hover:underline">Портфоліо</Link>
+                                <Link :href="route('dashboard.stories.index', p.id)" class="text-indigo-600 hover:underline">Історії</Link>
+                                <Link :href="route('dashboard.deals.index', p.id)" class="text-indigo-600 hover:underline">Угоди</Link>
                                 <Link :href="route('dashboard.business-profiles.edit', p.id)" class="text-indigo-600 hover:underline">Редагувати</Link>
                             </div>
                         </li>

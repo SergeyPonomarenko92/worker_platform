@@ -41,6 +41,11 @@ class PortfolioPostController extends Controller
     {
         $this->authorize('update', $businessProfile);
 
+        // Normalize datetime-local empty string ("" -> null)
+        $request->merge([
+            'published_at' => $request->input('published_at') ?: null,
+        ]);
+
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'body' => ['nullable', 'string', 'max:10000'],
@@ -71,6 +76,11 @@ class PortfolioPostController extends Controller
     {
         $this->authorize('update', $businessProfile);
         $this->authorize('update', $portfolioPost);
+
+        // Normalize datetime-local empty string ("" -> null)
+        $request->merge([
+            'published_at' => $request->input('published_at') ?: null,
+        ]);
 
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],

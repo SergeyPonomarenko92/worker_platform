@@ -44,11 +44,17 @@ class DealController extends Controller
     {
         $this->authorize('update', $businessProfile);
 
+        // Normalize optional numeric/select fields from HTML forms ("" -> null)
+        $request->merge([
+            'offer_id' => $request->input('offer_id') ?: null,
+            'agreed_price' => $request->input('agreed_price') === '' ? null : $request->input('agreed_price'),
+        ]);
+
         $data = $request->validate([
             'client_email' => ['required', 'email', 'exists:users,email'],
             'offer_id' => ['nullable', 'integer', 'exists:offers,id'],
             'agreed_price' => ['nullable', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'max:3'],
+            'currency' => ['required', 'string', 'size:3'],
             'status' => ['required', 'in:draft,in_progress,completed,cancelled'],
         ]);
 
@@ -70,7 +76,7 @@ class DealController extends Controller
             'offer_id' => $data['offer_id'] ?? null,
             'status' => $data['status'],
             'agreed_price' => $data['agreed_price'] ?? null,
-            'currency' => $data['currency'],
+            'currency' => strtoupper($data['currency']),
             'completed_at' => $data['status'] === 'completed' ? now() : null,
         ]);
 

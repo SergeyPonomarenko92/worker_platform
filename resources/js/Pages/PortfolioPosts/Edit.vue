@@ -63,6 +63,7 @@ const destroy = () => {
                         <div>
                             <InputLabel for="published_at" value="Дата публікації (необов'язково)" />
                             <TextInput id="published_at" v-model="form.published_at" type="datetime-local" class="mt-1 block w-full" />
+                            <div class="mt-1 text-xs text-gray-500">Час береться з вашого браузера.</div>
                             <InputError class="mt-2" :message="form.errors.published_at" />
                         </div>
 
