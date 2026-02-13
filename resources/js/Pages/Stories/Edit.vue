@@ -74,7 +74,6 @@ const destroy = () => {
                             <div class="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
                                 <span>Час береться з вашого браузера.</span>
                                 <button type="button" class="text-indigo-600 hover:underline" @click="setExpiresInDays(1)">+1 день</button>
-                                <button type="button" class="text-indigo-600 hover:underline" @click="setExpiresInDays(7)">+7 днів</button>
                             </div>
                         </div>
 
