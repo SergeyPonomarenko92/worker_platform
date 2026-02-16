@@ -47,10 +47,10 @@ const submit = () => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <form @submit.prevent="submit" class="space-y-6">
+                    <form @submit.prevent="submit" novalidate class="space-y-6">
                         <div>
                             <InputLabel for="client_email" value="Email клієнта (має бути зареєстрований)" />
-                            <TextInput id="client_email" v-model="form.client_email" type="email" class="mt-1 block w-full" required />
+                            <TextInput id="client_email" v-model="form.client_email" type="email" class="mt-1 block w-full" />
                             <InputError class="mt-2" :message="form.errors.client_email" />
                         </div>
 
@@ -71,7 +71,7 @@ const submit = () => {
                             </div>
                             <div>
                                 <InputLabel for="currency" value="Валюта" />
-                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" @blur="normalizeCurrency" required />
+                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" @blur="normalizeCurrency" />
                                 <InputError class="mt-2" :message="form.errors.currency" />
                             <div class="mt-1 text-xs text-gray-500">Напр.: UAH</div>
                             </div>

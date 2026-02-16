@@ -49,10 +49,10 @@ const submit = () => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <form @submit.prevent="submit" class="space-y-6">
+                    <form @submit.prevent="submit" novalidate class="space-y-6">
                         <div>
                             <InputLabel for="title" value="Заголовок" />
-                            <TextInput id="title" v-model="form.title" type="text" class="mt-1 block w-full" required />
+                            <TextInput id="title" v-model="form.title" type="text" class="mt-1 block w-full" />
                             <InputError class="mt-2" :message="form.errors.title" />
                         </div>
 

@@ -54,10 +54,10 @@ const destroy = () => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <form @submit.prevent="submit" class="space-y-6">
+                    <form @submit.prevent="submit" novalidate class="space-y-6">
                         <div>
                             <InputLabel for="media_path" value="Шлях до медіа" />
-                            <TextInput id="media_path" v-model="form.media_path" type="text" class="mt-1 block w-full" required />
+                            <TextInput id="media_path" v-model="form.media_path" type="text" class="mt-1 block w-full" />
                             <InputError class="mt-2" :message="form.errors.media_path" />
                         </div>
 
@@ -69,7 +69,7 @@ const destroy = () => {
 
                         <div>
                             <InputLabel for="expires_at" value="Дата завершення" />
-                            <TextInput id="expires_at" v-model="form.expires_at" type="datetime-local" class="mt-1 block w-full" required />
+                            <TextInput id="expires_at" v-model="form.expires_at" type="datetime-local" class="mt-1 block w-full" />
                             <InputError class="mt-2" :message="form.errors.expires_at" />
                             <div class="mt-1 flex flex-wrap items-center gap-3 text-xs text-gray-500">
                                 <span>Час береться з вашого браузера.</span>

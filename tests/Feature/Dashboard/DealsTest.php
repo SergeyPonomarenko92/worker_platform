@@ -43,21 +43,38 @@ class DealsTest extends TestCase
         $deal->refresh();
         $this->assertSame('in_progress', $deal->status);
 
-        // Mark completed
-        $this->actingAs($provider)
-            ->patch(route('dashboard.deals.completed', [$profile, $deal]))
-            ->assertRedirect();
-
-        $deal->refresh();
-        $this->assertSame('completed', $deal->status);
-        $this->assertNotNull($deal->completed_at);
-
-        // Mark cancelled
+        // Mark cancelled (allowed from in_progress)
         $this->actingAs($provider)
             ->patch(route('dashboard.deals.cancelled', [$profile, $deal]))
             ->assertRedirect();
 
         $deal->refresh();
         $this->assertSame('cancelled', $deal->status);
+
+        // Create a second deal to test completion path
+        $this->actingAs($provider)
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => $client->email,
+                'offer_id' => $offer->id,
+                'status' => 'draft',
+                'currency' => 'UAH',
+                'agreed_price' => 100,
+            ])
+            ->assertRedirect();
+
+        $deal2 = Deal::query()
+            ->where('business_profile_id', $profile->id)
+            ->where('status', 'draft')
+            ->latest('id')
+            ->firstOrFail();
+
+        // Mark completed
+        $this->actingAs($provider)
+            ->patch(route('dashboard.deals.completed', [$profile, $deal2]))
+            ->assertRedirect();
+
+        $deal2->refresh();
+        $this->assertSame('completed', $deal2->status);
+        $this->assertNotNull($deal2->completed_at);
     }
 }
