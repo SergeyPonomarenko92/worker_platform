@@ -4,19 +4,24 @@
 - 2026-02-12: Stage 3 (Content) — CRUD PortfolioPost/Story у кабінеті + фільтрація портфоліо на public provider page + статуси в UI.
 - 2026-02-12: Tests — додано feature happy-path тести для PortfolioPost/Story.
 - 2026-02-12: Stage 4 (Deals) — додано кабінет угод (створення вручну + зміна статусів) + тести.
+- 2026-02-16: UX/Polish — `/` редіректить на `/catalog`; форми показують помилки валідації (Inertia, без нативної HTML-валидації); локаль UI/validation = `uk`.
+- 2026-02-16: Stories — у кабінеті протерміновані історії приховані за замовчуванням (перемикач `?show_expired=1`).
+- 2026-02-16: Deals — у UI кнопка «Скасувати» вимкнена для завершених угод (узгоджено з бекенд-правилами).
 
 ## Current status
 - Branch: `main`
 - Postgres configured and working locally.
 - Migrations and seeders run successfully.
-- Pages working: `/catalog`, `/providers/demo-provider`.
+- Pages working: `/` (→ redirect to `/catalog`), `/catalog`, `/providers/demo-provider`.
 - Provider cabinet pages added (multiple business profiles):
   - `/dashboard/business-profiles` (list)
   - `/dashboard/business-profiles/create` (create)
   - `/dashboard/business-profiles/{businessProfile}/edit` (edit)
   - `/dashboard/business-profiles/{businessProfile}/offers` (offers CRUD)
   - `/dashboard/business-profiles/{businessProfile}/portfolio-posts` (portfolio posts CRUD)
-  - `/dashboard/business-profiles/{businessProfile}/stories` (stories CRUD)
+  - `/dashboard/business-profiles/{businessProfile}/stories` (stories CRUD; expired hidden by default)
+  - `/dashboard/business-profiles/{businessProfile}/deals` (deals cabinet)
+- Reviews flow: `/deals/{deal}/review/create` (client leaves review after completed deal)
 
 ## Done
 - [x] Stage 2: Provider cabinet (CRUD)
@@ -43,13 +48,15 @@
   - `published_at <= now()`
 
 ## TODO (next session)
-1) Finish Stage 3 polish:
-   - verify UI in browser (links, flash messages, validations)
+1) Stage 3 polish — завершити ручний UI-check:
+   - перевірити flash messages після CRUD (create/update/delete) для Offers/Portfolio/Stories/Deals
+   - переконатися, що помилки валідації показуються скрізь (після переключення локалі на `uk`)
+   - Stories: перевірити UX перемикача «Показати протерміновані»
 2) Public provider page:
-   - stories: already filtered by `expires_at > now()`
-   - portfolio: filtered by `published_at` (draft/scheduled hidden)
-3) Stage 4 (Deals + Reviews):
-   - [x] reviews flow after deal completed (policy + UI + tests) — PR: feature/reviews
-   - (optional) deal details: note/description fields if needed
-4) Stage 5 (Polish):
-   - [ ] catalog filters/sorting (type/category/city + sort) — PR: feature/catalog-filters
+   - stories: показуються лише активні (`expires_at > now()`)
+   - portfolio: показуються лише опубліковані (`published_at` not null і `<= now()`)
+   - reviews: після completed deal відгук з’являється на сторінці (перевірити формат/UX)
+3) Stage 5 (Polish):
+   - переглянути каталог фільтри/сортування (type/category/city + sort) — допиляти UX/edge cases
+4) Техборг:
+   - розібратись з тестовою БД (sqlite vs pgsql schema) якщо захочемо повернути sqlite, або додати явну доку про pgsql schema `testing`.
