@@ -16,14 +16,21 @@ class StoryController extends Controller
     {
         $this->authorize('update', $businessProfile);
 
-        $stories = $businessProfile->stories()
-            ->latest('created_at')
-            ->get();
+        $showExpired = $request->boolean('show_expired');
+
+        $storiesQuery = $businessProfile->stories()->latest('created_at');
+
+        if (!$showExpired) {
+            $storiesQuery->where('expires_at', '>', now());
+        }
+
+        $stories = $storiesQuery->get();
 
         return Inertia::render('Stories/Index', [
             'businessProfile' => $businessProfile,
             'stories' => $stories,
             'now' => now()->toIso8601String(),
+            'showExpired' => $showExpired,
         ]);
     }
 

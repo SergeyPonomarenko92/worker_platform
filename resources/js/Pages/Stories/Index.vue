@@ -8,6 +8,7 @@ const props = defineProps({
     businessProfile: Object,
     stories: Array,
     now: String,
+    showExpired: Boolean,
 });
 
 const form = useForm({});
@@ -60,6 +61,17 @@ const destroy = (storyId) => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
+                    <div class="mb-4 flex items-center justify-between gap-3">
+                        <div class="text-sm text-gray-600">
+                            За замовчуванням показані лише активні історії.
+                        </div>
+                        <Link
+                            class="text-sm text-indigo-600 hover:underline"
+                            :href="route('dashboard.stories.index', businessProfile.id) + (showExpired ? '' : '?show_expired=1')"
+                        >
+                            {{ showExpired ? 'Сховати протерміновані' : 'Показати протерміновані' }}
+                        </Link>
+                    </div>
                     <div v-if="stories.length === 0" class="text-sm text-gray-700">Поки що немає історій.</div>
 
                     <ul v-else class="divide-y divide-gray-200">
