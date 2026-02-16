@@ -53,10 +53,10 @@ const destroy = () => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <form @submit.prevent="submit" class="space-y-6">
+                    <form @submit.prevent="submit" novalidate class="space-y-6">
                         <div>
                             <InputLabel for="type" value="Тип" />
-                            <select id="type" v-model="form.type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" required>
+                            <select id="type" v-model="form.type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                 <option value="service">Послуга</option>
                                 <option value="product">Товар</option>
                             </select>
@@ -65,7 +65,7 @@ const destroy = () => {
 
                         <div>
                             <InputLabel for="title" value="Назва" />
-                            <TextInput id="title" v-model="form.title" type="text" class="mt-1 block w-full" required />
+                            <TextInput id="title" v-model="form.title" type="text" class="mt-1 block w-full" />
                             <InputError class="mt-2" :message="form.errors.title" />
                         </div>
 
@@ -97,7 +97,7 @@ const destroy = () => {
                             </div>
                             <div>
                                 <InputLabel for="currency" value="Валюта" />
-                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" @blur="normalizeCurrency" required />
+                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" @blur="normalizeCurrency" />
                                 <InputError class="mt-2" :message="form.errors.currency" />
                             <div class="mt-1 text-xs text-gray-500">Напр.: UAH</div>
                             </div>
