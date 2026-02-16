@@ -29,7 +29,7 @@ const statusLabel = (status) => {
 
 const canMarkInProgress = () => props.deal.status !== 'in_progress' && props.deal.status !== 'completed' && props.deal.status !== 'cancelled';
 const canMarkCompleted = () => props.deal.status !== 'completed' && props.deal.status !== 'cancelled';
-const canMarkCancelled = () => props.deal.status !== 'cancelled';
+const canMarkCancelled = () => props.deal.status !== 'cancelled' && props.deal.status !== 'completed';
 
 const markInProgress = () => {
     if (!canMarkInProgress()) return;
