@@ -15,6 +15,7 @@ const form = reactive({
   city: props.filters?.city || '',
   price_from: props.filters?.price_from ?? '',
   price_to: props.filters?.price_to ?? '',
+  include_no_price: props.filters?.include_no_price || false,
   sort: props.filters?.sort || 'newest',
 })
 
@@ -28,6 +29,7 @@ function submit() {
       city: (form.city || '').trim() || undefined,
       price_from: String(form.price_from).trim() || undefined,
       price_to: String(form.price_to).trim() || undefined,
+      include_no_price: form.include_no_price ? 1 : undefined,
       sort: form.sort || undefined,
     },
     {
@@ -74,6 +76,9 @@ const activeChips = computed(() => {
   if ((form.city || '').trim()) chips.push({ key: 'city', label: `Місто: ${String((form.city || '').trim()).slice(0, 30)}` })
   if (String(form.price_from || '').trim()) chips.push({ key: 'price_from', label: `Ціна від: ${String(form.price_from).trim()}` })
   if (String(form.price_to || '').trim()) chips.push({ key: 'price_to', label: `Ціна до: ${String(form.price_to).trim()}` })
+  if (form.include_no_price && (String(form.price_from || '').trim() || String(form.price_to || '').trim())) {
+    chips.push({ key: 'include_no_price', label: 'Включати «за домовленістю»' })
+  }
   if (form.sort && form.sort !== 'newest') chips.push({ key: 'sort', label: `Сортування: ${sortLabel(form.sort)}` })
 
   return chips
@@ -86,6 +91,7 @@ function clearChip(key) {
   if (key === 'city') form.city = ''
   if (key === 'price_from') form.price_from = ''
   if (key === 'price_to') form.price_to = ''
+  if (key === 'include_no_price') form.include_no_price = false
   if (key === 'sort') form.sort = 'newest'
 
   submit()
@@ -112,7 +118,7 @@ watch(
 )
 
 watch(
-  () => [form.price_from, form.price_to],
+  () => [form.price_from, form.price_to, form.include_no_price],
   () => {
     if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
     priceDebounceTimer = setTimeout(() => submit(), 400)
@@ -134,6 +140,7 @@ function resetFilters() {
   form.city = ''
   form.price_from = ''
   form.price_to = ''
+  form.include_no_price = false
   form.sort = 'newest'
 
   submit()
@@ -229,6 +236,10 @@ function resetFilters() {
               @keydown.enter.prevent="onSearch"
             />
           </div>
+          <label class="mt-2 inline-flex items-center gap-2 text-xs text-gray-600">
+            <input type="checkbox" v-model="form.include_no_price" class="rounded border-gray-300" />
+            Включати «ціна за домовленістю»
+          </label>
         </div>
 
         <div>
