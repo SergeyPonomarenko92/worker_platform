@@ -40,12 +40,22 @@ defineProps({
       <div class="mt-8">
         <h2 class="text-lg font-semibold">Історії</h2>
         <div class="mt-3 flex gap-3 overflow-x-auto">
-          <div
+          <a
             v-for="story in provider.stories"
             :key="story.id"
-            class="h-20 w-20 flex-shrink-0 rounded-full border border-gray-300 bg-gray-50"
+            :href="'/' + story.media_path"
+            target="_blank"
+            rel="noreferrer"
+            class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-gray-300 bg-gray-50"
             :title="story.caption || ''"
-          />
+          >
+            <img
+              :src="'/' + story.media_path"
+              alt=""
+              class="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </a>
           <div v-if="!provider.stories?.length" class="text-sm text-gray-500">Поки що немає історій</div>
         </div>
       </div>
