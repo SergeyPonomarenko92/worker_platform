@@ -23,7 +23,8 @@ class CatalogController extends Controller
 
         $type = (string) ($data['type'] ?? '');
         $categoryId = $data['category_id'] ?? null;
-        $city = trim((string) ($data['city'] ?? ''));
+        $city = preg_replace('/\s+/', ' ', trim((string) ($data['city'] ?? '')));
+        $cityLower = mb_strtolower($city);
         $q = trim((string) ($data['q'] ?? ''));
         $priceFrom = $data['price_from'] ?? null;
         $priceTo = $data['price_to'] ?? null;
@@ -39,7 +40,7 @@ class CatalogController extends Controller
             ->whereHas('businessProfile', fn ($bp) => $bp->where('is_active', true))
             ->when($type, fn ($query) => $query->where('type', $type))
             ->when($categoryId, fn ($query) => $query->where('category_id', $categoryId))
-            ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->where('city', 'ilike', "%{$city}%")))
+            ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->whereRaw('lower(city) like ?', ["{$cityLower}%"])))
             ->when($q, fn ($query) => $query->where(function ($sub) use ($q) {
                 $sub->where('title', 'ilike', "%{$q}%")
                     ->orWhere('description', 'ilike', "%{$q}%");
