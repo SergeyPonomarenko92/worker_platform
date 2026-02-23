@@ -65,7 +65,7 @@ class DemoSeeder extends Seeder
         );
 
         Story::query()->firstOrCreate(
-            ['business_profile_id' => $provider->id, 'media_path' => 'stories/demo.png'],
+            ['business_profile_id' => $provider->id, 'media_path' => 'stories/demo.svg'],
             [
                 'caption' => 'Сьогодні вільні слоти!',
                 'expires_at' => now()->addDay(),
