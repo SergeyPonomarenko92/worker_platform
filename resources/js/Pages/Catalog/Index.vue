@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
-import { reactive, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 
 const props = defineProps({
   offers: Object,
@@ -35,7 +35,56 @@ function submit() {
   )
 }
 
+const typeLabel = (type) => {
+  switch (type) {
+    case 'service':
+      return 'Послуги'
+    case 'product':
+      return 'Товари'
+    default:
+      return type
+  }
+}
+
+const sortLabel = (sort) => {
+  switch (sort) {
+    case 'newest':
+      return 'Найновіші'
+    case 'price_asc':
+      return 'Ціна: зростання'
+    case 'price_desc':
+      return 'Ціна: спадання'
+    default:
+      return sort
+  }
+}
+
+const categoryLabel = (id) => props.categories?.find((c) => String(c.id) === String(id))?.name || 'Категорія'
+
+const activeChips = computed(() => {
+  const chips = []
+
+  if ((form.q || '').trim()) chips.push({ key: 'q', label: `Пошук: ${String((form.q || '').trim()).slice(0, 30)}` })
+  if (form.type) chips.push({ key: 'type', label: `Тип: ${typeLabel(form.type)}` })
+  if (form.category_id) chips.push({ key: 'category_id', label: `Категорія: ${categoryLabel(form.category_id)}` })
+  if ((form.city || '').trim()) chips.push({ key: 'city', label: `Місто: ${String((form.city || '').trim()).slice(0, 30)}` })
+  if (form.sort && form.sort !== 'newest') chips.push({ key: 'sort', label: `Сортування: ${sortLabel(form.sort)}` })
+
+  return chips
+})
+
+function clearChip(key) {
+  if (key === 'q') form.q = ''
+  if (key === 'type') form.type = ''
+  if (key === 'category_id') form.category_id = ''
+  if (key === 'city') form.city = ''
+  if (key === 'sort') form.sort = 'newest'
+
+  submit()
+}
+
 let qDebounceTimer = null
+let cityDebounceTimer = null
 
 watch(
   () => form.q,
@@ -45,9 +94,18 @@ watch(
   },
 )
 
+watch(
+  () => form.city,
+  () => {
+    if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
+    cityDebounceTimer = setTimeout(() => submit(), 400)
+  },
+)
+
 function onSearch(e) {
   e.preventDefault()
   if (qDebounceTimer) clearTimeout(qDebounceTimer)
+  if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
   submit()
 }
 
@@ -73,6 +131,22 @@ function resetFilters() {
       </div>
 
       <form class="mt-6 flex flex-wrap gap-3 items-end" @submit="onSearch">
+        <div v-if="activeChips.length" class="w-full">
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="text-xs text-gray-500 mr-2">Активні фільтри:</div>
+            <button
+              v-for="chip in activeChips"
+              :key="chip.key"
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
+              @click="clearChip(chip.key)"
+              :title="'Прибрати фільтр: ' + chip.label"
+            >
+              <span class="whitespace-nowrap">{{ chip.label }}</span>
+              <span class="text-gray-400">×</span>
+            </button>
+          </div>
+        </div>
         <div class="w-full max-w-md">
           <div class="text-xs text-gray-500">Пошук</div>
           <input
@@ -106,7 +180,7 @@ function resetFilters() {
             v-model="form.city"
             class="mt-1 w-48 rounded-md border-gray-300"
             placeholder="напр. Київ"
-            @keydown.enter.prevent="submit"
+            @keydown.enter.prevent="onSearch"
           />
         </div>
 
