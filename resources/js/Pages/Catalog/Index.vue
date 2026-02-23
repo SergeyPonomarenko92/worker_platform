@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 
 const props = defineProps({
   offers: Object,
@@ -35,8 +35,19 @@ function submit() {
   )
 }
 
+let qDebounceTimer = null
+
+watch(
+  () => form.q,
+  () => {
+    if (qDebounceTimer) clearTimeout(qDebounceTimer)
+    qDebounceTimer = setTimeout(() => submit(), 400)
+  },
+)
+
 function onSearch(e) {
   e.preventDefault()
+  if (qDebounceTimer) clearTimeout(qDebounceTimer)
   submit()
 }
 
@@ -68,6 +79,7 @@ function resetFilters() {
             v-model="form.q"
             class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. електрик, ремонт, булочна"
+            @keydown.enter.prevent="onSearch"
           />
         </div>
 
@@ -153,14 +165,53 @@ function resetFilters() {
         Нічого не знайдено. Спробуйте змінити фільтри.
       </div>
 
-      <div class="mt-8 flex items-center justify-between">
-        <Link v-if="offers.prev_page_url" :href="offers.prev_page_url" class="text-sm text-blue-600 hover:underline">
-          Назад
-        </Link>
-        <div class="text-sm text-gray-500">Сторінка {{ offers.current_page }} з {{ offers.last_page }}</div>
-        <Link v-if="offers.next_page_url" :href="offers.next_page_url" class="text-sm text-blue-600 hover:underline">
-          Далі
-        </Link>
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <Link
+            v-if="offers.prev_page_url"
+            :href="offers.prev_page_url"
+            class="text-sm text-blue-600 hover:underline"
+          >
+            Назад
+          </Link>
+          <span v-else class="text-sm text-gray-300">Назад</span>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          <template v-if="offers.links?.length">
+            <span
+              v-for="(l, idx) in offers.links"
+              :key="idx"
+              class="px-2 py-1 text-sm rounded"
+              :class="l.active ? 'bg-gray-900 text-white' : 'text-gray-700'"
+            >
+              <Link
+                v-if="l.url"
+                :href="l.url"
+                class="hover:underline"
+                preserve-scroll
+                preserve-state
+              >
+                <span v-html="l.label" />
+              </Link>
+              <span v-else class="text-gray-300" v-html="l.label" />
+            </span>
+          </template>
+          <template v-else>
+            <div class="text-sm text-gray-500">Сторінка {{ offers.current_page }} з {{ offers.last_page }}</div>
+          </template>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <Link
+            v-if="offers.next_page_url"
+            :href="offers.next_page_url"
+            class="text-sm text-blue-600 hover:underline"
+          >
+            Далі
+          </Link>
+          <span v-else class="text-sm text-gray-300">Далі</span>
+        </div>
       </div>
     </div>
   </div>
