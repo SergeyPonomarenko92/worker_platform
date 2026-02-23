@@ -53,8 +53,8 @@ class OfferController extends Controller
             'type' => ['required', 'in:service,product'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
-            'price_from' => ['nullable', 'numeric', 'min:0'],
-            'price_to' => ['nullable', 'numeric', 'min:0', 'gte:price_from'],
+            'price_from' => ['nullable', 'integer', 'min:0'],
+            'price_to' => ['nullable', 'integer', 'min:0', 'gte:price_from'],
             'currency' => ['required', 'string', 'size:3'],
             'is_active' => ['nullable', 'boolean'],
         ]);
@@ -99,8 +99,8 @@ class OfferController extends Controller
             'type' => ['required', 'in:service,product'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
-            'price_from' => ['nullable', 'numeric', 'min:0'],
-            'price_to' => ['nullable', 'numeric', 'min:0', 'gte:price_from'],
+            'price_from' => ['nullable', 'integer', 'min:0'],
+            'price_to' => ['nullable', 'integer', 'min:0', 'gte:price_from'],
             'currency' => ['required', 'string', 'size:3'],
             'is_active' => ['nullable', 'boolean'],
         ]);
