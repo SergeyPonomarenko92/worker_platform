@@ -1,0 +1,81 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\BusinessProfile;
+use App\Models\Category;
+use App\Models\Offer;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class CatalogTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_catalog_filters_by_city_prefix_case_insensitive(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $kyiv = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+        $lviv = BusinessProfile::factory()->create(['city' => 'Львів', 'is_active' => true]);
+
+        Offer::factory()->for($kyiv)->create([
+            'category_id' => $cat->id,
+            'title' => 'Київ оффер',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($lviv)->create([
+            'category_id' => $cat->id,
+            'title' => 'Львів оффер',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?city=%D0%BA%D0%B8') // "ки"
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Київ оффер')
+            );
+    }
+
+    public function test_catalog_filters_by_price_range_and_excludes_null_price_when_filtering(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'No price offer',
+            'is_active' => true,
+            'price_from' => null,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Cheap offer',
+            'is_active' => true,
+            'price_from' => 200,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Expensive offer',
+            'is_active' => true,
+            'price_from' => 2000,
+        ]);
+
+        $this
+            ->get('/catalog?price_from=100&price_to=500')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Cheap offer')
+            );
+    }
+}
