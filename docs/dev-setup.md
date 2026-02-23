@@ -31,6 +31,8 @@ Open:
 ./vendor/bin/sail test
 ```
 
+> Tests use Postgres `search_path=testing`. If you hit DB/schema issues, see `docs/testing-db.md`.
+
 ## 4) Run without Sail (local)
 ### Database
 #### Option A: Postgres (recommended)
