@@ -16,8 +16,8 @@ class CatalogController extends Controller
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'city' => ['nullable', 'string', 'max:255'],
             'q' => ['nullable', 'string', 'max:255'],
-            'price_from' => ['nullable', 'numeric', 'min:0'],
-            'price_to' => ['nullable', 'numeric', 'min:0'],
+            'price_from' => ['nullable', 'integer', 'min:0'],
+            'price_to' => ['nullable', 'integer', 'min:0'],
             'include_no_price' => ['nullable', 'boolean'],
             'sort' => ['nullable', 'in:newest,price_asc,price_desc'],
         ]);
