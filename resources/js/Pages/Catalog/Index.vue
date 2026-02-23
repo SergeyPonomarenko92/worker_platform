@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
+import { reactive, watch } from 'vue'
 
 const props = defineProps({
   offers: Object,
@@ -7,21 +8,57 @@ const props = defineProps({
   categories: Array,
 })
 
+const form = reactive({
+  q: props.filters?.q || '',
+  type: props.filters?.type || '',
+  category_id: props.filters?.category_id || '',
+  city: props.filters?.city || '',
+  sort: props.filters?.sort || 'newest',
+})
+
+function submit() {
+  router.get(
+    '/catalog',
+    {
+      q: (form.q || '').trim() || undefined,
+      type: form.type || undefined,
+      category_id: form.category_id || undefined,
+      city: (form.city || '').trim() || undefined,
+      sort: form.sort || undefined,
+    },
+    {
+      preserveState: true,
+      preserveScroll: true,
+      replace: true,
+      only: ['offers', 'filters'],
+    },
+  )
+}
+
+let qDebounceTimer = null
+
+watch(
+  () => form.q,
+  () => {
+    if (qDebounceTimer) clearTimeout(qDebounceTimer)
+    qDebounceTimer = setTimeout(() => submit(), 400)
+  },
+)
+
 function onSearch(e) {
   e.preventDefault()
-  const form = e.target
-
-  router.get('/catalog', {
-    q: form.q.value || undefined,
-    type: form.type.value || undefined,
-    category_id: form.category_id.value || undefined,
-    city: form.city.value || undefined,
-    sort: form.sort.value || undefined,
-  }, { preserveState: true })
+  if (qDebounceTimer) clearTimeout(qDebounceTimer)
+  submit()
 }
 
 function resetFilters() {
-  router.get('/catalog', {}, { preserveState: true })
+  form.q = ''
+  form.type = ''
+  form.category_id = ''
+  form.city = ''
+  form.sort = 'newest'
+
+  submit()
 }
 </script>
 
@@ -39,16 +76,16 @@ function resetFilters() {
         <div class="w-full max-w-md">
           <div class="text-xs text-gray-500">Пошук</div>
           <input
-            name="q"
+            v-model="form.q"
             class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. електрик, ремонт, булочна"
-            :defaultValue="filters?.q || ''"
+            @keydown.enter.prevent="onSearch"
           />
         </div>
 
         <div>
           <div class="text-xs text-gray-500">Тип</div>
-          <select name="type" class="mt-1 rounded-md border-gray-300" :defaultValue="filters?.type || ''">
+          <select v-model="form.type" class="mt-1 rounded-md border-gray-300" @change="submit">
             <option value="">Усі</option>
             <option value="service">Послуги</option>
             <option value="product">Товари</option>
@@ -57,25 +94,25 @@ function resetFilters() {
 
         <div>
           <div class="text-xs text-gray-500">Категорія</div>
-          <select name="category_id" class="mt-1 rounded-md border-gray-300" :defaultValue="filters?.category_id || ''">
+          <select v-model="form.category_id" class="mt-1 rounded-md border-gray-300" @change="submit">
             <option value="">Усі</option>
-            <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+            <option v-for="c in categories" :key="c.id" :value="String(c.id)">{{ c.name }}</option>
           </select>
         </div>
 
         <div>
           <div class="text-xs text-gray-500">Місто</div>
           <input
-            name="city"
+            v-model="form.city"
             class="mt-1 w-48 rounded-md border-gray-300"
             placeholder="напр. Київ"
-            :defaultValue="filters?.city || ''"
+            @keydown.enter.prevent="submit"
           />
         </div>
 
         <div>
           <div class="text-xs text-gray-500">Сортування</div>
-          <select name="sort" class="mt-1 rounded-md border-gray-300" :defaultValue="filters?.sort || 'newest'">
+          <select v-model="form.sort" class="mt-1 rounded-md border-gray-300" @change="submit">
             <option value="newest">Найновіші</option>
             <option value="price_asc">Ціна: зростання</option>
             <option value="price_desc">Ціна: спадання</option>
@@ -128,14 +165,53 @@ function resetFilters() {
         Нічого не знайдено. Спробуйте змінити фільтри.
       </div>
 
-      <div class="mt-8 flex items-center justify-between">
-        <Link v-if="offers.prev_page_url" :href="offers.prev_page_url" class="text-sm text-blue-600 hover:underline">
-          Назад
-        </Link>
-        <div class="text-sm text-gray-500">Сторінка {{ offers.current_page }} з {{ offers.last_page }}</div>
-        <Link v-if="offers.next_page_url" :href="offers.next_page_url" class="text-sm text-blue-600 hover:underline">
-          Далі
-        </Link>
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <Link
+            v-if="offers.prev_page_url"
+            :href="offers.prev_page_url"
+            class="text-sm text-blue-600 hover:underline"
+          >
+            Назад
+          </Link>
+          <span v-else class="text-sm text-gray-300">Назад</span>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-1">
+          <template v-if="offers.links?.length">
+            <span
+              v-for="(l, idx) in offers.links"
+              :key="idx"
+              class="px-2 py-1 text-sm rounded"
+              :class="l.active ? 'bg-gray-900 text-white' : 'text-gray-700'"
+            >
+              <Link
+                v-if="l.url"
+                :href="l.url"
+                class="hover:underline"
+                preserve-scroll
+                preserve-state
+              >
+                <span v-html="l.label" />
+              </Link>
+              <span v-else class="text-gray-300" v-html="l.label" />
+            </span>
+          </template>
+          <template v-else>
+            <div class="text-sm text-gray-500">Сторінка {{ offers.current_page }} з {{ offers.last_page }}</div>
+          </template>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <Link
+            v-if="offers.next_page_url"
+            :href="offers.next_page_url"
+            class="text-sm text-blue-600 hover:underline"
+          >
+            Далі
+          </Link>
+          <span v-else class="text-sm text-gray-300">Далі</span>
+        </div>
       </div>
     </div>
   </div>
