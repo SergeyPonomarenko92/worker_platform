@@ -16,6 +16,8 @@ class CatalogController extends Controller
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'city' => ['nullable', 'string', 'max:255'],
             'q' => ['nullable', 'string', 'max:255'],
+            'price_from' => ['nullable', 'numeric', 'min:0'],
+            'price_to' => ['nullable', 'numeric', 'min:0'],
             'sort' => ['nullable', 'in:newest,price_asc,price_desc'],
         ]);
 
@@ -23,7 +25,13 @@ class CatalogController extends Controller
         $categoryId = $data['category_id'] ?? null;
         $city = trim((string) ($data['city'] ?? ''));
         $q = trim((string) ($data['q'] ?? ''));
+        $priceFrom = $data['price_from'] ?? null;
+        $priceTo = $data['price_to'] ?? null;
         $sort = (string) ($data['sort'] ?? 'newest');
+
+        if (is_numeric($priceFrom) && is_numeric($priceTo) && $priceTo < $priceFrom) {
+            [$priceFrom, $priceTo] = [$priceTo, $priceFrom];
+        }
 
         $offersQuery = Offer::query()
             ->with(['businessProfile', 'category'])
@@ -35,7 +43,14 @@ class CatalogController extends Controller
             ->when($q, fn ($query) => $query->where(function ($sub) use ($q) {
                 $sub->where('title', 'ilike', "%{$q}%")
                     ->orWhere('description', 'ilike', "%{$q}%");
-            }));
+            }))
+            // Price filter:
+            // - if user sets price_from: show offers with known price_from >= price_from
+            // - if user sets price_to: show offers with known price_from <= price_to
+            // - if either bound is set: exclude offers with NULL price_from ("ціна за домовленістю")
+            ->when(is_numeric($priceFrom) || is_numeric($priceTo), fn ($query) => $query->whereNotNull('price_from'))
+            ->when(is_numeric($priceFrom), fn ($query) => $query->where('price_from', '>=', $priceFrom))
+            ->when(is_numeric($priceTo), fn ($query) => $query->where('price_from', '<=', $priceTo));
 
         $offersQuery = match ($sort) {
             'price_asc' => $offersQuery->orderByRaw('price_from is null asc, price_from asc'),
@@ -57,6 +72,8 @@ class CatalogController extends Controller
                 'category_id' => $categoryId,
                 'city' => $city,
                 'q' => $q,
+                'price_from' => $priceFrom,
+                'price_to' => $priceTo,
                 'sort' => $sort,
             ],
             'categories' => $categories,
