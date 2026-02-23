@@ -26,6 +26,8 @@ npm install
 Open:
 - http://localhost/catalog
 
+> Note: use `localhost`, not `127.0.0.1`, because `APP_URL` is `http://localhost` and mixing hosts may cause session/CSRF issues.
+
 ### Run tests (Sail)
 ```bash
 ./vendor/bin/sail test

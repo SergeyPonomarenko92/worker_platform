@@ -7,6 +7,8 @@
 - 2026-02-16: UX/Polish — `/` редіректить на `/catalog`; форми показують помилки валідації (Inertia, без нативної HTML-валидації); локаль UI/validation = `uk`.
 - 2026-02-16: Stories — у кабінеті протерміновані історії приховані за замовчуванням (перемикач `?show_expired=1`).
 - 2026-02-16: Deals — у UI кнопка «Скасувати» вимкнена для завершених угод (узгоджено з бекенд-правилами).
+- 2026-02-23: UI fix — `PrimaryButton` підтримує prop `type` (впливає на кнопки статусів у Deals).
+- 2026-02-23: Demo — додано плейсхолдер медіа для stories (`public/stories/demo.svg`) + stories thumbnails на public provider page.
 
 ## Current status
 - Branch: `main`
@@ -48,15 +50,7 @@
   - `published_at <= now()`
 
 ## TODO (next session)
-1) Stage 3 polish — завершити ручний UI-check:
-   - перевірити flash messages після CRUD (create/update/delete) для Offers/Portfolio/Stories/Deals
-   - переконатися, що помилки валідації показуються скрізь (після переключення локалі на `uk`)
-   - Stories: перевірити UX перемикача «Показати протерміновані»
-2) Public provider page:
-   - stories: показуються лише активні (`expires_at > now()`)
-   - portfolio: показуються лише опубліковані (`published_at` not null і `<= now()`)
-   - reviews: після completed deal відгук з’являється на сторінці (перевірити формат/UX)
-3) Stage 5 (Polish):
+1) Stage 5 (Polish):
    - переглянути каталог фільтри/сортування (type/category/city + sort) — допиляти UX/edge cases
-4) Техборг:
+2) Техборг:
    - розібратись з тестовою БД (sqlite vs pgsql schema) якщо захочемо повернути sqlite, або додати явну доку про pgsql schema `testing`.
