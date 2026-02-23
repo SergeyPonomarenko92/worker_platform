@@ -13,6 +13,8 @@ const form = reactive({
   type: props.filters?.type || '',
   category_id: props.filters?.category_id || '',
   city: props.filters?.city || '',
+  price_from: props.filters?.price_from ?? '',
+  price_to: props.filters?.price_to ?? '',
   sort: props.filters?.sort || 'newest',
 })
 
@@ -24,6 +26,8 @@ function submit() {
       type: form.type || undefined,
       category_id: form.category_id || undefined,
       city: (form.city || '').trim() || undefined,
+      price_from: String(form.price_from).trim() || undefined,
+      price_to: String(form.price_to).trim() || undefined,
       sort: form.sort || undefined,
     },
     {
@@ -68,6 +72,8 @@ const activeChips = computed(() => {
   if (form.type) chips.push({ key: 'type', label: `Тип: ${typeLabel(form.type)}` })
   if (form.category_id) chips.push({ key: 'category_id', label: `Категорія: ${categoryLabel(form.category_id)}` })
   if ((form.city || '').trim()) chips.push({ key: 'city', label: `Місто: ${String((form.city || '').trim()).slice(0, 30)}` })
+  if (String(form.price_from || '').trim()) chips.push({ key: 'price_from', label: `Ціна від: ${String(form.price_from).trim()}` })
+  if (String(form.price_to || '').trim()) chips.push({ key: 'price_to', label: `Ціна до: ${String(form.price_to).trim()}` })
   if (form.sort && form.sort !== 'newest') chips.push({ key: 'sort', label: `Сортування: ${sortLabel(form.sort)}` })
 
   return chips
@@ -78,6 +84,8 @@ function clearChip(key) {
   if (key === 'type') form.type = ''
   if (key === 'category_id') form.category_id = ''
   if (key === 'city') form.city = ''
+  if (key === 'price_from') form.price_from = ''
+  if (key === 'price_to') form.price_to = ''
   if (key === 'sort') form.sort = 'newest'
 
   submit()
@@ -85,6 +93,7 @@ function clearChip(key) {
 
 let qDebounceTimer = null
 let cityDebounceTimer = null
+let priceDebounceTimer = null
 
 watch(
   () => form.q,
@@ -102,10 +111,19 @@ watch(
   },
 )
 
+watch(
+  () => [form.price_from, form.price_to],
+  () => {
+    if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
+    priceDebounceTimer = setTimeout(() => submit(), 400)
+  },
+)
+
 function onSearch(e) {
   e.preventDefault()
   if (qDebounceTimer) clearTimeout(qDebounceTimer)
   if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
+  if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
   submit()
 }
 
@@ -114,6 +132,8 @@ function resetFilters() {
   form.type = ''
   form.category_id = ''
   form.city = ''
+  form.price_from = ''
+  form.price_to = ''
   form.sort = 'newest'
 
   submit()
@@ -182,6 +202,33 @@ function resetFilters() {
             placeholder="напр. Київ"
             @keydown.enter.prevent="onSearch"
           />
+        </div>
+
+        <div>
+          <div class="text-xs text-gray-500">Ціна</div>
+          <div class="mt-1 flex items-center gap-2">
+            <input
+              v-model="form.price_from"
+              type="number"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              class="w-28 rounded-md border-gray-300"
+              placeholder="від"
+              @keydown.enter.prevent="onSearch"
+            />
+            <span class="text-xs text-gray-400">—</span>
+            <input
+              v-model="form.price_to"
+              type="number"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              class="w-28 rounded-md border-gray-300"
+              placeholder="до"
+              @keydown.enter.prevent="onSearch"
+            />
+          </div>
         </div>
 
         <div>
