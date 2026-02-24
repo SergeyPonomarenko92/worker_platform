@@ -12,6 +12,35 @@ class CatalogTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_catalog_swaps_price_bounds_when_price_to_is_less_than_price_from(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Cheap offer',
+            'is_active' => true,
+            'price_from' => 200,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Expensive offer',
+            'is_active' => true,
+            'price_from' => 2000,
+        ]);
+
+        $this
+            ->get('/catalog?price_from=500&price_to=100')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Cheap offer')
+            );
+    }
+
     public function test_catalog_filters_by_city_prefix_case_insensitive(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
