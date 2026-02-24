@@ -36,6 +36,8 @@ class CatalogTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
+                ->where('filters.price_from', '100')
+                ->where('filters.price_to', '500')
                 ->has('offers.data', 1)
                 ->where('offers.data.0.title', 'Cheap offer')
             );
