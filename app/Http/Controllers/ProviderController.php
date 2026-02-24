@@ -12,6 +12,11 @@ class ProviderController extends Controller
     {
         $provider = BusinessProfile::query()
             ->where('slug', $slug)
+            ->withCount([
+                'offers as offers_count' => fn ($q) => $q->where('is_active', true),
+                'reviews as reviews_count',
+            ])
+            ->withAvg('reviews as reviews_avg_rating', 'rating')
             ->with([
                 'offers' => fn ($q) => $q->where('is_active', true)->latest()->limit(10),
                 'portfolioPosts' => fn ($q) => $q

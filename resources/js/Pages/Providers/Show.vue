@@ -1,10 +1,25 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
 
-defineProps({
+const props = defineProps({
   provider: Object,
   eligibleDealId: Number,
 })
+
+const normalizedWebsite = () => {
+  const raw = (props.provider?.website || '').trim()
+  if (!raw) return ''
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw
+  return `https://${raw}`
+}
+
+const ratingText = () => {
+  const avg = props.provider?.reviews_avg_rating
+  if (avg === null || avg === undefined) return ''
+  const rounded = Math.round(Number(avg) * 10) / 10
+  if (Number.isNaN(rounded)) return ''
+  return String(rounded).replace('.', ',')
+}
 
 const offerTypeLabel = (type) => {
   switch (type) {
@@ -49,6 +64,12 @@ const formatPrice = (offer) => {
           <div class="text-sm text-gray-500">Провайдер</div>
           <h1 class="text-2xl font-semibold">{{ provider.name }}</h1>
           <div v-if="provider.city" class="mt-1 text-sm text-gray-600">{{ provider.city }}, {{ provider.country_code }}</div>
+
+          <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
+            <div v-if="provider.offers_count !== undefined">Пропозицій: <span class="font-medium text-gray-800">{{ provider.offers_count }}</span></div>
+            <div v-if="provider.reviews_count !== undefined">Відгуків: <span class="font-medium text-gray-800">{{ provider.reviews_count }}</span></div>
+            <div v-if="ratingText()">Рейтинг: <span class="font-medium text-gray-800">{{ ratingText() }}/5</span></div>
+          </div>
         </div>
         <div class="flex gap-3">
           <Link href="/catalog" class="text-sm text-blue-600 hover:underline">Каталог</Link>
@@ -61,7 +82,7 @@ const formatPrice = (offer) => {
         <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
           <div v-if="provider.phone">☎ {{ provider.phone }}</div>
           <div v-if="provider.website">
-            <a class="text-blue-600 hover:underline" :href="provider.website" target="_blank" rel="noreferrer">
+            <a class="text-blue-600 hover:underline" :href="normalizedWebsite()" target="_blank" rel="noreferrer">
               {{ provider.website }}
             </a>
           </div>
