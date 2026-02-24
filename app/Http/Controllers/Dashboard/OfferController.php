@@ -8,6 +8,7 @@ use App\Models\BusinessProfile;
 use App\Models\Offer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -54,7 +55,12 @@ class OfferController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'price_from' => ['nullable', 'integer', 'min:0'],
-            'price_to' => ['nullable', 'integer', 'min:0', 'gte:price_from'],
+            'price_to' => [
+                'nullable',
+                'integer',
+                'min:0',
+                Rule::when($request->filled('price_from'), ['gte:price_from']),
+            ],
             'currency' => ['required', 'string', 'size:3'],
             'is_active' => ['nullable', 'boolean'],
         ]);
@@ -100,7 +106,12 @@ class OfferController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'price_from' => ['nullable', 'integer', 'min:0'],
-            'price_to' => ['nullable', 'integer', 'min:0', 'gte:price_from'],
+            'price_to' => [
+                'nullable',
+                'integer',
+                'min:0',
+                Rule::when($request->filled('price_from'), ['gte:price_from']),
+            ],
             'currency' => ['required', 'string', 'size:3'],
             'is_active' => ['nullable', 'boolean'],
         ]);
