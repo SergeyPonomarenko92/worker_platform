@@ -46,7 +46,7 @@ class CatalogController extends Controller
         }
         $city = preg_replace('/\s+/', ' ', trim((string) ($data['city'] ?? '')));
         $cityLower = mb_strtolower($city);
-        $q = trim((string) ($data['q'] ?? ''));
+        $q = preg_replace('/\s+/', ' ', trim((string) ($data['q'] ?? '')));
         $priceFrom = $data['price_from'] ?? null;
         $priceTo = $data['price_to'] ?? null;
         $includeNoPrice = (bool) ($data['include_no_price'] ?? false);

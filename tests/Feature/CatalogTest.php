@@ -188,6 +188,54 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_normalizes_whitespace_in_city_filter(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Київ оффер',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?city=%20%20%D0%9A%D0%98%20%20') // "  КИ  "
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.city', 'КИ')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Київ оффер')
+            );
+    }
+
+    public function test_catalog_normalizes_whitespace_in_q_filter(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Майстер руки',
+            'description' => 'Швидко і якісно',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?q=%D0%BC%D0%B0%D0%B9%D1%81%D1%82%D0%B5%D1%80%20%20%20%D1%80%D1%83%D0%BA%D0%B8') // "майстер   руки"
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.q', 'майстер руки')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Майстер руки')
+            );
+    }
+
     public function test_catalog_filters_by_price_range_and_excludes_null_price_when_filtering(): void
     {
         $cat = Category::factory()->create();
