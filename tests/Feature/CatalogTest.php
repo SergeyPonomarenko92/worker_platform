@@ -259,6 +259,41 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_can_include_offers_without_price_when_filtering_by_only_price_from(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'No price offer',
+            'is_active' => true,
+            'price_from' => null,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Cheap offer',
+            'is_active' => true,
+            'price_from' => 200,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Expensive offer',
+            'is_active' => true,
+            'price_from' => 2000,
+        ]);
+
+        $this
+            ->get('/catalog?price_from=500&include_no_price=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 2)
+            );
+    }
+
     public function test_catalog_category_filter_includes_child_categories(): void
     {
         $parent = Category::factory()->create(['name' => 'Ремонт', 'parent_id' => null]);
