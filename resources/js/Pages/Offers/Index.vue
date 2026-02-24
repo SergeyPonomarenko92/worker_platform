@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import { offerTypeLabel, formatPrice } from '@/lib/formatters'
 
 const props = defineProps({
     businessProfile: Object,
@@ -59,9 +60,9 @@ const props = defineProps({
                             <div>
                                 <div class="font-medium text-gray-900">{{ offer.title }}</div>
                                 <div class="text-sm text-gray-600">
-                                    {{ offer.type }}
+                                    {{ offerTypeLabel(offer.type) }}
                                     <span v-if="offer.category">· {{ offer.category.name }}</span>
-                                    <span v-if="offer.currency">· {{ offer.currency }}</span>
+                                    <span class="text-gray-400">·</span> <span class="font-medium text-gray-800">{{ formatPrice(offer) }}</span>
                                 </div>
                             </div>
                             <Link :href="route('dashboard.offers.edit', [businessProfile.id, offer.id])" class="text-sm text-indigo-600 hover:underline">Редагувати</Link>
