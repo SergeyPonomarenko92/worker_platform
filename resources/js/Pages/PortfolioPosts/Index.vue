@@ -55,7 +55,25 @@ const statusFor = (post) => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <div v-if="posts.length === 0" class="text-sm text-gray-700">Поки що немає постів у портфоліо.</div>
+                    <div v-if="posts.length === 0" class="rounded-lg border border-dashed border-gray-300 p-6">
+                        <div class="text-sm font-medium text-gray-900">Поки що немає робіт у портфоліо</div>
+                        <div class="mt-1 text-sm text-gray-700">
+                            Додайте перший пост — він з’явиться на публічній сторінці провайдера.
+                        </div>
+
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <Link :href="route('dashboard.portfolio-posts.create', businessProfile.id)">
+                                <PrimaryButton>Створити пост</PrimaryButton>
+                            </Link>
+                            <Link
+                                v-if="businessProfile.slug"
+                                :href="route('providers.show', businessProfile.slug)"
+                                class="text-sm text-indigo-600 hover:underline"
+                            >
+                                Переглянути публічну сторінку
+                            </Link>
+                        </div>
+                    </div>
 
                     <ul v-else class="divide-y divide-gray-200">
                         <li v-for="post in posts" :key="post.id" class="py-3 flex items-start justify-between">
