@@ -99,7 +99,18 @@ const sortLabel = (sort) => {
   }
 }
 
-const categoryLabel = (id) => props.categories?.find((c) => String(c.id) === String(id))?.name || 'Категорія'
+const flattenCategories = (nodes, depth = 0) => {
+  const out = []
+  ;(nodes || []).forEach((n) => {
+    out.push({ id: n.id, name: n.name, depth })
+    if (n.children?.length) out.push(...flattenCategories(n.children, depth + 1))
+  })
+  return out
+}
+
+const flatCategories = computed(() => flattenCategories(props.categories || []))
+
+const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === String(id))?.name || 'Категорія'
 
 const activeChips = computed(() => {
   const chips = []
@@ -231,7 +242,13 @@ function resetFilters() {
           <div class="text-xs text-gray-500">Категорія</div>
           <select v-model="form.category_id" class="mt-1 rounded-md border-gray-300" @change="submit">
             <option value="">Усі</option>
-            <option v-for="c in categories" :key="c.id" :value="String(c.id)">{{ c.name }}</option>
+            <option
+              v-for="c in flatCategories"
+              :key="c.id"
+              :value="String(c.id)"
+            >
+              {{ `${'—'.repeat(c.depth)} ${c.name}`.trim() }}
+            </option>
           </select>
         </div>
 

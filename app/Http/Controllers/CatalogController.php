@@ -83,8 +83,10 @@ class CatalogController extends Controller
             ->withQueryString();
 
         $categories = Category::query()
+            ->with(['children' => fn ($q) => $q->orderBy('name')])
+            ->whereNull('parent_id')
             ->orderBy('name')
-            ->get(['id', 'name']);
+            ->get(['id', 'parent_id', 'name']);
 
         return Inertia::render('Catalog/Index', [
             'filters' => [
