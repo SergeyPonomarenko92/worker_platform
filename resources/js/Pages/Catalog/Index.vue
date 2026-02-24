@@ -170,8 +170,16 @@ function resetFilters() {
 
   <div class="py-8">
     <div class="mx-auto max-w-6xl px-4">
-      <div class="flex items-center justify-between gap-4">
-        <h1 class="text-2xl font-semibold">Каталог</h1>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div>
+          <h1 class="text-2xl font-semibold">Каталог</h1>
+          <div class="mt-1 text-sm text-gray-500">
+            Знайдено: <span class="font-medium text-gray-700">{{ offers.total ?? offers.data?.length ?? 0 }}</span>
+            <template v-if="offers.from && offers.to">
+              <span class="text-gray-400">·</span> Показано {{ offers.from }}–{{ offers.to }}
+            </template>
+          </div>
+        </div>
         <Link href="/" class="text-sm text-gray-600 hover:text-gray-900">На головну</Link>
       </div>
 
@@ -179,6 +187,14 @@ function resetFilters() {
         <div v-if="activeChips.length" class="w-full">
           <div class="flex flex-wrap items-center gap-2">
             <div class="text-xs text-gray-500 mr-2">Активні фільтри:</div>
+            <button
+              type="button"
+              class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
+              @click="resetFilters"
+              title="Очистити всі фільтри"
+            >
+              Очистити всі
+            </button>
             <button
               v-for="chip in activeChips"
               :key="chip.key"
