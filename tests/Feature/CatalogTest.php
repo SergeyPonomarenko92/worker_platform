@@ -667,4 +667,53 @@ class CatalogTest extends TestCase
             );
     }
 
+
+
+    public function test_catalog_pagination_invalid_page_defaults_to_first_page(): void
+    {
+        Carbon::setTestNow(now());
+
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        // Create 3 offers so we can safely assert content on page 1.
+        for ($i = 1; $i <= 3; $i++) {
+            Offer::factory()->for($bp)->create([
+                'category_id' => $cat->id,
+                'title' => 'Offer '.$i,
+                'is_active' => true,
+                'price_from' => 100,
+                'created_at' => now()->subMinutes(3 - $i),
+            ]);
+        }
+
+        $this
+            ->get('/catalog?page=0')
+            ->assertOk()
+            ->assertSessionHasNoErrors()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('offers.current_page', 1)
+                ->has('offers.data', 3)
+                ->where('offers.data.0.title', 'Offer 3')
+            );
+
+        $this
+            ->get('/catalog?page=-10')
+            ->assertOk()
+            ->assertSessionHasNoErrors()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('offers.current_page', 1)
+            );
+
+        $this
+            ->get('/catalog?page=abc')
+            ->assertOk()
+            ->assertSessionHasNoErrors()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('offers.current_page', 1)
+            );
+    }
 }
