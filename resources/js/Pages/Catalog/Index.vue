@@ -174,7 +174,7 @@ function resetFilters() {
         <div>
           <h1 class="text-2xl font-semibold">Каталог</h1>
           <div class="mt-1 text-sm text-gray-500">
-            Знайдено: <span class="font-medium text-gray-700">{{ offers.total ?? offers.data?.length ?? 0 }}</span>
+            <span class="font-medium text-gray-700">{{ offers.total ?? offers.data?.length ?? 0 }}</span> результатів
             <template v-if="offers.from && offers.to">
               <span class="text-gray-400">·</span> Показано {{ offers.from }}–{{ offers.to }}
             </template>
@@ -189,11 +189,11 @@ function resetFilters() {
             <div class="text-xs text-gray-500 mr-2">Активні фільтри:</div>
             <button
               type="button"
-              class="inline-flex items-center rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
+              class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs text-white hover:bg-black"
               @click="resetFilters"
               title="Очистити всі фільтри"
             >
-              Очистити всі
+              Очистити всі фільтри
             </button>
             <button
               v-for="chip in activeChips"
