@@ -101,7 +101,12 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
             :key="post.id"
             class="rounded-lg border border-gray-200 bg-white p-4"
           >
-            <div class="font-medium">{{ post.title }}</div>
+            <div class="flex items-start justify-between gap-3">
+              <div class="font-medium">{{ post.title }}</div>
+              <div v-if="post.published_at" class="text-xs text-gray-400 whitespace-nowrap">
+                {{ new Date(post.published_at).toLocaleDateString('uk-UA') }}
+              </div>
+            </div>
             <div v-if="post.body" class="mt-2 text-sm text-gray-600 line-clamp-3">{{ post.body }}</div>
           </div>
         </div>
