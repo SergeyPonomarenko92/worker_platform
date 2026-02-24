@@ -113,4 +113,34 @@ class CatalogTest extends TestCase
                 ->has('offers.data', 2)
             );
     }
+
+    public function test_catalog_category_filter_includes_child_categories(): void
+    {
+        $parent = Category::factory()->create(['name' => 'Ремонт', 'parent_id' => null]);
+        $child = Category::factory()->create(['name' => 'Електрика', 'parent_id' => $parent->id]);
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $child->id,
+            'title' => 'Child offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $parent->id,
+            'title' => 'Parent offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?category_id='.$parent->id)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 2)
+            );
+    }
 }

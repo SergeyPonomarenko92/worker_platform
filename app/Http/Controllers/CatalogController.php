@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Offer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class CatalogController extends Controller
@@ -24,6 +25,25 @@ class CatalogController extends Controller
 
         $type = (string) ($data['type'] ?? '');
         $categoryId = $data['category_id'] ?? null;
+        $categoryIds = null;
+        if (is_numeric($categoryId)) {
+            // Include child categories when a parent is selected.
+            // Postgres recursive CTE keeps it simple and fast.
+            $rows = DB::select(
+                <<<SQL
+                with recursive category_tree as (
+                    select id from categories where id = ?
+                    union all
+                    select c.id from categories c
+                    join category_tree ct on c.parent_id = ct.id
+                )
+                select id from category_tree
+                SQL,
+                [$categoryId]
+            );
+
+            $categoryIds = array_values(array_unique(array_map(fn ($r) => (int) $r->id, $rows)));
+        }
         $city = preg_replace('/\s+/', ' ', trim((string) ($data['city'] ?? '')));
         $cityLower = mb_strtolower($city);
         $q = trim((string) ($data['q'] ?? ''));
@@ -41,7 +61,8 @@ class CatalogController extends Controller
             ->where('is_active', true)
             ->whereHas('businessProfile', fn ($bp) => $bp->where('is_active', true))
             ->when($type, fn ($query) => $query->where('type', $type))
-            ->when($categoryId, fn ($query) => $query->where('category_id', $categoryId))
+            ->when(is_array($categoryIds) && count($categoryIds), fn ($query) => $query->whereIn('category_id', $categoryIds))
+            ->when($categoryId && (!is_array($categoryIds) || !count($categoryIds)), fn ($query) => $query->where('category_id', $categoryId))
             ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->whereRaw('lower(city) like ?', ["{$cityLower}%"])))
             ->when($q, fn ($query) => $query->where(function ($sub) use ($q) {
                 $sub->where('title', 'ilike', "%{$q}%")
