@@ -62,7 +62,22 @@ class CatalogController extends Controller
         }
 
         $offersQuery = Offer::query()
-            ->with(['businessProfile', 'category'])
+            ->select([
+                'id',
+                'business_profile_id',
+                'category_id',
+                'type',
+                'title',
+                'description',
+                'price_from',
+                'price_to',
+                'currency',
+                'created_at',
+            ])
+            ->with([
+                'businessProfile:id,name,slug,city,is_active',
+                'category:id,name',
+            ])
             ->where('is_active', true)
             ->whereHas('businessProfile', fn ($bp) => $bp->where('is_active', true))
             ->when($type, fn ($query) => $query->where('type', $type))
