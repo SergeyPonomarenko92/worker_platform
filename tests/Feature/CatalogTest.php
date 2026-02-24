@@ -416,6 +416,52 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_category_filter_includes_grandchild_categories(): void
+    {
+        $parent = Category::factory()->create(['name' => 'Ремонт', 'parent_id' => null]);
+        $child = Category::factory()->create(['name' => 'Електрика', 'parent_id' => $parent->id]);
+        $grandchild = Category::factory()->create(['name' => 'Проводка', 'parent_id' => $child->id]);
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $parent->id,
+            'title' => 'Parent offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $child->id,
+            'title' => 'Child offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $grandchild->id,
+            'title' => 'Grandchild offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?category_id='.$parent->id)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.category_id', (string) $parent->id)
+                ->has('offers.data', 3)
+                ->where('offers.data', function ($offers) {
+                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
+                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
+                    sort($titles);
+
+                    return $titles === ['Child offer', 'Grandchild offer', 'Parent offer'];
+                })
+            );
+    }
+
     public function test_catalog_include_no_price_is_ignored_without_price_bounds(): void
     {
         $cat = Category::factory()->create();
