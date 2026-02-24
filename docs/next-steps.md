@@ -11,6 +11,7 @@
 - 2026-02-23: Catalog — price range filter + опція включати оффери без ціни.
 - 2026-02-23: Catalog — оптимізація city filter (prefix search + індекс `lower(city)`).
 - 2026-02-23: Tests/Perf — тести на фільтри каталогу + індекси для `offers`.
+- 2026-02-24: Catalog — у картках офферів user-friendly лейбли типу (Послуга/Товар) + форматування ціни (range/від/до/«за домовленістю»).
 
 ## Current status
 - Branch: `main`
@@ -53,7 +54,7 @@
 
 ## TODO (next session)
 1) Stage 5 (Polish):
-   - зробити більш user-friendly лейбли у каталозі (тип service/product → Послуга/Товар) + форматування цін (якщо є `price_to`)
+   - [x] user-friendly лейбли у каталозі (тип service/product → Послуга/Товар) + форматування цін (range `price_from`/`price_to`, `ціна за домовленістю`)
    - розглянути фільтр по категоріях з деревом (parent/child) або пошук по категорії
 2) Техборг:
    - пройтись по індексах (offers/business_profiles) і додати/підтвердити потрібні під реальні запити

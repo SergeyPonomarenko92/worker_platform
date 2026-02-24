@@ -42,6 +42,7 @@ function submit() {
 }
 
 const typeLabel = (type) => {
+  // plural (for filters/chips)
   switch (type) {
     case 'service':
       return 'Послуги'
@@ -50,6 +51,39 @@ const typeLabel = (type) => {
     default:
       return type
   }
+}
+
+const offerTypeLabel = (type) => {
+  // singular (for offer cards)
+  switch (type) {
+    case 'service':
+      return 'Послуга'
+    case 'product':
+      return 'Товар'
+    default:
+      return type
+  }
+}
+
+const formatNumber = (value) => {
+  if (value === null || value === undefined || value === '') return ''
+  const num = Number(value)
+  if (Number.isNaN(num)) return String(value)
+  return new Intl.NumberFormat('uk-UA').format(num)
+}
+
+const formatPrice = (offer) => {
+  const from = offer?.price_from
+  const to = offer?.price_to
+  const currency = offer?.currency || 'UAH'
+
+  const hasFrom = from !== null && from !== undefined
+  const hasTo = to !== null && to !== undefined
+
+  if (!hasFrom && !hasTo) return 'ціна за домовленістю'
+  if (hasFrom && hasTo) return `${formatNumber(from)} — ${formatNumber(to)} ${currency}`
+  if (hasFrom) return `від ${formatNumber(from)} ${currency}`
+  return `до ${formatNumber(to)} ${currency}`
 }
 
 const sortLabel = (sort) => {
@@ -74,8 +108,8 @@ const activeChips = computed(() => {
   if (form.type) chips.push({ key: 'type', label: `Тип: ${typeLabel(form.type)}` })
   if (form.category_id) chips.push({ key: 'category_id', label: `Категорія: ${categoryLabel(form.category_id)}` })
   if ((form.city || '').trim()) chips.push({ key: 'city', label: `Місто: ${String((form.city || '').trim()).slice(0, 30)}` })
-  if (String(form.price_from || '').trim()) chips.push({ key: 'price_from', label: `Ціна від: ${String(form.price_from).trim()}` })
-  if (String(form.price_to || '').trim()) chips.push({ key: 'price_to', label: `Ціна до: ${String(form.price_to).trim()}` })
+  if (String(form.price_from || '').trim()) chips.push({ key: 'price_from', label: `Ціна від: ${formatNumber(String(form.price_from).trim())}` })
+  if (String(form.price_to || '').trim()) chips.push({ key: 'price_to', label: `Ціна до: ${formatNumber(String(form.price_to).trim())}` })
   if (form.include_no_price && (String(form.price_from || '').trim() || String(form.price_to || '').trim())) {
     chips.push({ key: 'include_no_price', label: 'Включати «за домовленістю»' })
   }
@@ -264,7 +298,7 @@ function resetFilters() {
           <div class="flex items-start justify-between gap-3">
             <div>
               <div class="text-sm text-gray-500">
-                {{ offer.type }}
+                {{ offerTypeLabel(offer.type) }}
                 <span v-if="offer.category">· {{ offer.category.name }}</span>
               </div>
               <div class="text-lg font-semibold">{{ offer.title }}</div>
@@ -287,8 +321,7 @@ function resetFilters() {
           </div>
 
           <div class="mt-3 text-sm text-gray-500">
-            <span v-if="offer.price_from">від {{ offer.price_from }} {{ offer.currency }}</span>
-            <span v-else>ціна за домовленістю</span>
+            {{ formatPrice(offer) }}
           </div>
         </div>
       </div>
