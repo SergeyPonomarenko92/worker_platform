@@ -24,8 +24,17 @@ const props = defineProps({
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <div v-if="profiles.length === 0" class="text-sm text-gray-700">
-                        Поки що немає профілів.
+                    <div v-if="profiles.length === 0" class="rounded-lg border border-dashed border-gray-300 p-6">
+                        <div class="text-sm font-medium text-gray-900">Поки що немає профілів бізнесу</div>
+                        <div class="mt-1 text-sm text-gray-700">
+                            Створіть перший профіль — він стане вашою публічною сторінкою та основою для пропозицій, портфоліо, історій і угод.
+                        </div>
+
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <Link :href="route('dashboard.business-profiles.create')">
+                                <PrimaryButton>Створити профіль</PrimaryButton>
+                            </Link>
+                        </div>
                     </div>
 
                     <ul v-else class="divide-y divide-gray-200">
