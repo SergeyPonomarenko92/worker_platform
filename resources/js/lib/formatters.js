@@ -32,13 +32,26 @@ export const formatPrice = (offer) => {
   const to = offer?.price_to
   const currency = offer?.currency || 'UAH'
 
+  const currencyLabel = (() => {
+    switch (currency) {
+      case 'UAH':
+        return 'грн'
+      case 'USD':
+        return '$'
+      case 'EUR':
+        return '€'
+      default:
+        return currency
+    }
+  })()
+
   const hasFrom = from !== null && from !== undefined
   const hasTo = to !== null && to !== undefined
 
   if (!hasFrom && !hasTo) return 'ціна за домовленістю'
-  if (hasFrom && hasTo) return `${formatNumber(from)} — ${formatNumber(to)} ${currency}`
-  if (hasFrom) return `від ${formatNumber(from)} ${currency}`
-  return `до ${formatNumber(to)} ${currency}`
+  if (hasFrom && hasTo) return `${formatNumber(from)} — ${formatNumber(to)} ${currencyLabel}`
+  if (hasFrom) return `від ${formatNumber(from)} ${currencyLabel}`
+  return `до ${formatNumber(to)} ${currencyLabel}`
 }
 
 export const normalizeWebsite = (raw) => {
