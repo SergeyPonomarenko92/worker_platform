@@ -23,6 +23,14 @@ class Offer extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'business_profile_id' => 'integer',
+        'category_id' => 'integer',
+        'price_from' => 'integer',
+        'price_to' => 'integer',
+        'is_active' => 'boolean',
+    ];
+
     public function businessProfile(): BelongsTo
     {
         return $this->belongsTo(BusinessProfile::class);

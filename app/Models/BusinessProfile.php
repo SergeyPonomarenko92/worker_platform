@@ -24,6 +24,11 @@ class BusinessProfile extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'user_id' => 'integer',
+        'is_active' => 'boolean',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
