@@ -56,7 +56,8 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
       <!-- Stories -->
       <div class="mt-8">
         <h2 class="text-lg font-semibold">Історії</h2>
-        <div class="mt-3 flex gap-3 overflow-x-auto">
+
+        <div v-if="provider.stories?.length" class="mt-3 flex gap-3 overflow-x-auto">
           <a
             v-for="story in provider.stories"
             :key="story.id"
@@ -73,7 +74,10 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
               loading="lazy"
             />
           </a>
-          <div v-if="!provider.stories?.length" class="text-sm text-gray-500">Поки що немає історій</div>
+        </div>
+
+        <div v-else class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600">
+          Поки що немає історій
         </div>
       </div>
 
@@ -115,7 +119,8 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
       <!-- Offers -->
       <div class="mt-8">
         <h2 class="text-lg font-semibold">Пропозиції</h2>
-        <div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
+
+        <div v-if="provider.offers?.length" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div
             v-for="offer in provider.offers"
             :key="offer.id"
@@ -134,7 +139,11 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
 
             <div v-if="offer.description" class="mt-2 text-sm text-gray-700 line-clamp-3">{{ offer.description }}</div>
           </div>
-          <div v-if="!provider.offers?.length" class="text-sm text-gray-500">Поки що немає пропозицій</div>
+        </div>
+
+        <div v-else class="mt-3 rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
+          <div class="font-medium">Поки що немає пропозицій</div>
+          <div class="mt-1 text-gray-600">Коли провайдер додасть оголошення — воно з'явиться тут.</div>
         </div>
       </div>
 
