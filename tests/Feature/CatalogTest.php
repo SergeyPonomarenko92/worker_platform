@@ -6,6 +6,7 @@ use App\Models\BusinessProfile;
 use App\Models\Category;
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class CatalogTest extends TestCase
@@ -556,6 +557,39 @@ class CatalogTest extends TestCase
                 ->component('Catalog/Index')
                 ->has('offers.data', 1)
                 ->where('offers.data.0.title', 'Послуга 1')
+            );
+    }
+
+    public function test_catalog_pagination_second_page_shows_remaining_offers_and_meta(): void
+    {
+        Carbon::setTestNow(now());
+
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        // Create 25 offers with deterministic created_at so default `latest()` ordering is stable.
+        // Offer 25 is newest; Offer 1 is oldest.
+        for ($i = 1; $i <= 25; $i++) {
+            Offer::factory()->for($bp)->create([
+                'category_id' => $cat->id,
+                'title' => 'Offer '.$i,
+                'is_active' => true,
+                'price_from' => 100,
+                'created_at' => now()->subMinutes(25 - $i),
+            ]);
+        }
+
+        $this
+            ->get('/catalog?page=2')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('offers.current_page', 2)
+                ->where('offers.per_page', 20)
+                ->where('offers.total', 25)
+                ->has('offers.data', 5)
+                ->where('offers.data.0.title', 'Offer 5')
+                ->where('offers.data.4.title', 'Offer 1')
             );
     }
 
