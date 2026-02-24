@@ -6,13 +6,16 @@ use App\Models\Category;
 use App\Models\Offer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class CatalogController extends Controller
 {
     public function index(Request $request)
     {
-        $data = $request->validate([
+        // Public page: be tolerant to malformed/invalid query params.
+        // We'll keep only valid values and ignore the rest (no validation redirects).
+        $validator = Validator::make($request->all(), [
             'type' => ['nullable', 'in:service,product'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'city' => ['nullable', 'string', 'max:255'],
@@ -22,6 +25,10 @@ class CatalogController extends Controller
             'include_no_price' => ['nullable', 'boolean'],
             'sort' => ['nullable', 'string', 'max:32'],
         ]);
+
+        $data = $validator->fails()
+            ? $validator->valid() // keep only valid values; ignore invalid (no redirects)
+            : $validator->validated();
 
         $type = (string) ($data['type'] ?? '');
         $categoryId = $data['category_id'] ?? null;

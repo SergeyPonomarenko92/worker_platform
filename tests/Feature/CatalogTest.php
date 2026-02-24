@@ -643,4 +643,28 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_ignores_invalid_category_id_without_redirect_or_errors(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Some offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?category_id=999999')
+            ->assertOk()
+            ->assertSessionHasNoErrors()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.category_id', null)
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Some offer')
+            );
+    }
+
 }
