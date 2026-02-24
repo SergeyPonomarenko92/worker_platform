@@ -15,7 +15,7 @@ const form = useForm({});
 
 const formatDate = (value) => {
     if (!value) return '—';
-    return new Date(value).toLocaleString();
+    return new Date(value).toLocaleString('uk-UA');
 };
 
 const statusFor = (story) => {
