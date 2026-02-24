@@ -250,4 +250,25 @@ class CatalogTest extends TestCase
                 ->has('offers.data', 2)
             );
     }
+
+    public function test_catalog_include_no_price_is_ignored_without_price_bounds(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'No price offer',
+            'is_active' => true,
+            'price_from' => null,
+        ]);
+
+        $this
+            ->get('/catalog?include_no_price=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.include_no_price', false)
+            );
+    }
 }

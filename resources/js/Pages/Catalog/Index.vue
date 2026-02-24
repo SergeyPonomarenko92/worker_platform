@@ -30,7 +30,10 @@ function submit() {
       city: (form.city || '').trim() || undefined,
       price_from: String(form.price_from).trim() || undefined,
       price_to: String(form.price_to).trim() || undefined,
-      include_no_price: form.include_no_price ? 1 : undefined,
+      include_no_price:
+        form.include_no_price && (String(form.price_from || '').trim() || String(form.price_to || '').trim())
+          ? 1
+          : undefined,
       sort: form.sort || undefined,
     },
     {

@@ -56,6 +56,11 @@ class CatalogController extends Controller
             [$priceFrom, $priceTo] = [$priceTo, $priceFrom];
         }
 
+        // Only makes sense alongside a price range filter.
+        if (! is_numeric($priceFrom) && ! is_numeric($priceTo)) {
+            $includeNoPrice = false;
+        }
+
         $offersQuery = Offer::query()
             ->with(['businessProfile', 'category'])
             ->where('is_active', true)
