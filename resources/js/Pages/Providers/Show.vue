@@ -91,7 +91,7 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
           </button>
         </div>
 
-        <div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div v-if="portfolioPostsToShow.length" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div
             v-for="post in portfolioPostsToShow"
             :key="post.id"
@@ -100,7 +100,11 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
             <div class="font-medium">{{ post.title }}</div>
             <div v-if="post.body" class="mt-2 text-sm text-gray-600 line-clamp-3">{{ post.body }}</div>
           </div>
-          <div v-if="!provider.portfolio_posts?.length" class="text-sm text-gray-500">Поки що немає робіт</div>
+        </div>
+
+        <div v-else class="mt-3 rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
+          <div class="font-medium">Поки що немає робіт</div>
+          <div class="mt-1 text-gray-600">Коли провайдер опублікує портфоліо — воно з'явиться тут.</div>
         </div>
 
         <div v-if="hasMorePortfolio && !showAllPortfolio" class="mt-3 text-sm text-gray-500">
