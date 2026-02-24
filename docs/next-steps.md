@@ -55,6 +55,6 @@
 ## TODO (next session)
 1) Stage 5 (Polish):
    - [x] user-friendly лейбли у каталозі (тип service/product → Послуга/Товар) + форматування цін (range `price_from`/`price_to`, `ціна за домовленістю`)
-   - [ ] фільтр по категоріях з деревом (parent/child) або пошук по категорії (в роботі: додано дерево в select у каталозі)
+   - [x] фільтр по категоріях з деревом (parent/child): select показує дерево + бекенд включає дочірні категорії при виборі parent
 2) Техборг:
    - [x] індекси під каталог: додано (is_active, created_at desc) для newest + (business_profiles.is_active)
