@@ -12,6 +12,21 @@ use Inertia\Response;
 
 class BusinessProfileController extends Controller
 {
+    private function normalizeWebsite(?string $raw): ?string
+    {
+        $v = trim((string) ($raw ?? ''));
+
+        if ($v === '') {
+            return null;
+        }
+
+        if (str_starts_with($v, 'http://') || str_starts_with($v, 'https://')) {
+            return $v;
+        }
+
+        return 'https://'.$v;
+    }
+
     private function uniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $base = Str::slug($name);
@@ -66,6 +81,7 @@ class BusinessProfileController extends Controller
         $data['user_id'] = $user->id;
         $data['slug'] = $this->uniqueSlug($data['name']);
         $data['is_active'] = (bool)($data['is_active'] ?? true);
+        $data['website'] = $this->normalizeWebsite($data['website'] ?? null);
 
         $profile = BusinessProfile::create($data);
 
@@ -97,6 +113,7 @@ class BusinessProfileController extends Controller
         ]);
 
         $data['slug'] = $this->uniqueSlug($data['name'], $businessProfile->id);
+        $data['website'] = $this->normalizeWebsite($data['website'] ?? null);
         if (array_key_exists('is_active', $data)) {
             $data['is_active'] = (bool)$data['is_active'];
         }
