@@ -304,6 +304,13 @@ class CatalogTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->has('offers.data', 2)
+                ->where('offers.data', function ($offers) {
+                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
+                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
+                    sort($titles);
+
+                    return $titles === ['Cheap offer', 'No price offer'];
+                })
             );
     }
 
@@ -339,6 +346,13 @@ class CatalogTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->has('offers.data', 2)
+                ->where('offers.data', function ($offers) {
+                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
+                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
+                    sort($titles);
+
+                    return $titles === ['Expensive offer', 'No price offer'];
+                })
             );
     }
 
@@ -374,6 +388,13 @@ class CatalogTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->has('offers.data', 2)
+                ->where('offers.data', function ($offers) {
+                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
+                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
+                    sort($titles);
+
+                    return $titles === ['Cheap offer', 'No price offer'];
+                })
             );
     }
 
