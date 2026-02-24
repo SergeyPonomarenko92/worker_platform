@@ -1,57 +1,14 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
+import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk } from '@/lib/formatters'
 
 const props = defineProps({
   provider: Object,
   eligibleDealId: Number,
 })
 
-const normalizedWebsite = () => {
-  const raw = (props.provider?.website || '').trim()
-  if (!raw) return ''
-  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw
-  return `https://${raw}`
-}
-
-const ratingText = () => {
-  const avg = props.provider?.reviews_avg_rating
-  if (avg === null || avg === undefined) return ''
-  const rounded = Math.round(Number(avg) * 10) / 10
-  if (Number.isNaN(rounded)) return ''
-  return String(rounded).replace('.', ',')
-}
-
-const offerTypeLabel = (type) => {
-  switch (type) {
-    case 'service':
-      return 'Послуга'
-    case 'product':
-      return 'Товар'
-    default:
-      return type
-  }
-}
-
-const formatNumber = (value) => {
-  if (value === null || value === undefined || value === '') return ''
-  const num = Number(value)
-  if (Number.isNaN(num)) return String(value)
-  return new Intl.NumberFormat('uk-UA').format(num)
-}
-
-const formatPrice = (offer) => {
-  const from = offer?.price_from
-  const to = offer?.price_to
-  const currency = offer?.currency || 'UAH'
-
-  const hasFrom = from !== null && from !== undefined
-  const hasTo = to !== null && to !== undefined
-
-  if (!hasFrom && !hasTo) return 'ціна за домовленістю'
-  if (hasFrom && hasTo) return `${formatNumber(from)} — ${formatNumber(to)} ${currency}`
-  if (hasFrom) return `від ${formatNumber(from)} ${currency}`
-  return `до ${formatNumber(to)} ${currency}`
-}
+const ratingText = () => formatAvgRatingUk(props.provider?.reviews_avg_rating)
+const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
 </script>
 
 <template>
@@ -82,7 +39,7 @@ const formatPrice = (offer) => {
         <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
           <div v-if="provider.phone">☎ {{ provider.phone }}</div>
           <div v-if="provider.website">
-            <a class="text-blue-600 hover:underline" :href="normalizedWebsite()" target="_blank" rel="noreferrer">
+            <a class="text-blue-600 hover:underline" :href="normalizedWebsiteHref()" target="_blank" rel="noreferrer">
               {{ provider.website }}
             </a>
           </div>

@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
 import { computed, reactive, watch } from 'vue'
+import { offerTypeLabel, formatNumber, formatPrice } from '@/lib/formatters'
 
 const props = defineProps({
   offers: Object,
@@ -41,50 +42,7 @@ function submit() {
   )
 }
 
-const typeLabel = (type) => {
-  // plural (for filters/chips)
-  switch (type) {
-    case 'service':
-      return 'Послуги'
-    case 'product':
-      return 'Товари'
-    default:
-      return type
-  }
-}
-
-const offerTypeLabel = (type) => {
-  // singular (for offer cards)
-  switch (type) {
-    case 'service':
-      return 'Послуга'
-    case 'product':
-      return 'Товар'
-    default:
-      return type
-  }
-}
-
-const formatNumber = (value) => {
-  if (value === null || value === undefined || value === '') return ''
-  const num = Number(value)
-  if (Number.isNaN(num)) return String(value)
-  return new Intl.NumberFormat('uk-UA').format(num)
-}
-
-const formatPrice = (offer) => {
-  const from = offer?.price_from
-  const to = offer?.price_to
-  const currency = offer?.currency || 'UAH'
-
-  const hasFrom = from !== null && from !== undefined
-  const hasTo = to !== null && to !== undefined
-
-  if (!hasFrom && !hasTo) return 'ціна за домовленістю'
-  if (hasFrom && hasTo) return `${formatNumber(from)} — ${formatNumber(to)} ${currency}`
-  if (hasFrom) return `від ${formatNumber(from)} ${currency}`
-  return `до ${formatNumber(to)} ${currency}`
-}
+const typeLabel = (type) => offerTypeLabel(type, { plural: true })
 
 const sortLabel = (sort) => {
   switch (sort) {
