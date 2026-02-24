@@ -12,6 +12,16 @@ class ProviderShowTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_provider_page_is_not_accessible_for_inactive_provider(): void
+    {
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'inactive-provider',
+            'is_active' => false,
+        ]);
+
+        $this->get('/providers/'.$provider->slug)->assertNotFound();
+    }
+
     public function test_provider_page_includes_offer_category(): void
     {
         $category = Category::factory()->create(['name' => 'Електрика']);

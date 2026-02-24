@@ -11,7 +11,15 @@
 - 2026-02-23: Catalog — price range filter + опція включати оффери без ціни.
 - 2026-02-23: Catalog — оптимізація city filter (prefix search + індекс `lower(city)`).
 - 2026-02-23: Tests/Perf — тести на фільтри каталогу + індекси для `offers`.
-- 2026-02-24: Catalog — у картках офферів user-friendly лейбли типу (Послуга/Товар) + форматування ціни (range/від/до/«за домовленістю»).
+- 2026-02-24: Catalog/Provider/Cabinet — великий пакет polish+tests+perf:
+  - Catalog: лейбли типу (Послуга/Товар) + форматування ціни (range/від/до/«за домовленістю») + лейбли валют.
+  - Catalog: дерево категорій у select + фільтр категорії включає descendants (child/grandchild) + у UI показується повний шлях категорії (parent → child).
+  - Catalog: UX/robustness: нормалізація пробілів у `q/city`, пошук `q` також матчитиме `BusinessProfile.name`, `include_no_price` disabled без price bounds, невалідний `sort` ігнорується (fallback на newest, без validation errors).
+  - Catalog: perf — select тільки потрібні колонки + додано індекс під price.
+  - Provider public page: оффери показують category+форматовану ціну; додано статистику (offers/reviews/avg rating); зовнішні лінки з `target=_blank` мають `rel=noopener`.
+  - Provider cabinet: у списку профілів бейдж Активний/Неактивний + лінк на публічну сторінку.
+  - Tests: суттєво розширено покриття фільтрів (ціна/include_no_price, дерево категорій, sort edge-cases).
+  - Offers: валідація дозволяє `price_to` без `price_from`.
 
 ## Current status
 - Branch: `main`
@@ -54,7 +62,10 @@
 
 ## TODO (next session)
 1) Stage 5 (Polish):
-   - [x] user-friendly лейбли у каталозі (тип service/product → Послуга/Товар) + форматування цін (range `price_from`/`price_to`, `ціна за домовленістю`)
-   - [x] фільтр по категоріях з деревом (parent/child): select показує дерево + бекенд включає дочірні категорії при виборі parent
-2) Техборг:
-   - [x] індекси під каталог: додано (is_active, created_at desc) для newest + (business_profiles.is_active)
+   - [ ] Catalog: показати “N результатів” + зробити більш явну дію “Очистити всі фільтри” біля чіпів
+   - [ ] Catalog: дрібний UI (порожні стани/підказки) + ще 1-2 edge-case тести (pagination/sort)
+   - [ ] Provider public page: покращити блок “Останні роботи” (порожній стан + ліміт/посилання “дивитись все”, якщо треба)
+2) Кабінет провайдера:
+   - [ ] дрібний polish списків (offers/portfolio/stories): підказки/порожні стани/CTA
+3) Техборг:
+   - [ ] ревізія індексів під реальні запити (з EXPLAIN пізніше) + аудит N+1

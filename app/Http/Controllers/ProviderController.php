@@ -12,6 +12,7 @@ class ProviderController extends Controller
     {
         $provider = BusinessProfile::query()
             ->where('slug', $slug)
+            ->where('is_active', true)
             ->withCount([
                 'offers as offers_count' => fn ($q) => $q->where('is_active', true),
                 'reviews as reviews_count',
