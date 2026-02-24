@@ -18,7 +18,11 @@ class ProviderController extends Controller
             ])
             ->withAvg('reviews as reviews_avg_rating', 'rating')
             ->with([
-                'offers' => fn ($q) => $q->where('is_active', true)->latest()->limit(10),
+                'offers' => fn ($q) => $q
+                    ->with(['category:id,name'])
+                    ->where('is_active', true)
+                    ->latest()
+                    ->limit(10),
                 'portfolioPosts' => fn ($q) => $q
                     ->whereNotNull('published_at')
                     ->where('published_at', '<=', now())
