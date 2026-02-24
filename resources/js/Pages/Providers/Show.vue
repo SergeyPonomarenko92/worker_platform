@@ -39,7 +39,7 @@ const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
         <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
           <div v-if="provider.phone">☎ {{ provider.phone }}</div>
           <div v-if="provider.website">
-            <a class="text-blue-600 hover:underline" :href="normalizedWebsiteHref()" target="_blank" rel="noreferrer">
+            <a class="text-blue-600 hover:underline" :href="normalizedWebsiteHref()" target="_blank" rel="noopener noreferrer">
               {{ provider.website }}
             </a>
           </div>
@@ -55,7 +55,7 @@ const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
             :key="story.id"
             :href="'/' + story.media_path"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-gray-300 bg-gray-50"
             :title="story.caption || ''"
           >
