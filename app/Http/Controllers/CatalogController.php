@@ -89,7 +89,8 @@ class CatalogController extends Controller
             ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->whereRaw('lower(city) like ?', ["{$cityLower}%"])))
             ->when($q, fn ($query) => $query->where(function ($sub) use ($q) {
                 $sub->where('title', 'ilike', "%{$q}%")
-                    ->orWhere('description', 'ilike', "%{$q}%");
+                    ->orWhere('description', 'ilike', "%{$q}%")
+                    ->orWhereHas('businessProfile', fn ($bp) => $bp->where('name', 'ilike', "%{$q}%"));
             }))
             // Price filter:
             // - if user sets price_from: show offers with known price_from >= price_from

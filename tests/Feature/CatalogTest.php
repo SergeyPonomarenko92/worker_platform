@@ -503,4 +503,38 @@ class CatalogTest extends TestCase
                 ->where('filters.sort', 'newest')
             );
     }
+
+    public function test_catalog_q_filter_matches_business_profile_name(): void
+    {
+        $cat = Category::factory()->create();
+
+        $bp1 = BusinessProfile::factory()->create(['name' => 'Супер Електрик', 'city' => 'Київ', 'is_active' => true]);
+        $bp2 = BusinessProfile::factory()->create(['name' => 'Пекарня', 'city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp1)->create([
+            'category_id' => $cat->id,
+            'title' => 'Послуга 1',
+            'description' => 'Опис',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp2)->create([
+            'category_id' => $cat->id,
+            'title' => 'Послуга 2',
+            'description' => 'Опис',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?q=%D0%B5%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D0%BA') // електрик
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Послуга 1')
+            );
+    }
+
 }
