@@ -5,6 +5,38 @@ defineProps({
   provider: Object,
   eligibleDealId: Number,
 })
+
+const offerTypeLabel = (type) => {
+  switch (type) {
+    case 'service':
+      return 'Послуга'
+    case 'product':
+      return 'Товар'
+    default:
+      return type
+  }
+}
+
+const formatNumber = (value) => {
+  if (value === null || value === undefined || value === '') return ''
+  const num = Number(value)
+  if (Number.isNaN(num)) return String(value)
+  return new Intl.NumberFormat('uk-UA').format(num)
+}
+
+const formatPrice = (offer) => {
+  const from = offer?.price_from
+  const to = offer?.price_to
+  const currency = offer?.currency || 'UAH'
+
+  const hasFrom = from !== null && from !== undefined
+  const hasTo = to !== null && to !== undefined
+
+  if (!hasFrom && !hasTo) return 'ціна за домовленістю'
+  if (hasFrom && hasTo) return `${formatNumber(from)} — ${formatNumber(to)} ${currency}`
+  if (hasFrom) return `від ${formatNumber(from)} ${currency}`
+  return `до ${formatNumber(to)} ${currency}`
+}
 </script>
 
 <template>
@@ -85,9 +117,18 @@ defineProps({
             :key="offer.id"
             class="rounded-lg border border-gray-200 bg-white p-4"
           >
-            <div class="text-sm text-gray-500">{{ offer.type }}</div>
-            <div class="text-lg font-semibold">{{ offer.title }}</div>
-            <div v-if="offer.description" class="mt-2 text-sm text-gray-700">{{ offer.description }}</div>
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <div class="text-sm text-gray-500">
+                  {{ offerTypeLabel(offer.type) }}
+                  <span v-if="offer.category">· {{ offer.category.name }}</span>
+                </div>
+                <div class="text-lg font-semibold">{{ offer.title }}</div>
+              </div>
+              <div class="text-sm text-gray-600 whitespace-nowrap">{{ formatPrice(offer) }}</div>
+            </div>
+
+            <div v-if="offer.description" class="mt-2 text-sm text-gray-700 line-clamp-3">{{ offer.description }}</div>
           </div>
           <div v-if="!provider.offers?.length" class="text-sm text-gray-500">Поки що немає пропозицій</div>
         </div>
