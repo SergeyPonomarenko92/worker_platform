@@ -60,18 +60,19 @@ const sortLabel = (sort) => {
   }
 }
 
-const flattenCategories = (nodes, depth = 0) => {
+const flattenCategories = (nodes, depth = 0, parentLabel = '') => {
   const out = []
   ;(nodes || []).forEach((n) => {
-    out.push({ id: n.id, name: n.name, depth })
-    if (n.children?.length) out.push(...flattenCategories(n.children, depth + 1))
+    const label = parentLabel ? `${parentLabel} → ${n.name}` : n.name
+    out.push({ id: n.id, name: n.name, depth, label })
+    if (n.children?.length) out.push(...flattenCategories(n.children, depth + 1, label))
   })
   return out
 }
 
 const flatCategories = computed(() => flattenCategories(props.categories || []))
 
-const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === String(id))?.name || 'Категорія'
+const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === String(id))?.label || 'Категорія'
 
 const activeChips = computed(() => {
   const chips = []
@@ -208,7 +209,7 @@ function resetFilters() {
               :key="c.id"
               :value="String(c.id)"
             >
-              {{ `${'—'.repeat(c.depth)} ${c.name}`.trim() }}
+              {{ c.label }}
             </option>
           </select>
         </div>
