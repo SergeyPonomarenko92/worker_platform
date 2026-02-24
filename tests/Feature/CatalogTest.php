@@ -301,16 +301,17 @@ class CatalogTest extends TestCase
 
         $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
 
+        // Create parent first, then child -> newest ordering should put child first.
         Offer::factory()->for($bp)->create([
-            'category_id' => $child->id,
-            'title' => 'Child offer',
+            'category_id' => $parent->id,
+            'title' => 'Parent offer',
             'is_active' => true,
             'price_from' => 100,
         ]);
 
         Offer::factory()->for($bp)->create([
-            'category_id' => $parent->id,
-            'title' => 'Parent offer',
+            'category_id' => $child->id,
+            'title' => 'Child offer',
             'is_active' => true,
             'price_from' => 100,
         ]);
@@ -320,7 +321,15 @@ class CatalogTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
+                ->where('filters.category_id', (string) $parent->id)
                 ->has('offers.data', 2)
+                ->where('offers.data', function ($offers) {
+                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
+                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
+                    sort($titles);
+
+                    return $titles === ['Child offer', 'Parent offer'];
+                })
             );
     }
 
