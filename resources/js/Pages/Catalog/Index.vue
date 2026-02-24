@@ -163,6 +163,11 @@ function resetFilters() {
 
   submit()
 }
+
+function goFirstPage() {
+  // Re-submit current filters without `page` param (so we land on page 1).
+  submit()
+}
 </script>
 
 <template>
@@ -348,13 +353,23 @@ function resetFilters() {
         <div class="font-medium">Нічого не знайдено.</div>
         <div class="mt-1 text-gray-600">Спробуйте змінити або очистити фільтри.</div>
 
-        <div v-if="activeChips.length" class="mt-4">
+        <div class="mt-4 flex flex-wrap gap-2">
           <button
+            v-if="activeChips.length"
             type="button"
             class="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm text-white hover:bg-black"
             @click="resetFilters"
           >
             Очистити всі фільтри
+          </button>
+
+          <button
+            v-if="(offers.current_page ?? 1) > 1"
+            type="button"
+            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:bg-gray-50"
+            @click="goFirstPage"
+          >
+            На першу сторінку
           </button>
         </div>
       </div>

@@ -643,6 +643,38 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_pagination_out_of_range_page_returns_empty_data_and_keeps_meta(): void
+    {
+        Carbon::setTestNow(now());
+
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        // 25 offers => 2 pages with per_page=20.
+        for ($i = 1; $i <= 25; $i++) {
+            Offer::factory()->for($bp)->create([
+                'category_id' => $cat->id,
+                'title' => 'Offer '.$i,
+                'is_active' => true,
+                'price_from' => 100,
+                'created_at' => now()->subMinutes(25 - $i),
+            ]);
+        }
+
+        $this
+            ->get('/catalog?page=999')
+            ->assertOk()
+            ->assertSessionHasNoErrors()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('offers.current_page', 999)
+                ->where('offers.per_page', 20)
+                ->where('offers.total', 25)
+                ->where('offers.last_page', 2)
+                ->has('offers.data', 0)
+            );
+    }
+
     public function test_catalog_ignores_invalid_category_id_without_redirect_or_errors(): void
     {
         $cat = Category::factory()->create();
