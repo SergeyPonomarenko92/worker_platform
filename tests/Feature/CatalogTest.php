@@ -519,6 +519,7 @@ class CatalogTest extends TestCase
         $this
             ->get('/catalog?sort=totally_invalid')
             ->assertOk()
+            ->assertSessionHasNoErrors()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->where('filters.sort', 'newest')
