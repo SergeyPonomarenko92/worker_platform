@@ -20,7 +20,7 @@ class CatalogController extends Controller
             'price_from' => ['nullable', 'integer', 'min:0'],
             'price_to' => ['nullable', 'integer', 'min:0'],
             'include_no_price' => ['nullable', 'boolean'],
-            'sort' => ['nullable', 'in:newest,price_asc,price_desc'],
+            'sort' => ['nullable', 'string', 'max:32'],
         ]);
 
         $type = (string) ($data['type'] ?? '');
@@ -51,6 +51,9 @@ class CatalogController extends Controller
         $priceTo = $data['price_to'] ?? null;
         $includeNoPrice = (bool) ($data['include_no_price'] ?? false);
         $sort = (string) ($data['sort'] ?? 'newest');
+        if (! in_array($sort, ['newest', 'price_asc', 'price_desc'], true)) {
+            $sort = 'newest';
+        }
 
         if (is_numeric($priceFrom) && is_numeric($priceTo) && $priceTo < $priceFrom) {
             [$priceFrom, $priceTo] = [$priceTo, $priceFrom];
