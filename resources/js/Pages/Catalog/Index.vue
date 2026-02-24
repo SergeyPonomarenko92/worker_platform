@@ -91,6 +91,8 @@ const activeChips = computed(() => {
   return chips
 })
 
+const hasPriceBounds = computed(() => Boolean(String(form.price_from || '').trim() || String(form.price_to || '').trim()))
+
 function clearChip(key) {
   if (key === 'q') form.q = ''
   if (key === 'type') form.type = ''
@@ -129,6 +131,15 @@ watch(
   () => {
     if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
     priceDebounceTimer = setTimeout(() => submit(), 400)
+  },
+)
+
+watch(
+  () => [form.price_from, form.price_to],
+  () => {
+    if (!hasPriceBounds.value) {
+      form.include_no_price = false
+    }
   },
 )
 
@@ -250,8 +261,13 @@ function resetFilters() {
             />
           </div>
           <label class="mt-2 inline-flex items-center gap-2 text-xs text-gray-600">
-            <input type="checkbox" v-model="form.include_no_price" class="rounded border-gray-300" />
-            Включати «ціна за домовленістю»
+            <input
+              type="checkbox"
+              v-model="form.include_no_price"
+              class="rounded border-gray-300"
+              :disabled="!hasPriceBounds"
+            />
+            <span :class="!hasPriceBounds ? 'text-gray-400' : ''">Включати «ціна за домовленістю»</span>
           </label>
         </div>
 
