@@ -359,7 +359,7 @@ function resetFilters() {
         </div>
       </div>
 
-      <div class="mt-8 flex flex-wrap items-center justify-between gap-4">
+      <div v-if="(offers.last_page ?? 1) > 1" class="mt-8 flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-2">
           <Link
             v-if="offers.prev_page_url"
