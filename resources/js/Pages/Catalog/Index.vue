@@ -196,6 +196,8 @@ function resetFilters() {
           <div class="text-xs text-gray-500">Пошук</div>
           <input
             v-model="form.q"
+            type="search"
+            autocomplete="off"
             class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. електрик, ремонт, булочна"
             @keydown.enter.prevent="onSearch"
@@ -229,6 +231,8 @@ function resetFilters() {
           <div class="text-xs text-gray-500">Місто</div>
           <input
             v-model="form.city"
+            type="search"
+            autocomplete="address-level2"
             class="mt-1 w-48 rounded-md border-gray-300"
             placeholder="напр. Київ"
             @keydown.enter.prevent="onSearch"
@@ -244,6 +248,7 @@ function resetFilters() {
               min="0"
               step="1"
               inputmode="numeric"
+              autocomplete="off"
               class="w-28 rounded-md border-gray-300"
               placeholder="від"
               @keydown.enter.prevent="onSearch"
@@ -255,6 +260,7 @@ function resetFilters() {
               min="0"
               step="1"
               inputmode="numeric"
+              autocomplete="off"
               class="w-28 rounded-md border-gray-300"
               placeholder="до"
               @keydown.enter.prevent="onSearch"
