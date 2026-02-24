@@ -63,7 +63,7 @@
 ## TODO (next session)
 1) Stage 5 (Polish):
    - [x] Catalog: показати “N результатів” + зробити більш явну дію “Очистити всі фільтри” біля чіпів
-   - [ ] Catalog: дрібний UI (порожні стани/підказки) + ще 1-2 edge-case тести (pagination/sort)
+   - [x] Catalog: дрібний UI (порожні стани/підказки) + ще 1-2 edge-case тести (pagination/sort) — empty state action "На першу сторінку" + test for out-of-range page
    - [x] Provider public page: покращити блок “Останні роботи” (порожній стан + ліміт/посилання “дивитись все”, якщо треба)
 2) Кабінет провайдера:
    - [ ] дрібний polish списків (offers/portfolio/stories): підказки/порожні стани/CTA
