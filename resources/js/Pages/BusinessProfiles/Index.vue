@@ -44,7 +44,7 @@ const props = defineProps({
                                 <div class="text-sm text-gray-600">/{{ p.slug }}</div>
                             </div>
                             <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm">
-                                <Link :href="route('providers.show', p.slug)" class="text-indigo-600 hover:underline">Публічна сторінка</Link>
+                                <Link :href="route('providers.show', p.slug)" class="text-indigo-600 hover:underline" target="_blank" rel="noopener noreferrer">Публічна сторінка</Link>
                                 <Link :href="route('dashboard.offers.index', p.id)" class="text-indigo-600 hover:underline">Пропозиції</Link>
                                 <Link :href="route('dashboard.portfolio-posts.index', p.id)" class="text-indigo-600 hover:underline">Портфоліо</Link>
                                 <Link :href="route('dashboard.stories.index', p.id)" class="text-indigo-600 hover:underline">Історії</Link>
