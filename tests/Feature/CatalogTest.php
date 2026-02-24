@@ -12,6 +12,82 @@ class CatalogTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_catalog_sort_price_asc_orders_by_price_and_puts_null_prices_last(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'No price offer',
+            'is_active' => true,
+            'price_from' => null,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Mid offer',
+            'is_active' => true,
+            'price_from' => 200,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Cheap offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?sort=price_asc')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 3)
+                ->where('offers.data.0.title', 'Cheap offer')
+                ->where('offers.data.1.title', 'Mid offer')
+                ->where('offers.data.2.title', 'No price offer')
+            );
+    }
+
+    public function test_catalog_sort_price_desc_orders_by_price_and_puts_null_prices_last(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'No price offer',
+            'is_active' => true,
+            'price_from' => null,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Mid offer',
+            'is_active' => true,
+            'price_from' => 200,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Expensive offer',
+            'is_active' => true,
+            'price_from' => 1000,
+        ]);
+
+        $this
+            ->get('/catalog?sort=price_desc')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 3)
+                ->where('offers.data.0.title', 'Expensive offer')
+                ->where('offers.data.1.title', 'Mid offer')
+                ->where('offers.data.2.title', 'No price offer')
+            );
+    }
+
     public function test_catalog_swaps_price_bounds_when_price_to_is_less_than_price_from(): void
     {
         $cat = Category::factory()->create();
