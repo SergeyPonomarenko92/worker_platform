@@ -72,7 +72,27 @@ const destroy = (storyId) => {
                             {{ showExpired ? 'Сховати протерміновані' : 'Показати протерміновані' }}
                         </Link>
                     </div>
-                    <div v-if="stories.length === 0" class="text-sm text-gray-700">Поки що немає історій.</div>
+                    <div v-if="stories.length === 0" class="rounded-lg border border-dashed border-gray-300 p-6">
+                        <div class="text-sm font-medium text-gray-900">
+                            {{ showExpired ? 'Поки що немає історій' : 'Поки що немає активних історій' }}
+                        </div>
+                        <div class="mt-1 text-sm text-gray-700">
+                            Створіть історію — вона з’явиться на публічній сторінці провайдера й буде активною до дати завершення.
+                        </div>
+
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <Link :href="route('dashboard.stories.create', businessProfile.id)">
+                                <PrimaryButton>Створити історію</PrimaryButton>
+                            </Link>
+                            <Link
+                                v-if="businessProfile.slug"
+                                :href="route('providers.show', businessProfile.slug)"
+                                class="text-sm text-indigo-600 hover:underline"
+                            >
+                                Переглянути публічну сторінку
+                            </Link>
+                        </div>
+                    </div>
 
                     <ul v-else class="divide-y divide-gray-200">
                         <li v-for="story in stories" :key="story.id" class="py-3 flex items-start justify-between">
