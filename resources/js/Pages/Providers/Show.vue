@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
 import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk } from '@/lib/formatters'
 
 const props = defineProps({
@@ -9,6 +10,12 @@ const props = defineProps({
 
 const ratingText = () => formatAvgRatingUk(props.provider?.reviews_avg_rating)
 const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
+
+const portfolioLimit = 6
+const showAllPortfolio = ref(false)
+const portfolioPosts = computed(() => props.provider?.portfolio_posts || [])
+const hasMorePortfolio = computed(() => portfolioPosts.value.length > portfolioLimit)
+const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioPosts.value : portfolioPosts.value.slice(0, portfolioLimit)))
 </script>
 
 <template>
@@ -72,10 +79,21 @@ const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
 
       <!-- Latest portfolio -->
       <div class="mt-8">
-        <h2 class="text-lg font-semibold">Останні роботи</h2>
+        <div class="flex items-center justify-between gap-4">
+          <h2 class="text-lg font-semibold">Останні роботи</h2>
+          <button
+            v-if="hasMorePortfolio"
+            type="button"
+            class="text-sm text-blue-600 hover:underline"
+            @click="showAllPortfolio = !showAllPortfolio"
+          >
+            {{ showAllPortfolio ? 'Згорнути' : `Дивитися всі (${portfolioPosts.length})` }}
+          </button>
+        </div>
+
         <div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div
-            v-for="post in provider.portfolio_posts"
+            v-for="post in portfolioPostsToShow"
             :key="post.id"
             class="rounded-lg border border-gray-200 bg-white p-4"
           >
@@ -83,6 +101,10 @@ const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
             <div v-if="post.body" class="mt-2 text-sm text-gray-600 line-clamp-3">{{ post.body }}</div>
           </div>
           <div v-if="!provider.portfolio_posts?.length" class="text-sm text-gray-500">Поки що немає робіт</div>
+        </div>
+
+        <div v-if="hasMorePortfolio && !showAllPortfolio" class="mt-3 text-sm text-gray-500">
+          Показано {{ portfolioLimit }} з {{ portfolioPosts.length }}
         </div>
       </div>
 
