@@ -12,6 +12,44 @@ class CatalogTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_catalog_shows_only_active_offers_from_active_business_profiles(): void
+    {
+        $cat = Category::factory()->create();
+
+        $activeBp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+        $inactiveBp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => false]);
+
+        Offer::factory()->for($activeBp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Active offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($activeBp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Inactive offer',
+            'is_active' => false,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($inactiveBp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Inactive BP offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Active offer')
+            );
+    }
+
     public function test_catalog_sort_price_asc_orders_by_price_and_puts_null_prices_last(): void
     {
         $cat = Category::factory()->create();
