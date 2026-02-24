@@ -345,7 +345,18 @@ function resetFilters() {
       </div>
 
       <div v-else class="mt-8 rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
-        Нічого не знайдено. Спробуйте змінити фільтри.
+        <div class="font-medium">Нічого не знайдено.</div>
+        <div class="mt-1 text-gray-600">Спробуйте змінити або очистити фільтри.</div>
+
+        <div v-if="activeChips.length" class="mt-4">
+          <button
+            type="button"
+            class="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm text-white hover:bg-black"
+            @click="resetFilters"
+          >
+            Очистити всі фільтри
+          </button>
+        </div>
       </div>
 
       <div class="mt-8 flex flex-wrap items-center justify-between gap-4">
