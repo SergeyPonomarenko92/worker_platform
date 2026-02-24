@@ -57,4 +57,4 @@
    - [x] user-friendly лейбли у каталозі (тип service/product → Послуга/Товар) + форматування цін (range `price_from`/`price_to`, `ціна за домовленістю`)
    - [ ] фільтр по категоріях з деревом (parent/child) або пошук по категорії (в роботі: додано дерево в select у каталозі)
 2) Техборг:
-   - пройтись по індексах (offers/business_profiles) і додати/підтвердити потрібні під реальні запити
+   - [x] індекси під каталог: додано (is_active, created_at desc) для newest + (business_profiles.is_active)
