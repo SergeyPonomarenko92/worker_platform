@@ -593,4 +593,54 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_pagination_preserves_query_string_in_links(): void
+    {
+        Carbon::setTestNow(now());
+
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        for ($i = 1; $i <= 25; $i++) {
+            Offer::factory()->for($bp)->create([
+                'category_id' => $cat->id,
+                'title' => 'Offer '.$i,
+                'is_active' => true,
+                'price_from' => 100,
+                'created_at' => now()->subMinutes(25 - $i),
+            ]);
+        }
+
+        $this
+            ->get('/catalog?q=Offer&sort=price_desc')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.links')
+                ->where('offers.links', function ($links) {
+                    $links = $links instanceof \Illuminate\Support\Collection ? $links->all() : (array) $links;
+
+                    // Ensure pagination URLs include original query string params.
+                    $urls = array_values(array_filter(array_map(fn ($l) => $l['url'] ?? null, $links)));
+
+                    $hasQ = false;
+                    $hasSort = false;
+                    $hasPage2 = false;
+
+                    foreach ($urls as $url) {
+                        if (str_contains($url, 'q=Offer')) {
+                            $hasQ = true;
+                        }
+                        if (str_contains($url, 'sort=price_desc')) {
+                            $hasSort = true;
+                        }
+                        if (str_contains($url, 'page=2')) {
+                            $hasPage2 = true;
+                        }
+                    }
+
+                    return $hasQ && $hasSort && $hasPage2;
+                })
+            );
+    }
+
 }
