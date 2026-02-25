@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
 import { computed, reactive, watch } from 'vue'
+import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import { offerTypeLabel, formatNumber, formatPrice } from '@/lib/formatters'
 
 const props = defineProps({
@@ -359,11 +360,13 @@ function goFirstPage() {
         </div>
       </div>
 
-      <div v-else class="mt-8 rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
-        <div class="font-medium">Нічого не знайдено.</div>
-        <div class="mt-1 text-gray-600">Спробуйте змінити або очистити фільтри.</div>
-
-        <div class="mt-4 flex flex-wrap gap-2">
+      <EmptyStateCard
+        v-else
+        class="mt-8"
+        title="Нічого не знайдено"
+        description="Спробуйте змінити або очистити фільтри."
+      >
+        <div class="flex flex-wrap gap-2">
           <button
             v-if="activeChips.length"
             type="button"
@@ -382,7 +385,7 @@ function goFirstPage() {
             На першу сторінку
           </button>
         </div>
-      </div>
+      </EmptyStateCard>
 
       <div v-if="(offers.last_page ?? 1) > 1" class="mt-8 flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-2">
