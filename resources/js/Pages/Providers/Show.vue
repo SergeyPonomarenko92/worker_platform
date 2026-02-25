@@ -11,8 +11,8 @@ const props = defineProps({
   loadAllReviews: Boolean,
 })
 
-const ratingText = () => formatAvgRatingUk(props.provider?.reviews_avg_rating)
-const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
+const ratingText = computed(() => formatAvgRatingUk(props.provider?.reviews_avg_rating))
+const normalizedWebsiteHref = computed(() => normalizeWebsite(props.provider?.website))
 
 const portfolioLimit = 6
 const showAllPortfolio = ref(!!props.loadAllPortfolio)
@@ -75,7 +75,7 @@ const toggleReviews = () => {
           <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
             <div v-if="provider.offers_count !== undefined">Пропозицій: <span class="font-medium text-gray-800">{{ provider.offers_count }}</span></div>
             <div v-if="provider.reviews_count !== undefined">Відгуків: <span class="font-medium text-gray-800">{{ provider.reviews_count }}</span></div>
-            <div v-if="ratingText()">Рейтинг: <span class="font-medium text-gray-800">{{ ratingText() }}/5</span></div>
+            <div v-if="ratingText">Рейтинг: <span class="font-medium text-gray-800">{{ ratingText }}/5</span></div>
           </div>
         </div>
         <div class="flex gap-3">
@@ -90,7 +90,7 @@ const toggleReviews = () => {
         <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
           <div v-if="provider.phone">☎ {{ provider.phone }}</div>
           <div v-if="provider.website">
-            <a class="text-blue-600 hover:underline" :href="normalizedWebsiteHref()" target="_blank" rel="noopener noreferrer">
+            <a class="text-blue-600 hover:underline" :href="normalizedWebsiteHref" target="_blank" rel="noopener noreferrer">
               {{ provider.website }}
             </a>
           </div>
