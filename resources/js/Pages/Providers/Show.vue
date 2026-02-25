@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk } from '@/lib/formatters'
+import { providerShowUrl } from '@/lib/providerShowUrl'
 
 const props = defineProps({
   provider: Object,
@@ -15,35 +16,29 @@ const props = defineProps({
 const ratingText = computed(() => formatAvgRatingUk(props.provider?.reviews_avg_rating))
 const normalizedWebsiteHref = computed(() => normalizeWebsite(props.provider?.website))
 
-const providerPageAllOffersUrl = computed(() => {
-  const params = new URLSearchParams()
-  params.set('all_offers', '1')
+const providerPageAllOffersUrl = computed(() =>
+  providerShowUrl(props.provider.slug, {
+    all_offers: true,
+    all_portfolio: props.loadAllPortfolio,
+    all_reviews: props.loadAllReviews,
+  })
+)
 
-  if (props.loadAllPortfolio) params.set('all_portfolio', '1')
-  if (props.loadAllReviews) params.set('all_reviews', '1')
+const providerPageAllPortfolioUrl = computed(() =>
+  providerShowUrl(props.provider.slug, {
+    all_portfolio: true,
+    all_offers: props.loadAllOffers,
+    all_reviews: props.loadAllReviews,
+  })
+)
 
-  return `/providers/${props.provider.slug}?${params.toString()}`
-})
-
-const providerPageAllPortfolioUrl = computed(() => {
-  const params = new URLSearchParams()
-  params.set('all_portfolio', '1')
-
-  if (props.loadAllOffers) params.set('all_offers', '1')
-  if (props.loadAllReviews) params.set('all_reviews', '1')
-
-  return `/providers/${props.provider.slug}?${params.toString()}`
-})
-
-const providerPageAllReviewsUrl = computed(() => {
-  const params = new URLSearchParams()
-  params.set('all_reviews', '1')
-
-  if (props.loadAllOffers) params.set('all_offers', '1')
-  if (props.loadAllPortfolio) params.set('all_portfolio', '1')
-
-  return `/providers/${props.provider.slug}?${params.toString()}`
-})
+const providerPageAllReviewsUrl = computed(() =>
+  providerShowUrl(props.provider.slug, {
+    all_reviews: true,
+    all_offers: props.loadAllOffers,
+    all_portfolio: props.loadAllPortfolio,
+  })
+)
 
 const portfolioLimit = 6
 const showAllPortfolio = ref(!!props.loadAllPortfolio)
