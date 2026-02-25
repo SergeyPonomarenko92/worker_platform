@@ -11,6 +11,8 @@ class ProviderController extends Controller
 {
     public function show(Request $request, string $slug)
     {
+        $now = now();
+
         $loadAllPortfolio = $request->boolean('all_portfolio');
         $loadAllReviews = $request->boolean('all_reviews');
         $loadAllOffers = $request->boolean('all_offers');
@@ -38,7 +40,7 @@ class ProviderController extends Controller
                 'reviews as reviews_count',
                 'portfolioPosts as published_portfolio_posts_count' => fn ($q) => $q
                     ->whereNotNull('published_at')
-                    ->where('published_at', '<=', now()),
+                    ->where('published_at', '<=', $now),
             ])
             ->withAvg('reviews as reviews_avg_rating', 'rating')
             ->with([
@@ -73,7 +75,7 @@ class ProviderController extends Controller
                         'updated_at',
                     ])
                     ->whereNotNull('published_at')
-                    ->where('published_at', '<=', now())
+                    ->where('published_at', '<=', $now)
                     ->latest('published_at')
                     ->when(! $loadAllPortfolio, fn ($q) => $q->limit(60))
                     ->when($loadAllPortfolio, fn ($q) => $q->limit(200)),
@@ -87,7 +89,7 @@ class ProviderController extends Controller
                         'created_at',
                         'updated_at',
                     ])
-                    ->where('expires_at', '>', now())
+                    ->where('expires_at', '>', $now)
                     ->latest()
                     ->limit(20),
                 'reviews' => fn ($q) => $q
@@ -115,6 +117,7 @@ class ProviderController extends Controller
                 ->where('client_user_id', auth()->id())
                 ->where('status', 'completed')
                 ->whereNotNull('completed_at')
+                ->where('completed_at', '<=', $now)
                 ->whereDoesntHave('review')
                 ->latest('completed_at')
                 ->value('id');
