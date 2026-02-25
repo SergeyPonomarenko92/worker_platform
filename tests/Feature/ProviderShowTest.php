@@ -4,9 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\BusinessProfile;
 use App\Models\Category;
+use App\Models\Deal;
 use App\Models\Offer;
 use App\Models\PortfolioPost;
+use App\Models\Review;
 use App\Models\Story;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\TestCase;
@@ -106,6 +109,60 @@ class ProviderShowTest extends TestCase
                 ->component('Providers/Show')
                 ->has('provider.stories', 1)
                 ->where('provider.stories.0.caption', 'Active story')
+            );
+    }
+
+    public function test_provider_page_includes_offers_and_reviews_stats(): void
+    {
+        $providerOwner = User::factory()->create();
+        $client = User::factory()->create();
+
+        $provider = BusinessProfile::factory()->create([
+            'user_id' => $providerOwner->id,
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        // Offers count should include only active offers
+        Offer::factory()->for($provider)->create(['is_active' => true]);
+        Offer::factory()->for($provider)->create(['is_active' => false]);
+
+        $deal1 = Deal::factory()->create([
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        $deal2 = Deal::factory()->create([
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        Review::factory()->create([
+            'deal_id' => $deal1->id,
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'rating' => 4,
+        ]);
+
+        Review::factory()->create([
+            'deal_id' => $deal2->id,
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'rating' => 5,
+        ]);
+
+        $this
+            ->get('/providers/'.$provider->slug)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('provider.offers_count', 1)
+                ->where('provider.reviews_count', 2)
+                ->where('provider.reviews_avg_rating', fn ($avg) => abs(((float) $avg) - 4.5) < 0.0001)
             );
     }
 }
