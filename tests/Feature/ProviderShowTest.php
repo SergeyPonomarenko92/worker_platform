@@ -143,6 +143,59 @@ class ProviderShowTest extends TestCase
             );
     }
 
+    public function test_provider_page_all_portfolio_does_not_load_all_offers_or_reviews_by_default(): void
+    {
+        Carbon::setTestNow(now());
+
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        // Published portfolio (more than default preload limit 60)
+        PortfolioPost::factory()->for($provider)->count(80)->create([
+            'published_at' => now()->subDay(),
+        ]);
+
+        // Active offers (more than default preload limit 10)
+        Offer::factory()->count(15)->for($provider)->create([
+            'is_active' => true,
+        ]);
+
+        // Reviews (more than default preload limit 20)
+        $client = User::factory()->create();
+        for ($i = 0; $i < 30; $i++) {
+            $deal = Deal::factory()->create([
+                'business_profile_id' => $provider->id,
+                'client_user_id' => $client->id,
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
+
+            Review::factory()->create([
+                'deal_id' => $deal->id,
+                'business_profile_id' => $provider->id,
+                'client_user_id' => $client->id,
+            ]);
+        }
+
+        $this
+            ->get('/providers/'.$provider->slug.'?all_portfolio=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('loadAllPortfolio', true)
+                ->where('loadAllOffers', false)
+                ->where('loadAllReviews', false)
+                ->where('provider.published_portfolio_posts_count', 80)
+                ->where('provider.offers_count', 15)
+                ->where('provider.reviews_count', 30)
+                ->has('provider.portfolio_posts', 80)
+                ->has('provider.offers', 10)
+                ->has('provider.reviews', 20)
+            );
+    }
+
     public function test_provider_page_shows_only_published_portfolio_posts(): void
     {
         Carbon::setTestNow(now());
