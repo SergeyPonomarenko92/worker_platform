@@ -20,11 +20,24 @@
   - Provider cabinet: у списку профілів бейдж Активний/Неактивний + лінк на публічну сторінку.
   - Tests: суттєво розширено покриття фільтрів (ціна/include_no_price, дерево категорій, sort edge-cases).
   - Offers: валідація дозволяє `price_to` без `price_from`.
-- 2026-02-25: Stage 5 polish (Catalog/Provider):
-  - Catalog: reset disabled без активних фільтрів; чіпи обрізають довгі значення; додано фільтр `provider` (slug); a11y (labels/fieldset) + focus ring для кнопок видалення чіпів.
-  - Provider public page: CTA/UX для секцій (відгуки/пропозиції), `?all_offers=1` для підвантаження всіх офферів на сторінці, збереження `all_*` query params; robustness для eligibleDealId (ігноруємо completed без `completed_at`).
+- 2026-02-25: Stage 5 polish (Catalog/Provider/Auth/a11y):
+  - Catalog:
+    - reset disabled без активних фільтрів + підказки/tooltip-и; helper-hint для ціни.
+    - чіпи: обрізання довгих значень (q/city/provider/category) + повні значення в tooltip.
+    - фільтр `provider` (slug) + нормалізація (можна вставляти URL `/providers/{slug}` — slug витягується).
+    - пагінація: `aria-current`, коректний focus-visible, disabled елементи без “порожніх” лінків.
+    - карточка оффера: імʼя провайдера — лінк на `/providers/{slug}`.
+  - Provider public page:
+    - CTA/UX для секцій (відгуки/пропозиції/портфоліо): “показати всі”, `?all_offers=1`, `?all_portfolio=1`, збереження `all_*` query params.
+    - anchors для секцій (portfolio/offers/reviews).
+    - контакти: телефон `tel:` + адреса/місто → Google Maps (noopener).
+    - robustness для eligibleDealId (ігноруємо completed без `completed_at`, guard по часу).
+    - perf: зменшено дефолтне preload портфоліо (повне — через `all_portfolio`).
+  - Auth/UI/a11y:
+    - локалізація Forgot Password (uk).
+    - focus-visible rings для ключових CTA/лінків; flash messages озвучуються скрінрідерами.
   - UI: `formatNumber()` коректно парсить числа з пробілами/NBSP/апострофами.
-  - Tests: додано/прискорено тести (provider show preload limits, deals offer belongs to BP).
+  - Tests: додано/підтягнуто покриття (provider show preload limits, all_portfolio behavior, deals offer belongs to BP тощо).
 
 ## Current status
 - Branch: `main`
