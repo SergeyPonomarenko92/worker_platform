@@ -194,15 +194,29 @@ onMounted(() => {
               Відгуків: <span class="font-medium text-gray-800">0</span>
             </div>
 
-            <button
+            <div
               v-if="portfolioTotalCount !== undefined && portfolioTotalCount !== null && portfolioTotalCount > 0"
-              type="button"
-              class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              :aria-label="`Перейти до секції портфоліо. Робіт: ${portfolioTotalCount}`"
-              @click="scrollToSection(portfolioSectionRef)"
+              class="flex items-center gap-2"
             >
-              Робіт: <span class="font-medium text-gray-800">{{ portfolioTotalCount }}</span>
-            </button>
+              <button
+                type="button"
+                class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                :aria-label="`Перейти до секції портфоліо. Робіт: ${portfolioTotalCount}`"
+                @click="scrollToSection(portfolioSectionRef)"
+              >
+                Робіт: <span class="font-medium text-gray-800">{{ portfolioTotalCount }}</span>
+              </button>
+
+              <Link
+                v-if="portfolioTotalCount > 18 && !loadAllPortfolio"
+                class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+                :href="providerPageAllPortfolioUrl"
+                preserve-scroll
+                :aria-label="`Показати всі роботи (усього: ${portfolioTotalCount})`"
+              >
+                всі
+              </Link>
+            </div>
             <div v-else-if="portfolioTotalCount === 0" class="text-gray-600">
               Робіт: <span class="font-medium text-gray-800">0</span>
             </div>
