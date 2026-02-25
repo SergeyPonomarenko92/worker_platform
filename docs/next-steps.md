@@ -70,7 +70,7 @@
    - [ ] Catalog: дрібний UI polish фільтрів/чіпів (візуальна ієрархія, підказки)
    - [x] Catalog: edge-case test на query-string комбінації (category+price+sort)
    - [x] Provider public page: CTA/UX для контенту (відгуки/пропозиції: “показати всі”, підвантаження all_offers)
-   - [ ] Provider public page: CTA/UX для портфоліо (наприклад, “Показати всі роботи”, якщо постів багато)
+   - [x] Provider public page: CTA/UX для портфоліо (“Показати всі роботи”/load all через all_portfolio=1)
 2) Техборг:
    - [ ] ревізія індексів під реальні запити (EXPLAIN) + аудит N+1
    - [ ] привести до спільних UI-компонентів (empty-state/card) там, де ще залишився “сирий” текст
