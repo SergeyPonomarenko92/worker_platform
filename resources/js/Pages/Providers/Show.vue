@@ -236,7 +236,7 @@ onMounted(() => {
       </div>
 
       <!-- Latest portfolio -->
-      <div ref="portfolioSectionRef" class="mt-8">
+      <div id="portfolio" ref="portfolioSectionRef" class="mt-8">
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Останні роботи</h2>
           <Link
@@ -337,7 +337,7 @@ onMounted(() => {
       </div>
 
       <!-- Offers -->
-      <div ref="offersSectionRef" class="mt-8">
+      <div id="offers" ref="offersSectionRef" class="mt-8">
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Пропозиції</h2>
 
@@ -413,7 +413,7 @@ onMounted(() => {
       </div>
 
       <!-- Reviews -->
-      <div ref="reviewsSectionRef" class="mt-8">
+      <div id="reviews" ref="reviewsSectionRef" class="mt-8">
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Відгуки</h2>
           <div class="flex items-center gap-4">
