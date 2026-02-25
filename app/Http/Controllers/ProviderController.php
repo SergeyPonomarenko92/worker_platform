@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\BusinessProfile;
 use App\Models\Deal;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProviderController extends Controller
 {
-    public function show(string $slug)
+    public function show(Request $request, string $slug)
     {
+        $loadAllPortfolio = $request->boolean('all_portfolio');
+
         $provider = BusinessProfile::query()
             ->where('slug', $slug)
             ->where('is_active', true)
@@ -31,7 +34,8 @@ class ProviderController extends Controller
                     ->whereNotNull('published_at')
                     ->where('published_at', '<=', now())
                     ->latest('published_at')
-                    ->limit(60),
+                    ->when(! $loadAllPortfolio, fn ($q) => $q->limit(60))
+                    ->when($loadAllPortfolio, fn ($q) => $q->limit(200)),
                 'stories' => fn ($q) => $q->where('expires_at', '>', now())->latest()->limit(20),
                 'reviews' => fn ($q) => $q->with(['client:id,name'])->latest()->limit(20),
             ])
@@ -51,6 +55,7 @@ class ProviderController extends Controller
         return Inertia::render('Providers/Show', [
             'provider' => $provider,
             'eligibleDealId' => $eligibleDealId,
+            'loadAllPortfolio' => $loadAllPortfolio,
         ]);
     }
 }

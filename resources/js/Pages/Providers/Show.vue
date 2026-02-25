@@ -7,13 +7,14 @@ import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk } from
 const props = defineProps({
   provider: Object,
   eligibleDealId: Number,
+  loadAllPortfolio: Boolean,
 })
 
 const ratingText = () => formatAvgRatingUk(props.provider?.reviews_avg_rating)
 const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
 
 const portfolioLimit = 6
-const showAllPortfolio = ref(false)
+const showAllPortfolio = ref(!!props.loadAllPortfolio)
 const portfolioSectionRef = ref(null)
 
 const portfolioPosts = computed(() => props.provider?.portfolio_posts || [])
@@ -121,19 +122,22 @@ const toggleReviews = () => {
       <div ref="portfolioSectionRef" class="mt-8">
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Останні роботи</h2>
+          <Link
+            v-if="hasMorePortfolio && !loadAllPortfolio && !portfolioCanLoadAll"
+            class="text-sm text-blue-600 hover:underline"
+            :href="route('providers.show', { slug: provider.slug, all_portfolio: 1 })"
+            preserve-scroll
+          >
+            Дивитися всі ({{ portfolioTotalCount }})
+          </Link>
+
           <button
-            v-if="hasMorePortfolio"
+            v-else-if="hasMorePortfolio"
             type="button"
             class="text-sm text-blue-600 hover:underline"
             @click="togglePortfolio"
           >
-            {{
-              showAllPortfolio
-                ? 'Згорнути'
-                : portfolioCanLoadAll
-                  ? `Дивитися всі (${portfolioTotalCount})`
-                  : `Дивитися більше (показати до ${portfolioLoadedCount} з ${portfolioTotalCount})`
-            }}
+            {{ showAllPortfolio ? 'Згорнути' : 'Дивитися всі (' + portfolioTotalCount + ')' }}
           </button>
         </div>
 

@@ -217,4 +217,42 @@ class ProviderShowTest extends TestCase
 
         $this->assertNotEquals($completedWithoutReview->id, $newestCompletedWithoutReview->id);
     }
+
+    public function test_provider_page_can_load_all_portfolio_posts_via_query_param(): void
+    {
+        Carbon::setTestNow(now());
+
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        // More than the default preload limit (60)
+        PortfolioPost::factory()
+            ->count(65)
+            ->for($provider)
+            ->create([
+                'published_at' => now()->subDay(),
+            ]);
+
+        $this
+            ->get('/providers/'.$provider->slug)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('loadAllPortfolio', false)
+                ->where('provider.published_portfolio_posts_count', 65)
+                ->has('provider.portfolio_posts', 60)
+            );
+
+        $this
+            ->get('/providers/'.$provider->slug.'?all_portfolio=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('loadAllPortfolio', true)
+                ->where('provider.published_portfolio_posts_count', 65)
+                ->has('provider.portfolio_posts', 65)
+            );
+    }
 }
