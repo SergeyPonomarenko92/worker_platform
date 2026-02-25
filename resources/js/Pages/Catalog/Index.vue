@@ -200,17 +200,22 @@ function goFirstPage() {
             >
               Очистити всі фільтри
             </button>
-            <button
+            <span
               v-for="chip in activeChips"
               :key="chip.key"
-              type="button"
-              class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
-              @click="clearChip(chip.key)"
-              :title="'Прибрати фільтр: ' + chip.label"
+              class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700"
+              :title="chip.label"
             >
               <span class="whitespace-nowrap">{{ chip.label }}</span>
-              <span class="text-gray-400">×</span>
-            </button>
+              <button
+                type="button"
+                class="text-gray-400 hover:text-gray-700"
+                :aria-label="'Прибрати фільтр: ' + chip.label"
+                @click="clearChip(chip.key)"
+              >
+                ×
+              </button>
+            </span>
           </div>
         </div>
         <div class="w-full max-w-md">
