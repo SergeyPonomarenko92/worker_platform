@@ -22,7 +22,8 @@ const portfolioLoadedCount = computed(() => portfolioPosts.value.length)
 const portfolioTotalCount = computed(() => props.provider?.published_portfolio_posts_count ?? portfolioLoadedCount.value)
 
 // The backend currently preloads only the latest N items (see ProviderController). Keep UI honest about that.
-const portfolioCanLoadAll = computed(() => portfolioTotalCount.value <= portfolioLoadedCount.value)
+// "Fully loaded" means we already received all published items in the current response.
+const portfolioIsFullyLoaded = computed(() => portfolioLoadedCount.value >= portfolioTotalCount.value)
 const hasMorePortfolio = computed(() => portfolioTotalCount.value > portfolioLimit)
 
 const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioPosts.value : portfolioPosts.value.slice(0, portfolioLimit)))
@@ -124,7 +125,7 @@ const toggleReviews = () => {
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Останні роботи</h2>
           <Link
-            v-if="hasMorePortfolio && !loadAllPortfolio && !portfolioCanLoadAll"
+            v-if="hasMorePortfolio && !loadAllPortfolio && !portfolioIsFullyLoaded"
             class="text-sm text-blue-600 hover:underline"
             :href="route('providers.show', { slug: provider.slug, all_portfolio: 1 })"
             preserve-scroll
@@ -160,7 +161,7 @@ const toggleReviews = () => {
           </div>
 
           <div
-            v-if="hasMorePortfolio && !showAllPortfolio && !loadAllPortfolio && !portfolioCanLoadAll"
+            v-if="hasMorePortfolio && !showAllPortfolio && !loadAllPortfolio && !portfolioIsFullyLoaded"
             class="mt-4 flex justify-center"
           >
             <Link
@@ -184,7 +185,7 @@ const toggleReviews = () => {
           Показано {{ portfolioLimit }} з {{ portfolioTotalCount }}
         </div>
 
-        <div v-if="showAllPortfolio && !portfolioCanLoadAll" class="mt-3 text-sm text-gray-500">
+        <div v-if="showAllPortfolio && !portfolioIsFullyLoaded" class="mt-3 text-sm text-gray-500">
           Показано останні {{ portfolioLoadedCount }} з {{ portfolioTotalCount }}.
         </div>
       </div>
