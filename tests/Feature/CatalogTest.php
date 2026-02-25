@@ -158,7 +158,7 @@ class CatalogTest extends TestCase
             );
     }
 
-    public function test_catalog_filters_by_provider_slug_and_normalizes_whitespace(): void
+    public function test_catalog_filters_by_provider_slug_case_insensitive_and_normalizes_whitespace(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
 
@@ -180,7 +180,7 @@ class CatalogTest extends TestCase
         ]);
 
         $this
-            ->get('/catalog?provider=%20%20demo-provider%20%20')
+            ->get('/catalog?provider=%20%20DEMO-PROVIDER%20%20')
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
