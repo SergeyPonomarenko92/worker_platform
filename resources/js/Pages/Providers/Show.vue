@@ -15,9 +15,15 @@ const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
 const portfolioLimit = 6
 const showAllPortfolio = ref(false)
 const portfolioSectionRef = ref(null)
+
 const portfolioPosts = computed(() => props.provider?.portfolio_posts || [])
-const portfolioTotalCount = computed(() => props.provider?.published_portfolio_posts_count ?? portfolioPosts.value.length)
+const portfolioLoadedCount = computed(() => portfolioPosts.value.length)
+const portfolioTotalCount = computed(() => props.provider?.published_portfolio_posts_count ?? portfolioLoadedCount.value)
+
+// The backend currently preloads only the latest N items (see ProviderController). Keep UI honest about that.
+const portfolioCanLoadAll = computed(() => portfolioTotalCount.value <= portfolioLoadedCount.value)
 const hasMorePortfolio = computed(() => portfolioTotalCount.value > portfolioLimit)
+
 const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioPosts.value : portfolioPosts.value.slice(0, portfolioLimit)))
 
 const togglePortfolio = () => {
@@ -121,7 +127,13 @@ const toggleReviews = () => {
             class="text-sm text-blue-600 hover:underline"
             @click="togglePortfolio"
           >
-            {{ showAllPortfolio ? 'Згорнути' : `Дивитися всі (${portfolioTotalCount})` }}
+            {{
+              showAllPortfolio
+                ? 'Згорнути'
+                : portfolioCanLoadAll
+                  ? `Дивитися всі (${portfolioTotalCount})`
+                  : `Дивитися більше (показати до ${portfolioLoadedCount} з ${portfolioTotalCount})`
+            }}
           </button>
         </div>
 
@@ -150,6 +162,10 @@ const toggleReviews = () => {
 
         <div v-if="hasMorePortfolio && !showAllPortfolio" class="mt-3 text-sm text-gray-500">
           Показано {{ portfolioLimit }} з {{ portfolioTotalCount }}
+        </div>
+
+        <div v-if="showAllPortfolio && !portfolioCanLoadAll" class="mt-3 text-sm text-gray-500">
+          Показано останні {{ portfolioLoadedCount }} з {{ portfolioTotalCount }}.
         </div>
       </div>
 
