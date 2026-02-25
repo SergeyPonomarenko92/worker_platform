@@ -217,14 +217,15 @@ function goFirstPage() {
       </div>
 
       <form class="mt-6 flex flex-wrap gap-3 items-end" @submit="onSearch">
-        <div v-if="activeChips.length" class="w-full">
+        <div class="w-full">
           <div class="flex flex-wrap items-center gap-2">
-            <div class="text-xs text-gray-500 mr-2">Активні фільтри:</div>
+            <div v-if="activeChips.length" class="text-xs text-gray-500 mr-2">Активні фільтри:</div>
             <button
               type="button"
-              class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs text-white hover:bg-black"
+              :disabled="!hasActiveFilters"
+              class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs text-white hover:bg-black disabled:opacity-50 disabled:hover:bg-gray-900"
               @click="resetFilters"
-              title="Очистити всі фільтри"
+              :title="hasActiveFilters ? 'Очистити всі фільтри' : 'Немає активних фільтрів'"
             >
               Очистити всі фільтри
             </button>
