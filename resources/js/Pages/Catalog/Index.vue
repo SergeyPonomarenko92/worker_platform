@@ -500,7 +500,7 @@ function goFirstPage() {
           <Link
             v-if="offers.prev_page_url"
             :href="offers.prev_page_url"
-            class="text-sm text-blue-600 hover:underline"
+            class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
           >
             Назад
           </Link>
@@ -509,24 +509,28 @@ function goFirstPage() {
 
         <nav aria-label="Пагінація" class="flex flex-wrap items-center justify-center gap-1">
           <template v-if="offers.links?.length">
-            <span
-              v-for="(l, idx) in offers.links"
-              :key="idx"
-              class="px-2 py-1 text-sm rounded"
-              :class="l.active ? 'bg-gray-900 text-white' : (l.url ? 'text-gray-700' : 'text-gray-300')"
-            >
+            <template v-for="(l, idx) in offers.links" :key="idx">
+              <span
+                v-if="l.active"
+                class="px-2 py-1 text-sm rounded bg-gray-900 text-white"
+                aria-current="page"
+              >
+                {{ l.label }}
+              </span>
+
               <Link
-                v-if="l.url"
+                v-else-if="l.url"
                 :href="l.url"
-                class="hover:underline focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 rounded"
-                preserve-scroll
-                preserve-state
-                :aria-current="l.active ? 'page' : undefined"
+                class="px-2 py-1 text-sm rounded text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                :aria-label="'Перейти на сторінку: ' + l.label"
               >
                 <span v-html="l.label" />
               </Link>
-              <span v-else aria-disabled="true" v-html="l.label" />
-            </span>
+
+              <span v-else class="px-2 py-1 text-sm rounded text-gray-300">
+                {{ l.label }}
+              </span>
+            </template>
           </template>
           <template v-else>
             <div class="text-sm text-gray-500">Сторінка {{ offers.current_page }} з {{ offers.last_page }}</div>
@@ -537,7 +541,7 @@ function goFirstPage() {
           <Link
             v-if="offers.next_page_url"
             :href="offers.next_page_url"
-            class="text-sm text-blue-600 hover:underline"
+            class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
           >
             Далі
           </Link>
