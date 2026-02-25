@@ -352,6 +352,9 @@ function goFirstPage() {
                 @keydown.enter.prevent="onSearch"
               />
             </div>
+            <div class="mt-1 text-[11px] text-gray-400">
+              Можна заповнити тільки одне поле («від» або «до») або обидва.
+            </div>
             <label
               class="mt-2 inline-flex items-center gap-2 text-xs text-gray-600"
               :title="!hasPriceBounds ? 'Спочатку задайте межі ціни (від/до), щоб увімкнути цей фільтр.' : ''"
