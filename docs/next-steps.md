@@ -62,7 +62,8 @@
 
 ## TODO (next session)
 1) Stage 5 (Polish):
-   - [ ] Catalog: дрібний UI polish фільтрів/чіпів (візуальна ієрархія, підказки) + 1 edge-case test на query-string комбінації (category+price+sort)
+   - [ ] Catalog: дрібний UI polish фільтрів/чіпів (візуальна ієрархія, підказки)
+   - [x] Catalog: edge-case test на query-string комбінації (category+price+sort)
    - [ ] Provider public page: CTA/UX для контенту (наприклад, кнопка “Показати всі роботи”, якщо постів багато; або дрібні покращення відображення відгуків)
 2) Техборг:
    - [ ] ревізія індексів під реальні запити (EXPLAIN) + аудит N+1
