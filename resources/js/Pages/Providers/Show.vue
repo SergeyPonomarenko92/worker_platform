@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk } from '@/lib/formatters'
 import { providerShowUrl } from '@/lib/providerShowUrl'
@@ -21,6 +21,7 @@ const providerPageAllOffersUrl = computed(() =>
     all_offers: true,
     all_portfolio: props.loadAllPortfolio,
     all_reviews: props.loadAllReviews,
+    hash: 'offers',
   })
 )
 
@@ -29,6 +30,7 @@ const providerPageAllPortfolioUrl = computed(() =>
     all_portfolio: true,
     all_offers: props.loadAllOffers,
     all_reviews: props.loadAllReviews,
+    hash: 'portfolio',
   })
 )
 
@@ -37,6 +39,7 @@ const providerPageAllReviewsUrl = computed(() =>
     all_reviews: true,
     all_offers: props.loadAllOffers,
     all_portfolio: props.loadAllPortfolio,
+    hash: 'reviews',
   })
 )
 
@@ -113,6 +116,27 @@ const toggleOffers = () => {
 const scrollToSection = (sectionRef) => {
   sectionRef?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
+
+onMounted(() => {
+  const hash = typeof window !== 'undefined' ? window.location.hash : ''
+  if (!hash) return
+
+  const target = decodeURIComponent(hash.replace(/^#/, ''))
+
+  const map = {
+    portfolio: portfolioSectionRef,
+    offers: offersSectionRef,
+    reviews: reviewsSectionRef,
+  }
+
+  const sectionRef = map[target]
+  if (!sectionRef) return
+
+  // Wait until DOM is painted (Inertia navigation may mount before layout settles).
+  requestAnimationFrame(() => {
+    sectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
+})
 </script>
 
 <template>
