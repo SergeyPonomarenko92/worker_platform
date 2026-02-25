@@ -316,6 +316,43 @@ class ProviderShowTest extends TestCase
             );
     }
 
+    public function test_provider_page_ignores_completed_deals_without_completed_at_when_suggesting_review(): void
+    {
+        $providerOwner = User::factory()->create();
+        $client = User::factory()->create();
+
+        $provider = BusinessProfile::factory()->create([
+            'user_id' => $providerOwner->id,
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        $completedButNoTimestamp = Deal::factory()->create([
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'status' => 'completed',
+            'completed_at' => null,
+        ]);
+
+        $properCompleted = Deal::factory()->create([
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        $this
+            ->actingAs($client)
+            ->get('/providers/'.$provider->slug)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('eligibleDealId', $properCompleted->id)
+            );
+
+        $this->assertNotEquals($completedButNoTimestamp->id, $properCompleted->id);
+    }
+
     public function test_provider_page_can_load_all_reviews_via_query_param(): void
     {
         Carbon::setTestNow(now());

@@ -112,6 +112,7 @@ class ProviderController extends Controller
                 ->where('business_profile_id', $provider->id)
                 ->where('client_user_id', auth()->id())
                 ->where('status', 'completed')
+                ->whereNotNull('completed_at')
                 ->whereDoesntHave('review')
                 ->latest('completed_at')
                 ->value('id');
