@@ -298,7 +298,10 @@ function goFirstPage() {
               @keydown.enter.prevent="onSearch"
             />
           </div>
-          <label class="mt-2 inline-flex items-center gap-2 text-xs text-gray-600">
+          <label
+            class="mt-2 inline-flex items-center gap-2 text-xs text-gray-600"
+            :title="!hasPriceBounds ? 'Спочатку задайте межі ціни (від/до), щоб увімкнути цей фільтр.' : ''"
+          >
             <input
               type="checkbox"
               v-model="form.include_no_price"
@@ -307,6 +310,9 @@ function goFirstPage() {
             />
             <span :class="!hasPriceBounds ? 'text-gray-400' : ''">Включати «ціна за домовленістю»</span>
           </label>
+          <div v-if="!hasPriceBounds" class="mt-1 text-xs text-gray-400">
+            Підказка: цей фільтр активується після введення «від» або «до».
+          </div>
         </div>
 
         <div>
