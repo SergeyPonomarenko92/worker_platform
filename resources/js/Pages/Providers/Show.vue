@@ -252,6 +252,8 @@ onMounted(() => {
             v-else-if="hasMorePortfolio"
             type="button"
             class="text-sm text-blue-600 hover:underline"
+            :aria-expanded="showAllPortfolio"
+            aria-controls="provider-portfolio-list"
             @click="togglePortfolio"
           >
             {{ showAllPortfolio ? 'Згорнути' : 'Дивитися всі (' + portfolioTotalCount + ')' }}
@@ -259,7 +261,7 @@ onMounted(() => {
         </div>
 
         <template v-if="portfolioPostsToShow.length">
-          <div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div id="provider-portfolio-list" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
             <div
               v-for="post in portfolioPostsToShow"
               :key="post.id"
@@ -280,6 +282,8 @@ onMounted(() => {
               v-if="!showAllPortfolio && portfolioCanToggleWithoutReload"
               type="button"
               class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              :aria-expanded="showAllPortfolio"
+              aria-controls="provider-portfolio-list"
               @click="togglePortfolio"
             >
               Показати всі роботи ({{ portfolioTotalCount }})
@@ -307,6 +311,8 @@ onMounted(() => {
               v-else
               type="button"
               class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+              :aria-expanded="showAllPortfolio"
+              aria-controls="provider-portfolio-list"
               @click="togglePortfolio"
             >
               Згорнути роботи
@@ -348,6 +354,8 @@ onMounted(() => {
             v-else-if="hasMoreOffers"
             type="button"
             class="text-sm text-blue-600 hover:underline"
+            :aria-expanded="showAllOffers"
+            aria-controls="provider-offers-list"
             @click="toggleOffers"
           >
             {{ showAllOffers ? 'Згорнути' : `Дивитися всі (${offersTotalCount})` }}
@@ -355,7 +363,7 @@ onMounted(() => {
         </div>
 
         <template v-if="offersToShow.length">
-          <div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div id="provider-offers-list" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div
               v-for="offer in offersToShow"
               :key="offer.id"
@@ -422,6 +430,8 @@ onMounted(() => {
               v-else-if="hasMoreReviews"
               type="button"
               class="text-sm text-blue-600 hover:underline"
+              :aria-expanded="showAllReviews"
+              aria-controls="provider-reviews-list"
               @click="toggleReviews"
             >
               {{ showAllReviews ? 'Згорнути' : `Дивитися всі (${reviewsTotalCount})` }}
@@ -438,7 +448,7 @@ onMounted(() => {
         </div>
 
         <template v-if="reviewsToShow.length">
-          <div class="mt-3 space-y-3">
+          <div id="provider-reviews-list" class="mt-3 space-y-3">
             <div
               v-for="review in reviewsToShow"
               :key="review.id"
