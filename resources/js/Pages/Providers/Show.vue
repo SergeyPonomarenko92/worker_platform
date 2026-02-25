@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
+import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk } from '@/lib/formatters'
 
 const props = defineProps({
@@ -76,8 +77,8 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
           </a>
         </div>
 
-        <div v-else class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600">
-          Поки що немає історій
+        <div v-else class="mt-3">
+          <EmptyStateCard title="Поки що немає історій" />
         </div>
       </div>
 
@@ -111,9 +112,11 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
           </div>
         </div>
 
-        <div v-else class="mt-3 rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
-          <div class="font-medium">Поки що немає робіт</div>
-          <div class="mt-1 text-gray-600">Коли провайдер опублікує портфоліо — воно з'явиться тут.</div>
+        <div v-else class="mt-3">
+          <EmptyStateCard
+            title="Поки що немає робіт"
+            description="Коли провайдер опублікує портфоліо — воно з'явиться тут."
+          />
         </div>
 
         <div v-if="hasMorePortfolio && !showAllPortfolio" class="mt-3 text-sm text-gray-500">
@@ -146,9 +149,11 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
           </div>
         </div>
 
-        <div v-else class="mt-3 rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
-          <div class="font-medium">Поки що немає пропозицій</div>
-          <div class="mt-1 text-gray-600">Коли провайдер додасть оголошення — воно з'явиться тут.</div>
+        <div v-else class="mt-3">
+          <EmptyStateCard
+            title="Поки що немає пропозицій"
+            description="Коли провайдер додасть оголошення — воно з'явиться тут."
+          />
         </div>
       </div>
 
@@ -184,12 +189,10 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
           </div>
         </div>
 
-        <div v-else class="mt-3 rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
-          <div class="font-medium">Поки що немає відгуків</div>
-          <div class="mt-1 text-gray-600">
-            Відгуки з’являються після завершення угоди.
-            <span v-if="eligibleDealId">Можете залишити свій відгук вище.</span>
-          </div>
+        <div v-else class="mt-3">
+          <EmptyStateCard title="Поки що немає відгуків" description="Відгуки з’являються після завершення угоди.">
+            <span v-if="eligibleDealId" class="text-gray-600">Можете залишити свій відгук вище.</span>
+          </EmptyStateCard>
         </div>
       </div>
     </div>
