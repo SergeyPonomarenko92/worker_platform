@@ -158,6 +158,38 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_filters_by_provider_slug_and_normalizes_whitespace(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bpA = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
+        $bpB = BusinessProfile::factory()->create(['slug' => 'other-provider', 'city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bpA)->create([
+            'category_id' => $cat->id,
+            'title' => 'Demo provider offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bpB)->create([
+            'category_id' => $cat->id,
+            'title' => 'Other provider offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?provider=%20%20demo-provider%20%20')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.provider', 'demo-provider')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Demo provider offer')
+            );
+    }
+
     public function test_catalog_filters_by_city_prefix_case_insensitive(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
