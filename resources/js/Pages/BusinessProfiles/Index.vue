@@ -55,17 +55,42 @@ const props = defineProps({
                             <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm">
                                 <Link
                                     :href="route('providers.show', p.slug)"
-                                    class="text-indigo-600 hover:underline"
+                                    class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
                                     Публічна сторінка
                                 </Link>
-                                <Link :href="route('dashboard.offers.index', p.id)" class="text-indigo-600 hover:underline">Пропозиції</Link>
-                                <Link :href="route('dashboard.portfolio-posts.index', p.id)" class="text-indigo-600 hover:underline">Портфоліо</Link>
-                                <Link :href="route('dashboard.stories.index', p.id)" class="text-indigo-600 hover:underline">Історії</Link>
-                                <Link :href="route('dashboard.deals.index', p.id)" class="text-indigo-600 hover:underline">Угоди</Link>
-                                <Link :href="route('dashboard.business-profiles.edit', p.id)" class="text-indigo-600 hover:underline">Редагувати</Link>
+                                <Link
+                                    :href="route('dashboard.offers.index', p.id)"
+                                    class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                >
+                                    Пропозиції
+                                </Link>
+                                <Link
+                                    :href="route('dashboard.portfolio-posts.index', p.id)"
+                                    class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                >
+                                    Портфоліо
+                                </Link>
+                                <Link
+                                    :href="route('dashboard.stories.index', p.id)"
+                                    class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                >
+                                    Історії
+                                </Link>
+                                <Link
+                                    :href="route('dashboard.deals.index', p.id)"
+                                    class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                >
+                                    Угоди
+                                </Link>
+                                <Link
+                                    :href="route('dashboard.business-profiles.edit', p.id)"
+                                    class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                >
+                                    Редагувати
+                                </Link>
                             </div>
                         </li>
                     </ul>
