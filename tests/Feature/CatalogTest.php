@@ -752,6 +752,39 @@ class CatalogTest extends TestCase
 
 
 
+    public function test_catalog_can_filter_by_provider_slug(): void
+    {
+        $cat = Category::factory()->create();
+
+        $bp1 = BusinessProfile::factory()->create(['slug' => 'provider-one', 'city' => 'Київ', 'is_active' => true]);
+        $bp2 = BusinessProfile::factory()->create(['slug' => 'provider-two', 'city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp1)->create([
+            'category_id' => $cat->id,
+            'title' => 'Offer one',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp2)->create([
+            'category_id' => $cat->id,
+            'title' => 'Offer two',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?provider=provider-one')
+            ->assertOk()
+            ->assertSessionHasNoErrors()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.provider', 'provider-one')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Offer one')
+            );
+    }
+
     public function test_catalog_pagination_invalid_page_defaults_to_first_page(): void
     {
         Carbon::setTestNow(now());

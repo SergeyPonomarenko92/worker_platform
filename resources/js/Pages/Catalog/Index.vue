@@ -14,6 +14,7 @@ const form = reactive({
   type: props.filters?.type || '',
   category_id: props.filters?.category_id || '',
   city: props.filters?.city || '',
+  provider: props.filters?.provider || '',
   price_from: props.filters?.price_from ?? '',
   price_to: props.filters?.price_to ?? '',
   include_no_price: props.filters?.include_no_price || false,
@@ -28,6 +29,7 @@ function submit() {
       type: form.type || undefined,
       category_id: form.category_id || undefined,
       city: (form.city || '').trim() || undefined,
+      provider: (form.provider || '').trim() || undefined,
       price_from: String(form.price_from).trim() || undefined,
       price_to: String(form.price_to).trim() || undefined,
       include_no_price:
@@ -81,6 +83,7 @@ const activeChips = computed(() => {
   if (form.type) chips.push({ key: 'type', label: `Тип: ${typeLabel(form.type)}` })
   if (form.category_id) chips.push({ key: 'category_id', label: `Категорія: ${categoryLabel(form.category_id)}` })
   if ((form.city || '').trim()) chips.push({ key: 'city', label: `Місто: ${String((form.city || '').trim()).slice(0, 30)}` })
+  if ((form.provider || '').trim()) chips.push({ key: 'provider', label: `Провайдер: ${String((form.provider || '').trim()).slice(0, 30)}` })
   if (String(form.price_from || '').trim()) chips.push({ key: 'price_from', label: `Ціна від: ${formatNumber(String(form.price_from).trim())}` })
   if (String(form.price_to || '').trim()) chips.push({ key: 'price_to', label: `Ціна до: ${formatNumber(String(form.price_to).trim())}` })
   if (form.include_no_price && (String(form.price_from || '').trim() || String(form.price_to || '').trim())) {
@@ -98,6 +101,7 @@ function clearChip(key) {
   if (key === 'type') form.type = ''
   if (key === 'category_id') form.category_id = ''
   if (key === 'city') form.city = ''
+  if (key === 'provider') form.provider = ''
   if (key === 'price_from') form.price_from = ''
   if (key === 'price_to') form.price_to = ''
   if (key === 'include_no_price') form.include_no_price = false
@@ -156,6 +160,7 @@ function resetFilters() {
   form.type = ''
   form.category_id = ''
   form.city = ''
+  form.provider = ''
   form.price_from = ''
   form.price_to = ''
   form.include_no_price = false

@@ -66,6 +66,7 @@ const toggleReviews = () => {
         </div>
         <div class="flex gap-3">
           <Link href="/catalog" class="text-sm text-blue-600 hover:underline">Каталог</Link>
+          <Link :href="`/catalog?provider=${provider.slug}`" class="text-sm text-blue-600 hover:underline">Пропозиції цього провайдера</Link>
         </div>
       </div>
 

@@ -24,6 +24,7 @@ class CatalogController extends Controller
             'price_to' => ['nullable', 'integer', 'min:0'],
             'include_no_price' => ['nullable', 'boolean'],
             'sort' => ['nullable', 'string', 'max:32'],
+            'provider' => ['nullable', 'string', 'max:255'],
         ]);
 
         $data = $validator->fails()
@@ -54,6 +55,7 @@ class CatalogController extends Controller
         $city = preg_replace('/\s+/', ' ', trim((string) ($data['city'] ?? '')));
         $cityLower = mb_strtolower($city);
         $q = preg_replace('/\s+/', ' ', trim((string) ($data['q'] ?? '')));
+        $providerSlug = preg_replace('/\s+/', ' ', trim((string) ($data['provider'] ?? '')));
         $priceFrom = $data['price_from'] ?? null;
         $priceTo = $data['price_to'] ?? null;
         $includeNoPrice = (bool) ($data['include_no_price'] ?? false);
@@ -93,6 +95,7 @@ class CatalogController extends Controller
             ->when($type, fn ($query) => $query->where('type', $type))
             ->when(is_array($categoryIds) && count($categoryIds), fn ($query) => $query->whereIn('category_id', $categoryIds))
             ->when($categoryId && (!is_array($categoryIds) || !count($categoryIds)), fn ($query) => $query->where('category_id', $categoryId))
+            ->when($providerSlug, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->where('slug', $providerSlug)))
             ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->whereRaw('lower(city) like ?', ["{$cityLower}%"])))
             ->when($q, fn ($query) => $query->where(function ($sub) use ($q) {
                 $sub->where('title', 'ilike', "%{$q}%")
@@ -146,6 +149,7 @@ class CatalogController extends Controller
                 'category_id' => $categoryId,
                 'city' => $city,
                 'q' => $q,
+                'provider' => $providerSlug,
                 'price_from' => $priceFrom,
                 'price_to' => $priceTo,
                 'include_no_price' => $includeNoPrice,
