@@ -20,7 +20,11 @@
   - Provider cabinet: у списку профілів бейдж Активний/Неактивний + лінк на публічну сторінку.
   - Tests: суттєво розширено покриття фільтрів (ціна/include_no_price, дерево категорій, sort edge-cases).
   - Offers: валідація дозволяє `price_to` без `price_from`.
-- 2026-02-25: Provider public page — поліпшено empty-state для відгуків (card + пояснення).
+- 2026-02-25: Stage 5 polish (Catalog/Provider):
+  - Catalog: reset disabled без активних фільтрів; чіпи обрізають довгі значення; додано фільтр `provider` (slug); a11y (labels/fieldset) + focus ring для кнопок видалення чіпів.
+  - Provider public page: CTA/UX для секцій (відгуки/пропозиції), `?all_offers=1` для підвантаження всіх офферів на сторінці, збереження `all_*` query params; robustness для eligibleDealId (ігноруємо completed без `completed_at`).
+  - UI: `formatNumber()` коректно парсить числа з пробілами/NBSP/апострофами.
+  - Tests: додано/прискорено тести (provider show preload limits, deals offer belongs to BP).
 
 ## Current status
 - Branch: `main`
@@ -65,7 +69,8 @@
 1) Stage 5 (Polish):
    - [ ] Catalog: дрібний UI polish фільтрів/чіпів (візуальна ієрархія, підказки)
    - [x] Catalog: edge-case test на query-string комбінації (category+price+sort)
-   - [ ] Provider public page: CTA/UX для контенту (наприклад, кнопка “Показати всі роботи”, якщо постів багато; або дрібні покращення відображення відгуків)
+   - [x] Provider public page: CTA/UX для контенту (відгуки/пропозиції: “показати всі”, підвантаження all_offers)
+   - [ ] Provider public page: CTA/UX для портфоліо (наприклад, “Показати всі роботи”, якщо постів багато)
 2) Техборг:
    - [ ] ревізія індексів під реальні запити (EXPLAIN) + аудит N+1
    - [ ] привести до спільних UI-компонентів (empty-state/card) там, де ще залишився “сирий” текст
