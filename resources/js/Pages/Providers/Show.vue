@@ -14,15 +14,36 @@ const normalizedWebsiteHref = () => normalizeWebsite(props.provider?.website)
 
 const portfolioLimit = 6
 const showAllPortfolio = ref(false)
+const portfolioSectionRef = ref(null)
 const portfolioPosts = computed(() => props.provider?.portfolio_posts || [])
 const hasMorePortfolio = computed(() => portfolioPosts.value.length > portfolioLimit)
 const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioPosts.value : portfolioPosts.value.slice(0, portfolioLimit)))
 
+const togglePortfolio = () => {
+  const nextValue = !showAllPortfolio.value
+  showAllPortfolio.value = nextValue
+
+  // When collapsing back to the limited view, keep user context.
+  if (!nextValue) {
+    portfolioSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
 const reviewsLimit = 5
 const showAllReviews = ref(false)
+const reviewsSectionRef = ref(null)
 const reviews = computed(() => props.provider?.reviews || [])
 const hasMoreReviews = computed(() => reviews.value.length > reviewsLimit)
 const reviewsToShow = computed(() => (showAllReviews.value ? reviews.value : reviews.value.slice(0, reviewsLimit)))
+
+const toggleReviews = () => {
+  const nextValue = !showAllReviews.value
+  showAllReviews.value = nextValue
+
+  if (!nextValue) {
+    reviewsSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
 </script>
 
 <template>
@@ -89,14 +110,14 @@ const reviewsToShow = computed(() => (showAllReviews.value ? reviews.value : rev
       </div>
 
       <!-- Latest portfolio -->
-      <div class="mt-8">
+      <div ref="portfolioSectionRef" class="mt-8">
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Останні роботи</h2>
           <button
             v-if="hasMorePortfolio"
             type="button"
             class="text-sm text-blue-600 hover:underline"
-            @click="showAllPortfolio = !showAllPortfolio"
+            @click="togglePortfolio"
           >
             {{ showAllPortfolio ? 'Згорнути' : `Дивитися всі (${portfolioPosts.length})` }}
           </button>
@@ -164,7 +185,7 @@ const reviewsToShow = computed(() => (showAllReviews.value ? reviews.value : rev
       </div>
 
       <!-- Reviews -->
-      <div class="mt-8">
+      <div ref="reviewsSectionRef" class="mt-8">
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Відгуки</h2>
           <div class="flex items-center gap-4">
@@ -172,7 +193,7 @@ const reviewsToShow = computed(() => (showAllReviews.value ? reviews.value : rev
               v-if="hasMoreReviews"
               type="button"
               class="text-sm text-blue-600 hover:underline"
-              @click="showAllReviews = !showAllReviews"
+              @click="toggleReviews"
             >
               {{ showAllReviews ? 'Згорнути' : `Дивитися всі (${reviews.length})` }}
             </button>
