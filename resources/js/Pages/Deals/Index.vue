@@ -1,27 +1,28 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import PrimaryButton from '@/Components/PrimaryButton.vue'
+import EmptyStateCard from '@/Components/EmptyStateCard.vue'
+import { Head, Link } from '@inertiajs/vue3'
 
 const props = defineProps({
     businessProfile: Object,
     deals: Array,
-});
+})
 
 const statusLabel = (status) => {
     switch (status) {
         case 'draft':
-            return 'Чернетка';
+            return 'Чернетка'
         case 'in_progress':
-            return 'В процесі';
+            return 'В процесі'
         case 'completed':
-            return 'Завершено';
+            return 'Завершено'
         case 'cancelled':
-            return 'Скасовано';
+            return 'Скасовано'
         default:
-            return status;
+            return status
     }
-};
+}
 </script>
 
 <template>
@@ -49,7 +50,17 @@ const statusLabel = (status) => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <div v-if="deals.length === 0" class="text-sm text-gray-700">Поки що немає угод.</div>
+                    <EmptyStateCard
+                        v-if="deals.length === 0"
+                        title="Поки що немає угод"
+                        description="Створіть першу угоду — після завершення клієнт зможе залишити відгук."
+                    >
+                        <div class="flex flex-wrap gap-3">
+                            <Link :href="route('dashboard.deals.create', businessProfile.id)">
+                                <PrimaryButton>Створити угоду</PrimaryButton>
+                            </Link>
+                        </div>
+                    </EmptyStateCard>
 
                     <ul v-else class="divide-y divide-gray-200">
                         <li v-for="deal in deals" :key="deal.id" class="py-3 flex items-start justify-between">

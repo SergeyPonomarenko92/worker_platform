@@ -1,13 +1,14 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import PrimaryButton from '@/Components/PrimaryButton.vue'
+import EmptyStateCard from '@/Components/EmptyStateCard.vue'
+import { Head, Link } from '@inertiajs/vue3'
 import { offerTypeLabel, formatPrice } from '@/lib/formatters'
 
 const props = defineProps({
     businessProfile: Object,
     offers: Array,
-});
+})
 </script>
 
 <template>
@@ -35,13 +36,12 @@ const props = defineProps({
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-white p-6 shadow sm:rounded-lg">
-                    <div v-if="offers.length === 0" class="rounded-lg border border-dashed border-gray-300 p-6">
-                        <div class="text-sm font-medium text-gray-900">Поки що немає пропозицій</div>
-                        <div class="mt-1 text-sm text-gray-700">
-                            Додайте першу пропозицію — вона з’явиться у каталозі та на публічній сторінці провайдера.
-                        </div>
-
-                        <div class="mt-4 flex flex-wrap gap-3">
+                    <EmptyStateCard
+                        v-if="offers.length === 0"
+                        title="Поки що немає пропозицій"
+                        description="Додайте першу пропозицію — вона з’явиться у каталозі та на публічній сторінці провайдера."
+                    >
+                        <div class="flex flex-wrap items-center gap-3">
                             <Link :href="route('dashboard.offers.create', businessProfile.id)">
                                 <PrimaryButton>Створити пропозицію</PrimaryButton>
                             </Link>
@@ -53,7 +53,7 @@ const props = defineProps({
                                 Переглянути публічну сторінку
                             </Link>
                         </div>
-                    </div>
+                    </EmptyStateCard>
 
                     <ul v-else class="divide-y divide-gray-200">
                         <li v-for="offer in offers" :key="offer.id" class="py-3 flex items-center justify-between">
@@ -62,7 +62,8 @@ const props = defineProps({
                                 <div class="text-sm text-gray-600">
                                     {{ offerTypeLabel(offer.type) }}
                                     <span v-if="offer.category">· {{ offer.category.name }}</span>
-                                    <span class="text-gray-400">·</span> <span class="font-medium text-gray-800">{{ formatPrice(offer) }}</span>
+                                    <span class="text-gray-400">·</span>
+                                    <span class="font-medium text-gray-800">{{ formatPrice(offer) }}</span>
                                 </div>
                             </div>
                             <Link :href="route('dashboard.offers.edit', [businessProfile.id, offer.id])" class="text-sm text-indigo-600 hover:underline">Редагувати</Link>
