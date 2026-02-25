@@ -165,4 +165,56 @@ class ProviderShowTest extends TestCase
                 ->where('provider.reviews_avg_rating', fn ($avg) => abs(((float) $avg) - 4.5) < 0.0001)
             );
     }
+
+    public function test_provider_page_sets_eligible_deal_id_for_logged_in_client_without_review(): void
+    {
+        $providerOwner = User::factory()->create();
+        $client = User::factory()->create();
+
+        $provider = BusinessProfile::factory()->create([
+            'user_id' => $providerOwner->id,
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        $completedWithReview = Deal::factory()->create([
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'status' => 'completed',
+            'completed_at' => now()->subDays(2),
+        ]);
+
+        Review::factory()->create([
+            'deal_id' => $completedWithReview->id,
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'rating' => 5,
+        ]);
+
+        $completedWithoutReview = Deal::factory()->create([
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'status' => 'completed',
+            'completed_at' => now()->subDay(),
+        ]);
+
+        // Newest eligible deal should be suggested.
+        $newestCompletedWithoutReview = Deal::factory()->create([
+            'business_profile_id' => $provider->id,
+            'client_user_id' => $client->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        $this
+            ->actingAs($client)
+            ->get('/providers/'.$provider->slug)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('eligibleDealId', $newestCompletedWithoutReview->id)
+            );
+
+        $this->assertNotEquals($completedWithoutReview->id, $newestCompletedWithoutReview->id);
+    }
 }
