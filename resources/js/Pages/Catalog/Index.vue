@@ -246,7 +246,7 @@ function goFirstPage() {
               <span class="whitespace-nowrap">{{ chip.label }}</span>
               <button
                 type="button"
-                class="text-gray-400 hover:text-gray-700"
+                class="rounded-full text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
                 :aria-label="'Прибрати фільтр: ' + chip.label"
                 @click="clearChip(chip.key)"
               >
