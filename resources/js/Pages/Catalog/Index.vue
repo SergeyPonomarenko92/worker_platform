@@ -426,10 +426,14 @@ function goFirstPage() {
           </select>
         </div>
 
-        <button class="rounded-md bg-black px-4 py-2 text-white">Шукати</button>
+        <button
+          class="rounded-md bg-black px-4 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+        >
+          Шукати
+        </button>
         <button
           type="button"
-          class="rounded-md border border-gray-300 px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          class="rounded-md border border-gray-300 px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
           :disabled="!hasActiveFilters"
           :title="!hasActiveFilters ? 'Немає активних фільтрів для скидання.' : ''"
           @click="resetFilters"
@@ -489,7 +493,7 @@ function goFirstPage() {
           <button
             v-if="activeChips.length"
             type="button"
-            class="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm text-white hover:bg-black"
+            class="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm text-white hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
             @click="resetFilters"
           >
             Очистити всі фільтри
@@ -498,7 +502,7 @@ function goFirstPage() {
           <button
             v-if="(offers.current_page ?? 1) > 1"
             type="button"
-            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:bg-gray-50"
+            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             @click="goFirstPage"
           >
             На першу сторінку
