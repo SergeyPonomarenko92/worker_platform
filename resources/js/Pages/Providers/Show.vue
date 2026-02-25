@@ -220,30 +220,52 @@ const toggleReviews = () => {
             class="text-sm text-blue-600 hover:underline"
             preserve-scroll
           >
-            Показати всі ({{ provider.offers_count }})
+            Дивитися всі ({{ provider.offers_count }})
           </Link>
         </div>
 
-        <div v-if="provider.offers?.length" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div
-            v-for="offer in provider.offers"
-            :key="offer.id"
-            class="rounded-lg border border-gray-200 bg-white p-4"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <div class="text-sm text-gray-500">
-                  {{ offerTypeLabel(offer.type) }}
-                  <span v-if="offer.category">· {{ offer.category.name }}</span>
+        <template v-if="provider.offers?.length">
+          <div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div
+              v-for="offer in provider.offers"
+              :key="offer.id"
+              class="rounded-lg border border-gray-200 bg-white p-4"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-sm text-gray-500">
+                    {{ offerTypeLabel(offer.type) }}
+                    <span v-if="offer.category">· {{ offer.category.name }}</span>
+                  </div>
+                  <div class="text-lg font-semibold">{{ offer.title }}</div>
                 </div>
-                <div class="text-lg font-semibold">{{ offer.title }}</div>
+                <div class="text-sm text-gray-600 whitespace-nowrap">{{ formatPrice(offer) }}</div>
               </div>
-              <div class="text-sm text-gray-600 whitespace-nowrap">{{ formatPrice(offer) }}</div>
-            </div>
 
-            <div v-if="offer.description" class="mt-2 text-sm text-gray-700 line-clamp-3">{{ offer.description }}</div>
+              <div v-if="offer.description" class="mt-2 text-sm text-gray-700 line-clamp-3">{{ offer.description }}</div>
+            </div>
           </div>
-        </div>
+
+          <div
+            v-if="provider.offers_count !== undefined && provider.offers_count > provider.offers.length && !loadAllOffers"
+            class="mt-4 flex justify-center"
+          >
+            <Link
+              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              :href="providerPageAllOffersUrl"
+              preserve-scroll
+            >
+              Показати всі пропозиції ({{ provider.offers_count }})
+            </Link>
+          </div>
+
+          <div
+            v-if="provider.offers_count !== undefined && provider.offers_count > provider.offers.length"
+            class="mt-3 text-sm text-gray-500"
+          >
+            Показано {{ provider.offers.length }} з {{ provider.offers_count }}
+          </div>
+        </template>
 
         <div v-else class="mt-3">
           <EmptyStateCard
