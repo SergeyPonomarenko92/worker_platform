@@ -313,8 +313,10 @@ function goFirstPage() {
             autocomplete="off"
             class="mt-1 w-48 rounded-md border-gray-300"
             placeholder="напр. demo-provider"
+            :title="'Slug береться з URL профілю провайдера: /providers/{slug}'"
             @keydown.enter.prevent="onSearch"
           />
+          <div class="mt-1 text-[11px] text-gray-400">Підказка: slug = частина URL профілю провайдера (<span class="font-mono">/providers/{slug}</span>).</div>
         </div>
 
         <div>
