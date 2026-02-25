@@ -79,14 +79,22 @@ const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === 
 
 const providerSlug = computed(() => String(form.provider || '').trim())
 
+const chipValue = (value, max = 30) => {
+  const s = String(value ?? '')
+  const trimmed = s.trim()
+  if (!trimmed) return ''
+  if (trimmed.length <= max) return trimmed
+  return `${trimmed.slice(0, max)}…`
+}
+
 const activeChips = computed(() => {
   const chips = []
 
-  if ((form.q || '').trim()) chips.push({ key: 'q', label: `Пошук: ${String((form.q || '').trim()).slice(0, 30)}` })
+  if ((form.q || '').trim()) chips.push({ key: 'q', label: `Пошук: ${chipValue(form.q)}` })
   if (form.type) chips.push({ key: 'type', label: `Тип: ${typeLabel(form.type)}` })
   if (form.category_id) chips.push({ key: 'category_id', label: `Категорія: ${categoryLabel(form.category_id)}` })
-  if ((form.city || '').trim()) chips.push({ key: 'city', label: `Місто: ${String((form.city || '').trim()).slice(0, 30)}` })
-  if ((form.provider || '').trim()) chips.push({ key: 'provider', label: `Провайдер: ${String((form.provider || '').trim()).slice(0, 30)}` })
+  if ((form.city || '').trim()) chips.push({ key: 'city', label: `Місто: ${chipValue(form.city)}` })
+  if ((form.provider || '').trim()) chips.push({ key: 'provider', label: `Провайдер: ${chipValue(form.provider)}` })
   if (String(form.price_from || '').trim()) chips.push({ key: 'price_from', label: `Ціна від: ${formatNumber(String(form.price_from).trim())}` })
   if (String(form.price_to || '').trim()) chips.push({ key: 'price_to', label: `Ціна до: ${formatNumber(String(form.price_to).trim())}` })
   if (form.include_no_price && (String(form.price_from || '').trim() || String(form.price_to || '').trim())) {
