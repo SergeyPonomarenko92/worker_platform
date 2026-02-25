@@ -9,10 +9,21 @@ const props = defineProps({
   eligibleDealId: Number,
   loadAllPortfolio: Boolean,
   loadAllReviews: Boolean,
+  loadAllOffers: Boolean,
 })
 
 const ratingText = computed(() => formatAvgRatingUk(props.provider?.reviews_avg_rating))
 const normalizedWebsiteHref = computed(() => normalizeWebsite(props.provider?.website))
+
+const providerPageAllOffersUrl = computed(() => {
+  const params = new URLSearchParams()
+  params.set('all_offers', '1')
+
+  if (props.loadAllPortfolio) params.set('all_portfolio', '1')
+  if (props.loadAllReviews) params.set('all_reviews', '1')
+
+  return `/providers/${props.provider.slug}?${params.toString()}`
+})
 
 const portfolioLimit = 6
 const showAllPortfolio = ref(!!props.loadAllPortfolio)
@@ -204,11 +215,12 @@ const toggleReviews = () => {
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Пропозиції</h2>
           <Link
-            v-if="provider.offers_count !== undefined && provider.offers?.length && provider.offers_count > provider.offers.length"
-            :href="`/catalog?provider=${provider.slug}`"
+            v-if="provider.offers_count !== undefined && provider.offers?.length && provider.offers_count > provider.offers.length && !loadAllOffers"
+            :href="providerPageAllOffersUrl"
             class="text-sm text-blue-600 hover:underline"
+            preserve-scroll
           >
-            Дивитися всі ({{ provider.offers_count }})
+            Показати всі ({{ provider.offers_count }})
           </Link>
         </div>
 

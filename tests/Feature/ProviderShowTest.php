@@ -110,6 +110,39 @@ class ProviderShowTest extends TestCase
             );
     }
 
+    public function test_provider_page_can_load_all_offers_via_query_param(): void
+    {
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        // More than the default preload limit (10)
+        Offer::factory()->count(15)->for($provider)->create([
+            'is_active' => true,
+        ]);
+
+        $this
+            ->get('/providers/'.$provider->slug)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('loadAllOffers', false)
+                ->where('provider.offers_count', 15)
+                ->has('provider.offers', 10)
+            );
+
+        $this
+            ->get('/providers/'.$provider->slug.'?all_offers=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('loadAllOffers', true)
+                ->where('provider.offers_count', 15)
+                ->has('provider.offers', 15)
+            );
+    }
+
     public function test_provider_page_shows_only_published_portfolio_posts(): void
     {
         Carbon::setTestNow(now());

@@ -13,6 +13,7 @@ class ProviderController extends Controller
     {
         $loadAllPortfolio = $request->boolean('all_portfolio');
         $loadAllReviews = $request->boolean('all_reviews');
+        $loadAllOffers = $request->boolean('all_offers');
 
         $provider = BusinessProfile::query()
             ->select([
@@ -59,7 +60,8 @@ class ProviderController extends Controller
                     ->with(['category:id,name'])
                     ->where('is_active', true)
                     ->latest()
-                    ->limit(10),
+                    ->when(! $loadAllOffers, fn ($q) => $q->limit(10))
+                    ->when($loadAllOffers, fn ($q) => $q->limit(200)),
                 'portfolioPosts' => fn ($q) => $q
                     ->select([
                         'id',
@@ -123,6 +125,7 @@ class ProviderController extends Controller
             'eligibleDealId' => $eligibleDealId,
             'loadAllPortfolio' => $loadAllPortfolio,
             'loadAllReviews' => $loadAllReviews,
+            'loadAllOffers' => $loadAllOffers,
         ]);
     }
 }
