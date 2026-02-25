@@ -20,6 +20,7 @@
   - Provider cabinet: у списку профілів бейдж Активний/Неактивний + лінк на публічну сторінку.
   - Tests: суттєво розширено покриття фільтрів (ціна/include_no_price, дерево категорій, sort edge-cases).
   - Offers: валідація дозволяє `price_to` без `price_from`.
+- 2026-02-25: Provider public page — поліпшено empty-state для відгуків (card + пояснення).
 
 ## Current status
 - Branch: `main`

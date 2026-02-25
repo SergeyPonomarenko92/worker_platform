@@ -164,7 +164,7 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
             Залишити відгук
           </Link>
         </div>
-        <div class="mt-3 space-y-3">
+        <div v-if="provider.reviews?.length" class="mt-3 space-y-3">
           <div
             v-for="review in provider.reviews"
             :key="review.id"
@@ -182,7 +182,14 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
             </div>
             <div v-if="review.body" class="mt-2 text-sm text-gray-700">{{ review.body }}</div>
           </div>
-          <div v-if="!provider.reviews?.length" class="text-sm text-gray-500">Поки що немає відгуків</div>
+        </div>
+
+        <div v-else class="mt-3 rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
+          <div class="font-medium">Поки що немає відгуків</div>
+          <div class="mt-1 text-gray-600">
+            Відгуки з’являються після завершення угоди.
+            <span v-if="eligibleDealId">Можете залишити свій відгук вище.</span>
+          </div>
         </div>
       </div>
     </div>
