@@ -58,6 +58,9 @@ const portfolioTotalCount = computed(() => props.provider?.published_portfolio_p
 const portfolioIsFullyLoaded = computed(() => portfolioLoadedCount.value >= portfolioTotalCount.value)
 const hasMorePortfolio = computed(() => portfolioTotalCount.value > portfolioLimit)
 
+// If backend already returned all published items, we can expand/collapse without a full page reload.
+const portfolioCanToggleWithoutReload = computed(() => portfolioIsFullyLoaded.value)
+
 const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioPosts.value : portfolioPosts.value.slice(0, portfolioLimit)))
 
 const togglePortfolio = () => {
@@ -221,11 +224,18 @@ const toggleOffers = () => {
             </div>
           </div>
 
-          <div
-            v-if="hasMorePortfolio && !showAllPortfolio && !loadAllPortfolio && !portfolioIsFullyLoaded"
-            class="mt-4 flex justify-center"
-          >
+          <div v-if="hasMorePortfolio && !showAllPortfolio" class="mt-4 flex justify-center">
+            <button
+              v-if="portfolioCanToggleWithoutReload"
+              type="button"
+              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              @click="togglePortfolio"
+            >
+              Показати всі роботи ({{ portfolioTotalCount }})
+            </button>
+
             <Link
+              v-else
               class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
               :href="providerPageAllPortfolioUrl"
               preserve-scroll
