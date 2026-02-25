@@ -32,10 +32,11 @@ class ProviderShowTest extends TestCase
         ]);
 
         // Create enough completed deals + reviews so that the controller needs to apply limits.
+        // Use a single client to keep the test fast (we only care about controller limits/counts here).
+        $client = User::factory()->create();
+
         $reviewsCount = 30;
         for ($i = 0; $i < $reviewsCount; $i++) {
-            $client = User::factory()->create();
-
             $deal = Deal::factory()->create([
                 'business_profile_id' => $provider->id,
                 'client_user_id' => $client->id,
