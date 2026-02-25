@@ -211,8 +211,8 @@ onMounted(() => {
           </div>
         </div>
         <div class="flex gap-3">
-          <Link href="/catalog" class="text-sm text-blue-600 hover:underline">Каталог</Link>
-          <Link :href="`/catalog?provider=${provider.slug}`" class="text-sm text-blue-600 hover:underline">Пропозиції цього провайдера</Link>
+          <Link href="/catalog" class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded">Каталог</Link>
+          <Link :href="`/catalog?provider=${provider.slug}`" class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded">Пропозиції цього провайдера</Link>
         </div>
       </div>
 
@@ -292,7 +292,7 @@ onMounted(() => {
           <h2 class="text-lg font-semibold">Останні роботи</h2>
           <Link
             v-if="hasMorePortfolio && !loadAllPortfolio && !portfolioIsFullyLoaded"
-            class="text-sm text-blue-600 hover:underline"
+            class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
             :href="providerPageAllPortfolioUrl"
             preserve-scroll
           >
@@ -302,7 +302,7 @@ onMounted(() => {
           <button
             v-else-if="hasMorePortfolio"
             type="button"
-            class="text-sm text-blue-600 hover:underline"
+            class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
             :aria-expanded="showAllPortfolio"
             aria-controls="provider-portfolio-list"
             @click="togglePortfolio"
@@ -395,7 +395,7 @@ onMounted(() => {
           <Link
             v-if="hasMoreOffers && !loadAllOffers && !offersIsFullyLoaded"
             :href="providerPageAllOffersUrl"
-            class="text-sm text-blue-600 hover:underline"
+            class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
             preserve-scroll
           >
             Дивитися всі ({{ offersTotalCount }})
@@ -404,7 +404,7 @@ onMounted(() => {
           <button
             v-else-if="hasMoreOffers"
             type="button"
-            class="text-sm text-blue-600 hover:underline"
+            class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
             :aria-expanded="showAllOffers"
             aria-controls="provider-offers-list"
             @click="toggleOffers"
@@ -470,7 +470,7 @@ onMounted(() => {
           <div class="flex items-center gap-4">
             <Link
               v-if="hasMoreReviews && !loadAllReviews && !reviewsIsFullyLoaded"
-              class="text-sm text-blue-600 hover:underline"
+              class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :href="providerPageAllReviewsUrl"
               preserve-scroll
             >
@@ -480,7 +480,7 @@ onMounted(() => {
             <button
               v-else-if="hasMoreReviews"
               type="button"
-              class="text-sm text-blue-600 hover:underline"
+              class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :aria-expanded="showAllReviews"
               aria-controls="provider-reviews-list"
               @click="toggleReviews"
@@ -491,7 +491,7 @@ onMounted(() => {
             <Link
               v-if="eligibleDealId"
               :href="route('reviews.create', eligibleDealId)"
-              class="text-sm text-blue-600 hover:underline"
+              class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
             >
               Залишити відгук
             </Link>
