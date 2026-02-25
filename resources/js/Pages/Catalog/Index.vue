@@ -79,9 +79,10 @@ const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === 
 
 const providerSlug = computed(() => String(form.provider || '').trim())
 
-const chipValue = (value, max = 30) => {
-  const s = String(value ?? '')
-  const trimmed = s.trim()
+const chipValue = (value) => String(value ?? '').trim()
+
+const chipDisplayValue = (value, max = 30) => {
+  const trimmed = chipValue(value)
   if (!trimmed) return ''
   if (trimmed.length <= max) return trimmed
   return `${trimmed.slice(0, max)}…`
@@ -90,11 +91,33 @@ const chipValue = (value, max = 30) => {
 const activeChips = computed(() => {
   const chips = []
 
-  if ((form.q || '').trim()) chips.push({ key: 'q', label: `Пошук: ${chipValue(form.q)}` })
+  if (chipValue(form.q)) {
+    chips.push({
+      key: 'q',
+      label: `Пошук: ${chipDisplayValue(form.q)}`,
+      title: `Пошук: ${chipValue(form.q)}`,
+    })
+  }
+
   if (form.type) chips.push({ key: 'type', label: `Тип: ${typeLabel(form.type)}` })
   if (form.category_id) chips.push({ key: 'category_id', label: `Категорія: ${categoryLabel(form.category_id)}` })
-  if ((form.city || '').trim()) chips.push({ key: 'city', label: `Місто: ${chipValue(form.city)}` })
-  if ((form.provider || '').trim()) chips.push({ key: 'provider', label: `Провайдер: ${chipValue(form.provider)}` })
+
+  if (chipValue(form.city)) {
+    chips.push({
+      key: 'city',
+      label: `Місто: ${chipDisplayValue(form.city)}`,
+      title: `Місто: ${chipValue(form.city)}`,
+    })
+  }
+
+  if (chipValue(form.provider)) {
+    chips.push({
+      key: 'provider',
+      label: `Провайдер: ${chipDisplayValue(form.provider)}`,
+      title: `Провайдер: ${chipValue(form.provider)}`,
+    })
+  }
+
   if (String(form.price_from || '').trim()) chips.push({ key: 'price_from', label: `Ціна від: ${formatNumber(String(form.price_from).trim())}` })
   if (String(form.price_to || '').trim()) chips.push({ key: 'price_to', label: `Ціна до: ${formatNumber(String(form.price_to).trim())}` })
   if (form.include_no_price && (String(form.price_from || '').trim() || String(form.price_to || '').trim())) {
@@ -242,13 +265,13 @@ function goFirstPage() {
               v-for="chip in activeChips"
               :key="chip.key"
               class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700"
-              :title="chip.label"
+              :title="chip.title || chip.label"
             >
               <span class="whitespace-nowrap">{{ chip.label }}</span>
               <button
                 type="button"
                 class="rounded-full text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
-                :aria-label="'Прибрати фільтр: ' + chip.label"
+                :aria-label="'Прибрати фільтр: ' + (chip.title || chip.label)"
                 @click="clearChip(chip.key)"
               >
                 ×
