@@ -25,6 +25,26 @@ const providerPageAllOffersUrl = computed(() => {
   return `/providers/${props.provider.slug}?${params.toString()}`
 })
 
+const providerPageAllPortfolioUrl = computed(() => {
+  const params = new URLSearchParams()
+  params.set('all_portfolio', '1')
+
+  if (props.loadAllOffers) params.set('all_offers', '1')
+  if (props.loadAllReviews) params.set('all_reviews', '1')
+
+  return `/providers/${props.provider.slug}?${params.toString()}`
+})
+
+const providerPageAllReviewsUrl = computed(() => {
+  const params = new URLSearchParams()
+  params.set('all_reviews', '1')
+
+  if (props.loadAllOffers) params.set('all_offers', '1')
+  if (props.loadAllPortfolio) params.set('all_portfolio', '1')
+
+  return `/providers/${props.provider.slug}?${params.toString()}`
+})
+
 const portfolioLimit = 6
 const showAllPortfolio = ref(!!props.loadAllPortfolio)
 const portfolioSectionRef = ref(null)
@@ -147,7 +167,7 @@ const toggleReviews = () => {
           <Link
             v-if="hasMorePortfolio && !loadAllPortfolio && !portfolioIsFullyLoaded"
             class="text-sm text-blue-600 hover:underline"
-            :href="route('providers.show', { slug: provider.slug, all_portfolio: 1 })"
+            :href="providerPageAllPortfolioUrl"
             preserve-scroll
           >
             Дивитися всі ({{ portfolioTotalCount }})
@@ -186,7 +206,7 @@ const toggleReviews = () => {
           >
             <Link
               class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              :href="route('providers.show', { slug: provider.slug, all_portfolio: 1 })"
+              :href="providerPageAllPortfolioUrl"
               preserve-scroll
             >
               Показати всі роботи ({{ portfolioTotalCount }})
@@ -283,7 +303,7 @@ const toggleReviews = () => {
             <Link
               v-if="hasMoreReviews && !loadAllReviews && !reviewsIsFullyLoaded"
               class="text-sm text-blue-600 hover:underline"
-              :href="route('providers.show', { slug: provider.slug, all_reviews: 1 })"
+              :href="providerPageAllReviewsUrl"
               preserve-scroll
             >
               Дивитися всі ({{ reviewsTotalCount }})
@@ -335,7 +355,7 @@ const toggleReviews = () => {
           >
             <Link
               class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              :href="route('providers.show', { slug: provider.slug, all_reviews: 1 })"
+              :href="providerPageAllReviewsUrl"
               preserve-scroll
             >
               Показати всі відгуки ({{ reviewsTotalCount }})
