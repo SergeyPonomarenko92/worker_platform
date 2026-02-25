@@ -198,7 +198,16 @@ const toggleReviews = () => {
 
       <!-- Offers -->
       <div class="mt-8">
-        <h2 class="text-lg font-semibold">Пропозиції</h2>
+        <div class="flex items-center justify-between gap-4">
+          <h2 class="text-lg font-semibold">Пропозиції</h2>
+          <Link
+            v-if="provider.offers_count !== undefined && provider.offers?.length && provider.offers_count > provider.offers.length"
+            :href="`/catalog?provider=${provider.slug}`"
+            class="text-sm text-blue-600 hover:underline"
+          >
+            Дивитися всі ({{ provider.offers_count }})
+          </Link>
+        </div>
 
         <div v-if="provider.offers?.length" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div
