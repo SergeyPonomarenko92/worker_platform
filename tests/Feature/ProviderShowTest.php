@@ -18,6 +18,65 @@ class ProviderShowTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_provider_page_loads_limited_portfolio_and_reviews_by_default_and_can_load_all_via_query_params(): void
+    {
+        Carbon::setTestNow(now());
+
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        PortfolioPost::factory()->for($provider)->count(80)->create([
+            'published_at' => now()->subDay(),
+        ]);
+
+        // Create enough completed deals + reviews so that the controller needs to apply limits.
+        $reviewsCount = 30;
+        for ($i = 0; $i < $reviewsCount; $i++) {
+            $client = User::factory()->create();
+
+            $deal = Deal::factory()->create([
+                'business_profile_id' => $provider->id,
+                'client_user_id' => $client->id,
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
+
+            Review::factory()->create([
+                'deal_id' => $deal->id,
+                'business_profile_id' => $provider->id,
+                'client_user_id' => $client->id,
+            ]);
+        }
+
+        // Default response should include counts for the full data, but only preload limited lists.
+        $this
+            ->get('/providers/'.$provider->slug)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('provider.published_portfolio_posts_count', 80)
+                ->where('provider.reviews_count', 30)
+                ->has('provider.portfolio_posts', 60)
+                ->has('provider.reviews', 20)
+            );
+
+        // When explicitly requested, controller should preload more items (up to 200).
+        $this
+            ->get('/providers/'.$provider->slug.'?all_portfolio=1&all_reviews=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('provider.published_portfolio_posts_count', 80)
+                ->where('provider.reviews_count', 30)
+                ->has('provider.portfolio_posts', 80)
+                ->has('provider.reviews', 30)
+                ->where('loadAllPortfolio', true)
+                ->where('loadAllReviews', true)
+            );
+    }
+
     public function test_provider_page_is_not_accessible_for_inactive_provider(): void
     {
         $provider = BusinessProfile::factory()->create([
