@@ -183,7 +183,7 @@ const toggleReviews = () => {
         <div v-else class="mt-3">
           <EmptyStateCard
             title="Поки що немає робіт"
-            description="Коли провайдер опублікує портфоліо — воно з'явиться тут."
+            description="Коли провайдер опублікує портфоліо — воно з’явиться тут."
           />
         </div>
 
@@ -224,7 +224,7 @@ const toggleReviews = () => {
         <div v-else class="mt-3">
           <EmptyStateCard
             title="Поки що немає пропозицій"
-            description="Коли провайдер додасть оголошення — воно з'явиться тут."
+            description="Коли провайдер додасть оголошення — воно з’явиться тут."
           />
         </div>
       </div>
