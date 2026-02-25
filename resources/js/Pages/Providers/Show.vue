@@ -214,7 +214,7 @@ onMounted(() => {
                 preserve-scroll
                 :aria-label="`Показати всі роботи (усього: ${portfolioTotalCount})`"
               >
-                всі
+                Показати всі
               </Link>
             </div>
             <div v-else-if="portfolioTotalCount === 0" class="text-gray-600">
