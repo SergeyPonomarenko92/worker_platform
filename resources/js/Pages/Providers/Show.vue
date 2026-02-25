@@ -17,6 +17,12 @@ const showAllPortfolio = ref(false)
 const portfolioPosts = computed(() => props.provider?.portfolio_posts || [])
 const hasMorePortfolio = computed(() => portfolioPosts.value.length > portfolioLimit)
 const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioPosts.value : portfolioPosts.value.slice(0, portfolioLimit)))
+
+const reviewsLimit = 5
+const showAllReviews = ref(false)
+const reviews = computed(() => props.provider?.reviews || [])
+const hasMoreReviews = computed(() => reviews.value.length > reviewsLimit)
+const reviewsToShow = computed(() => (showAllReviews.value ? reviews.value : reviews.value.slice(0, reviewsLimit)))
 </script>
 
 <template>
@@ -161,17 +167,29 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
       <div class="mt-8">
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Відгуки</h2>
-          <Link
-            v-if="eligibleDealId"
-            :href="route('reviews.create', eligibleDealId)"
-            class="text-sm text-blue-600 hover:underline"
-          >
-            Залишити відгук
-          </Link>
+          <div class="flex items-center gap-4">
+            <button
+              v-if="hasMoreReviews"
+              type="button"
+              class="text-sm text-blue-600 hover:underline"
+              @click="showAllReviews = !showAllReviews"
+            >
+              {{ showAllReviews ? 'Згорнути' : `Дивитися всі (${reviews.length})` }}
+            </button>
+
+            <Link
+              v-if="eligibleDealId"
+              :href="route('reviews.create', eligibleDealId)"
+              class="text-sm text-blue-600 hover:underline"
+            >
+              Залишити відгук
+            </Link>
+          </div>
         </div>
-        <div v-if="provider.reviews?.length" class="mt-3 space-y-3">
+
+        <div v-if="reviewsToShow.length" class="mt-3 space-y-3">
           <div
-            v-for="review in provider.reviews"
+            v-for="review in reviewsToShow"
             :key="review.id"
             class="rounded-lg border border-gray-200 bg-white p-4"
           >
@@ -193,6 +211,10 @@ const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioP
           <EmptyStateCard title="Поки що немає відгуків" description="Відгуки з’являються після завершення угоди.">
             <span v-if="eligibleDealId" class="text-gray-600">Можете залишити свій відгук вище.</span>
           </EmptyStateCard>
+        </div>
+
+        <div v-if="hasMoreReviews && !showAllReviews" class="mt-3 text-sm text-gray-500">
+          Показано {{ reviewsLimit }} з {{ reviews.length }}
         </div>
       </div>
     </div>
