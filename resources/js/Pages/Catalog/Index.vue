@@ -99,6 +99,8 @@ const activeChips = computed(() => {
 
 const hasPriceBounds = computed(() => Boolean(String(form.price_from || '').trim() || String(form.price_to || '').trim()))
 
+const hasActiveFilters = computed(() => activeChips.value.length > 0)
+
 function clearChip(key) {
   if (key === 'q') form.q = ''
   if (key === 'type') form.type = ''
@@ -336,7 +338,15 @@ function goFirstPage() {
         </div>
 
         <button class="rounded-md bg-black px-4 py-2 text-white">Шукати</button>
-        <button type="button" class="rounded-md border border-gray-300 px-4 py-2 text-sm" @click="resetFilters">Скинути</button>
+        <button
+          type="button"
+          class="rounded-md border border-gray-300 px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="!hasActiveFilters"
+          :title="!hasActiveFilters ? 'Немає активних фільтрів для скидання.' : ''"
+          @click="resetFilters"
+        >
+          Скинути
+        </button>
       </form>
 
       <div v-if="offers.data?.length" class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
