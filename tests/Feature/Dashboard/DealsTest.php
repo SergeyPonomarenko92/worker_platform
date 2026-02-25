@@ -77,4 +77,34 @@ class DealsTest extends TestCase
         $this->assertSame('completed', $deal2->status);
         $this->assertNotNull($deal2->completed_at);
     }
+
+    public function test_owner_cannot_create_deal_with_offer_from_another_business_profile(): void
+    {
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+        $otherProfile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        $offerFromOtherProfile = Offer::factory()->create(['business_profile_id' => $otherProfile->id]);
+
+        $this->actingAs($provider)
+            ->from(route('dashboard.deals.create', $profile))
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => $client->email,
+                'offer_id' => $offerFromOtherProfile->id,
+                'status' => 'draft',
+                'currency' => 'UAH',
+                'agreed_price' => 100,
+            ])
+            ->assertRedirect(route('dashboard.deals.create', $profile))
+            ->assertSessionHasErrors([
+                'offer_id' => 'Офер має належати вибраному профілю бізнесу.',
+            ]);
+
+        $this->assertDatabaseMissing('deals', [
+            'business_profile_id' => $profile->id,
+            'offer_id' => $offerFromOtherProfile->id,
+        ]);
+    }
 }
