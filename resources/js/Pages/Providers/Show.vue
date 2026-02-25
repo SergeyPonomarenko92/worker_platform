@@ -122,7 +122,10 @@ const toggleReviews = () => {
         </div>
 
         <div v-else class="mt-3">
-          <EmptyStateCard title="Поки що немає історій" />
+          <EmptyStateCard
+            title="Поки що немає історій"
+            description="Історії з’являються, коли провайдер публікує короткі оновлення (фото/відео) з обмеженим терміном."
+          />
         </div>
       </div>
 
