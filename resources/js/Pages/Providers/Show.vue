@@ -8,6 +8,7 @@ const props = defineProps({
   provider: Object,
   eligibleDealId: Number,
   loadAllPortfolio: Boolean,
+  loadAllReviews: Boolean,
 })
 
 const ratingText = () => formatAvgRatingUk(props.provider?.reviews_avg_rating)
@@ -39,10 +40,15 @@ const togglePortfolio = () => {
 }
 
 const reviewsLimit = 5
-const showAllReviews = ref(false)
+const showAllReviews = ref(!!props.loadAllReviews)
 const reviewsSectionRef = ref(null)
 const reviews = computed(() => props.provider?.reviews || [])
-const hasMoreReviews = computed(() => reviews.value.length > reviewsLimit)
+const reviewsLoadedCount = computed(() => reviews.value.length)
+const reviewsTotalCount = computed(() => props.provider?.reviews_count ?? reviewsLoadedCount.value)
+
+// Like portfolio: backend preloads only the latest N items unless query param is enabled.
+const reviewsIsFullyLoaded = computed(() => reviewsLoadedCount.value >= reviewsTotalCount.value)
+const hasMoreReviews = computed(() => reviewsTotalCount.value > reviewsLimit)
 const reviewsToShow = computed(() => (showAllReviews.value ? reviews.value : reviews.value.slice(0, reviewsLimit)))
 
 const toggleReviews = () => {
@@ -228,13 +234,22 @@ const toggleReviews = () => {
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Відгуки</h2>
           <div class="flex items-center gap-4">
+            <Link
+              v-if="hasMoreReviews && !loadAllReviews && !reviewsIsFullyLoaded"
+              class="text-sm text-blue-600 hover:underline"
+              :href="route('providers.show', { slug: provider.slug, all_reviews: 1 })"
+              preserve-scroll
+            >
+              Дивитися всі ({{ reviewsTotalCount }})
+            </Link>
+
             <button
-              v-if="hasMoreReviews"
+              v-else-if="hasMoreReviews"
               type="button"
               class="text-sm text-blue-600 hover:underline"
               @click="toggleReviews"
             >
-              {{ showAllReviews ? 'Згорнути' : `Дивитися всі (${reviews.length})` }}
+              {{ showAllReviews ? 'Згорнути' : `Дивитися всі (${reviewsTotalCount})` }}
             </button>
 
             <Link
@@ -274,7 +289,11 @@ const toggleReviews = () => {
         </div>
 
         <div v-if="hasMoreReviews && !showAllReviews" class="mt-3 text-sm text-gray-500">
-          Показано {{ reviewsLimit }} з {{ reviews.length }}
+          Показано {{ reviewsLimit }} з {{ reviewsTotalCount }}
+        </div>
+
+        <div v-if="showAllReviews && !reviewsIsFullyLoaded" class="mt-3 text-sm text-gray-500">
+          Показано останні {{ reviewsLoadedCount }} з {{ reviewsTotalCount }}.
         </div>
       </div>
     </div>

@@ -255,4 +255,56 @@ class ProviderShowTest extends TestCase
                 ->has('provider.portfolio_posts', 65)
             );
     }
+
+    public function test_provider_page_can_load_all_reviews_via_query_param(): void
+    {
+        Carbon::setTestNow(now());
+
+        $providerOwner = User::factory()->create();
+        $provider = BusinessProfile::factory()->create([
+            'user_id' => $providerOwner->id,
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        $client = User::factory()->create();
+
+        // More than the default preload limit (20)
+        foreach (range(1, 25) as $i) {
+            $deal = Deal::factory()->create([
+                'business_profile_id' => $provider->id,
+                'client_user_id' => $client->id,
+                'status' => 'completed',
+                'completed_at' => now()->subMinutes($i),
+            ]);
+
+            Review::factory()->create([
+                'deal_id' => $deal->id,
+                'business_profile_id' => $provider->id,
+                'client_user_id' => $client->id,
+                'rating' => 5,
+                'body' => 'Good job #'.$i,
+            ]);
+        }
+
+        $this
+            ->get('/providers/'.$provider->slug)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('loadAllReviews', false)
+                ->where('provider.reviews_count', 25)
+                ->has('provider.reviews', 20)
+            );
+
+        $this
+            ->get('/providers/'.$provider->slug.'?all_reviews=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('loadAllReviews', true)
+                ->where('provider.reviews_count', 25)
+                ->has('provider.reviews', 25)
+            );
+    }
 }

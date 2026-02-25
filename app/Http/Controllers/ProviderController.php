@@ -12,6 +12,7 @@ class ProviderController extends Controller
     public function show(Request $request, string $slug)
     {
         $loadAllPortfolio = $request->boolean('all_portfolio');
+        $loadAllReviews = $request->boolean('all_reviews');
 
         $provider = BusinessProfile::query()
             ->select([
@@ -100,7 +101,8 @@ class ProviderController extends Controller
                     ])
                     ->with(['client:id,name'])
                     ->latest()
-                    ->limit(20),
+                    ->when(! $loadAllReviews, fn ($q) => $q->limit(20))
+                    ->when($loadAllReviews, fn ($q) => $q->limit(200)),
             ])
             ->firstOrFail();
 
@@ -119,6 +121,7 @@ class ProviderController extends Controller
             'provider' => $provider,
             'eligibleDealId' => $eligibleDealId,
             'loadAllPortfolio' => $loadAllPortfolio,
+            'loadAllReviews' => $loadAllReviews,
         ]);
     }
 }
