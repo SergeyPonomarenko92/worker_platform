@@ -90,6 +90,27 @@ const toggleReviews = () => {
     reviewsSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 }
+
+const offersLimit = 6
+const showAllOffers = ref(!!props.loadAllOffers)
+const offersSectionRef = ref(null)
+const offers = computed(() => props.provider?.offers || [])
+const offersLoadedCount = computed(() => offers.value.length)
+const offersTotalCount = computed(() => props.provider?.offers_count ?? offersLoadedCount.value)
+
+// Same approach as portfolio/reviews: backend may preload only latest N offers.
+const offersIsFullyLoaded = computed(() => offersLoadedCount.value >= offersTotalCount.value)
+const hasMoreOffers = computed(() => offersTotalCount.value > offersLimit)
+const offersToShow = computed(() => (showAllOffers.value ? offers.value : offers.value.slice(0, offersLimit)))
+
+const toggleOffers = () => {
+  const nextValue = !showAllOffers.value
+  showAllOffers.value = nextValue
+
+  if (!nextValue) {
+    offersSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
 </script>
 
 <template>
@@ -231,23 +252,33 @@ const toggleReviews = () => {
       </div>
 
       <!-- Offers -->
-      <div class="mt-8">
+      <div ref="offersSectionRef" class="mt-8">
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-lg font-semibold">Пропозиції</h2>
+
           <Link
-            v-if="provider.offers_count !== undefined && provider.offers?.length && provider.offers_count > provider.offers.length && !loadAllOffers"
+            v-if="hasMoreOffers && !loadAllOffers && !offersIsFullyLoaded"
             :href="providerPageAllOffersUrl"
             class="text-sm text-blue-600 hover:underline"
             preserve-scroll
           >
-            Дивитися всі ({{ provider.offers_count }})
+            Дивитися всі ({{ offersTotalCount }})
           </Link>
+
+          <button
+            v-else-if="hasMoreOffers"
+            type="button"
+            class="text-sm text-blue-600 hover:underline"
+            @click="toggleOffers"
+          >
+            {{ showAllOffers ? 'Згорнути' : `Дивитися всі (${offersTotalCount})` }}
+          </button>
         </div>
 
-        <template v-if="provider.offers?.length">
+        <template v-if="offersToShow.length">
           <div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div
-              v-for="offer in provider.offers"
+              v-for="offer in offersToShow"
               :key="offer.id"
               class="rounded-lg border border-gray-200 bg-white p-4"
             >
@@ -267,7 +298,7 @@ const toggleReviews = () => {
           </div>
 
           <div
-            v-if="provider.offers_count !== undefined && provider.offers_count > provider.offers.length && !loadAllOffers"
+            v-if="hasMoreOffers && !showAllOffers && !loadAllOffers && !offersIsFullyLoaded"
             class="mt-4 flex justify-center"
           >
             <Link
@@ -275,15 +306,14 @@ const toggleReviews = () => {
               :href="providerPageAllOffersUrl"
               preserve-scroll
             >
-              Показати всі пропозиції ({{ provider.offers_count }})
+              Показати всі пропозиції ({{ offersTotalCount }})
             </Link>
           </div>
 
-          <div
-            v-if="provider.offers_count !== undefined && provider.offers_count > provider.offers.length"
-            class="mt-3 text-sm text-gray-500"
-          >
-            Показано {{ provider.offers.length }} з {{ provider.offers_count }}
+          <div v-if="hasMoreOffers && !showAllOffers" class="mt-3 text-sm text-gray-500">Показано {{ offersLimit }} з {{ offersTotalCount }}</div>
+
+          <div v-if="showAllOffers && !offersIsFullyLoaded" class="mt-3 text-sm text-gray-500">
+            Показано останні {{ offersLoadedCount }} з {{ offersTotalCount }}.
           </div>
         </template>
 
