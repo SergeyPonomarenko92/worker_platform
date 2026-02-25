@@ -22,8 +22,15 @@ export const offerTypeLabel = (type, { plural = false } = {}) => {
 
 export const formatNumber = (value) => {
   if (value === null || value === undefined || value === '') return ''
-  const num = Number(value)
-  if (Number.isNaN(num)) return String(value)
+
+  // UX: users often type numbers with spaces ("10 000") or NBSP; normalize before parsing.
+  // Keep non-numeric input as-is.
+  const raw = typeof value === 'string' ? value.trim() : value
+  const normalized = typeof raw === 'string' ? raw.replace(/[\s\u00A0']/g, '') : raw
+
+  const num = Number(normalized)
+  if (Number.isNaN(num)) return String(raw)
+
   return new Intl.NumberFormat('uk-UA').format(num)
 }
 
