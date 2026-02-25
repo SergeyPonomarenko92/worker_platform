@@ -77,9 +77,11 @@ class ProviderController extends Controller
                     ->whereNotNull('published_at')
                     ->where('published_at', '<=', $now)
                     ->latest('published_at')
-                    // Preload a reasonable amount by default to keep page fast; UI shows only the first few anyway.
+                    // Preload a reasonable amount by default to keep page fast.
+                    // UI shows only the first few items, but we still want enough preloaded
+                    // so users can expand a bit without a full reload.
                     // Users can request the full list via ?all_portfolio=1.
-                    ->when(! $loadAllPortfolio, fn ($q) => $q->limit(18))
+                    ->when(! $loadAllPortfolio, fn ($q) => $q->limit(12))
                     ->when($loadAllPortfolio, fn ($q) => $q->limit(200)),
                 'stories' => fn ($q) => $q
                     ->select([

@@ -59,7 +59,7 @@ class ProviderShowTest extends TestCase
                 ->component('Providers/Show')
                 ->where('provider.published_portfolio_posts_count', 80)
                 ->where('provider.reviews_count', 30)
-                ->has('provider.portfolio_posts', 18)
+                ->has('provider.portfolio_posts', 12)
                 ->has('provider.reviews', 20)
             );
 
@@ -152,7 +152,7 @@ class ProviderShowTest extends TestCase
             'is_active' => true,
         ]);
 
-        // Published portfolio (more than default preload limit 18)
+        // Published portfolio (more than default preload limit 12)
         PortfolioPost::factory()->for($provider)->count(80)->create([
             'published_at' => now()->subDay(),
         ]);
@@ -373,7 +373,7 @@ class ProviderShowTest extends TestCase
             'is_active' => true,
         ]);
 
-        // More than the default preload limit (18)
+        // More than the default preload limit (12)
         PortfolioPost::factory()
             ->count(65)
             ->for($provider)
@@ -388,7 +388,7 @@ class ProviderShowTest extends TestCase
                 ->component('Providers/Show')
                 ->where('loadAllPortfolio', false)
                 ->where('provider.published_portfolio_posts_count', 65)
-                ->has('provider.portfolio_posts', 18)
+                ->has('provider.portfolio_posts', 12)
             );
 
         $this
