@@ -14,6 +14,21 @@ class ProviderController extends Controller
         $loadAllPortfolio = $request->boolean('all_portfolio');
 
         $provider = BusinessProfile::query()
+            ->select([
+                'id',
+                'user_id',
+                'name',
+                'slug',
+                'about',
+                'country_code',
+                'city',
+                'address',
+                'phone',
+                'website',
+                'is_active',
+                'created_at',
+                'updated_at',
+            ])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->withCount([
@@ -26,18 +41,66 @@ class ProviderController extends Controller
             ->withAvg('reviews as reviews_avg_rating', 'rating')
             ->with([
                 'offers' => fn ($q) => $q
+                    ->select([
+                        'id',
+                        'business_profile_id',
+                        'category_id',
+                        'type',
+                        'title',
+                        'description',
+                        'price_from',
+                        'price_to',
+                        'currency',
+                        'is_active',
+                        'created_at',
+                        'updated_at',
+                    ])
                     ->with(['category:id,name'])
                     ->where('is_active', true)
                     ->latest()
                     ->limit(10),
                 'portfolioPosts' => fn ($q) => $q
+                    ->select([
+                        'id',
+                        'business_profile_id',
+                        'title',
+                        'body',
+                        'published_at',
+                        'created_at',
+                        'updated_at',
+                    ])
                     ->whereNotNull('published_at')
                     ->where('published_at', '<=', now())
                     ->latest('published_at')
                     ->when(! $loadAllPortfolio, fn ($q) => $q->limit(60))
                     ->when($loadAllPortfolio, fn ($q) => $q->limit(200)),
-                'stories' => fn ($q) => $q->where('expires_at', '>', now())->latest()->limit(20),
-                'reviews' => fn ($q) => $q->with(['client:id,name'])->latest()->limit(20),
+                'stories' => fn ($q) => $q
+                    ->select([
+                        'id',
+                        'business_profile_id',
+                        'caption',
+                        'media_path',
+                        'expires_at',
+                        'created_at',
+                        'updated_at',
+                    ])
+                    ->where('expires_at', '>', now())
+                    ->latest()
+                    ->limit(20),
+                'reviews' => fn ($q) => $q
+                    ->select([
+                        'id',
+                        'deal_id',
+                        'business_profile_id',
+                        'client_user_id',
+                        'rating',
+                        'body',
+                        'created_at',
+                        'updated_at',
+                    ])
+                    ->with(['client:id,name'])
+                    ->latest()
+                    ->limit(20),
             ])
             ->firstOrFail();
 
