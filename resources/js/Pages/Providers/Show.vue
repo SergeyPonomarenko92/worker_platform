@@ -223,7 +223,7 @@ const toggleOffers = () => {
             <button
               v-if="portfolioCanToggleWithoutReload"
               type="button"
-              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               @click="togglePortfolio"
             >
               Показати всі роботи ({{ portfolioTotalCount }})
@@ -231,7 +231,7 @@ const toggleOffers = () => {
 
             <Link
               v-else
-              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :href="providerPageAllPortfolioUrl"
               preserve-scroll
             >
@@ -307,7 +307,7 @@ const toggleOffers = () => {
             class="mt-4 flex justify-center"
           >
             <Link
-              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :href="providerPageAllOffersUrl"
               preserve-scroll
             >
@@ -389,7 +389,7 @@ const toggleOffers = () => {
             class="mt-4 flex justify-center"
           >
             <Link
-              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :href="providerPageAllReviewsUrl"
               preserve-scroll
             >
