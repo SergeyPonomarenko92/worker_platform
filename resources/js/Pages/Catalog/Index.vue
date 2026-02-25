@@ -22,6 +22,17 @@ const form = reactive({
   sort: props.filters?.sort || 'newest',
 })
 
+function normalizeProviderInputToSlug(value) {
+  const raw = String(value ?? '').trim()
+  if (!raw) return ''
+
+  // Allow pasting a full provider URL.
+  const m = raw.match(/\/providers\/([^/?#]+)/i)
+  const slug = m?.[1] ? m[1] : raw
+
+  return String(slug).trim().toLowerCase()
+}
+
 function submit() {
   router.get(
     '/catalog',
@@ -30,7 +41,7 @@ function submit() {
       type: form.type || undefined,
       category_id: form.category_id || undefined,
       city: (form.city || '').trim() || undefined,
-      provider: (form.provider || '').trim() || undefined,
+      provider: normalizeProviderInputToSlug(form.provider) || undefined,
       price_from: String(form.price_from).trim() || undefined,
       price_to: String(form.price_to).trim() || undefined,
       include_no_price:
@@ -77,7 +88,7 @@ const flatCategories = computed(() => flattenCategories(props.categories || []))
 
 const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === String(id))?.label || 'Категорія'
 
-const providerSlug = computed(() => String(form.provider || '').trim())
+const providerSlug = computed(() => normalizeProviderInputToSlug(form.provider))
 
 const chipValue = (value) => String(value ?? '').trim()
 
