@@ -142,21 +142,36 @@ const toggleReviews = () => {
           </button>
         </div>
 
-        <div v-if="portfolioPostsToShow.length" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div
-            v-for="post in portfolioPostsToShow"
-            :key="post.id"
-            class="rounded-lg border border-gray-200 bg-white p-4"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div class="font-medium">{{ post.title }}</div>
-              <div v-if="post.published_at" class="text-xs text-gray-400 whitespace-nowrap">
-                {{ new Date(post.published_at).toLocaleDateString('uk-UA') }}
+        <template v-if="portfolioPostsToShow.length">
+          <div class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div
+              v-for="post in portfolioPostsToShow"
+              :key="post.id"
+              class="rounded-lg border border-gray-200 bg-white p-4"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <div class="font-medium">{{ post.title }}</div>
+                <div v-if="post.published_at" class="text-xs text-gray-400 whitespace-nowrap">
+                  {{ new Date(post.published_at).toLocaleDateString('uk-UA') }}
+                </div>
               </div>
+              <div v-if="post.body" class="mt-2 text-sm text-gray-600 line-clamp-3">{{ post.body }}</div>
             </div>
-            <div v-if="post.body" class="mt-2 text-sm text-gray-600 line-clamp-3">{{ post.body }}</div>
           </div>
-        </div>
+
+          <div
+            v-if="hasMorePortfolio && !showAllPortfolio && !loadAllPortfolio && !portfolioCanLoadAll"
+            class="mt-4 flex justify-center"
+          >
+            <Link
+              class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              :href="route('providers.show', { slug: provider.slug, all_portfolio: 1 })"
+              preserve-scroll
+            >
+              Показати всі роботи ({{ portfolioTotalCount }})
+            </Link>
+          </div>
+        </template>
 
         <div v-else class="mt-3">
           <EmptyStateCard
