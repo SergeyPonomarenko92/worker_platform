@@ -109,6 +109,10 @@ const toggleOffers = () => {
     offersSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 }
+
+const scrollToSection = (sectionRef) => {
+  sectionRef?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 </script>
 
 <template>
@@ -123,8 +127,36 @@ const toggleOffers = () => {
           <div v-if="provider.city" class="mt-1 text-sm text-gray-600">{{ provider.city }}, {{ provider.country_code }}</div>
 
           <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
-            <div v-if="provider.offers_count !== undefined">Пропозицій: <span class="font-medium text-gray-800">{{ provider.offers_count }}</span></div>
-            <div v-if="provider.reviews_count !== undefined">Відгуків: <span class="font-medium text-gray-800">{{ provider.reviews_count }}</span></div>
+            <button
+              v-if="provider.offers_count !== undefined"
+              type="button"
+              class="hover:underline"
+              :aria-label="`Перейти до секції пропозицій. Пропозицій: ${provider.offers_count}`"
+              @click="scrollToSection(offersSectionRef)"
+            >
+              Пропозицій: <span class="font-medium text-gray-800">{{ provider.offers_count }}</span>
+            </button>
+
+            <button
+              v-if="provider.reviews_count !== undefined"
+              type="button"
+              class="hover:underline"
+              :aria-label="`Перейти до секції відгуків. Відгуків: ${provider.reviews_count}`"
+              @click="scrollToSection(reviewsSectionRef)"
+            >
+              Відгуків: <span class="font-medium text-gray-800">{{ provider.reviews_count }}</span>
+            </button>
+
+            <button
+              v-if="portfolioTotalCount !== undefined && portfolioTotalCount !== null"
+              type="button"
+              class="hover:underline"
+              :aria-label="`Перейти до секції портфоліо. Робіт: ${portfolioTotalCount}`"
+              @click="scrollToSection(portfolioSectionRef)"
+            >
+              Робіт: <span class="font-medium text-gray-800">{{ portfolioTotalCount }}</span>
+            </button>
+
             <div v-if="ratingText">Рейтинг: <span class="font-medium text-gray-800">{{ ratingText }}/5</span></div>
           </div>
         </div>
