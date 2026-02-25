@@ -405,30 +405,31 @@ function goFirstPage() {
           <span v-else class="text-sm text-gray-300">Назад</span>
         </div>
 
-        <div class="flex flex-wrap items-center justify-center gap-1">
+        <nav aria-label="Пагінація" class="flex flex-wrap items-center justify-center gap-1">
           <template v-if="offers.links?.length">
             <span
               v-for="(l, idx) in offers.links"
               :key="idx"
               class="px-2 py-1 text-sm rounded"
-              :class="l.active ? 'bg-gray-900 text-white' : 'text-gray-700'"
+              :class="l.active ? 'bg-gray-900 text-white' : (l.url ? 'text-gray-700' : 'text-gray-300')"
             >
               <Link
                 v-if="l.url"
                 :href="l.url"
-                class="hover:underline"
+                class="hover:underline focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 rounded"
                 preserve-scroll
                 preserve-state
+                :aria-current="l.active ? 'page' : undefined"
               >
                 <span v-html="l.label" />
               </Link>
-              <span v-else class="text-gray-300" v-html="l.label" />
+              <span v-else aria-disabled="true" v-html="l.label" />
             </span>
           </template>
           <template v-else>
             <div class="text-sm text-gray-500">Сторінка {{ offers.current_page }} з {{ offers.last_page }}</div>
           </template>
-        </div>
+        </nav>
 
         <div class="flex items-center gap-2">
           <Link
