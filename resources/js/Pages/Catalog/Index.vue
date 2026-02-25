@@ -77,6 +77,8 @@ const flatCategories = computed(() => flattenCategories(props.categories || []))
 
 const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === String(id))?.label || 'Категорія'
 
+const providerSlug = computed(() => String(form.provider || '').trim())
+
 const activeChips = computed(() => {
   const chips = []
 
@@ -206,6 +208,15 @@ function goFirstPage() {
             >
               Очистити всі фільтри
             </button>
+
+            <Link
+              v-if="providerSlug"
+              :href="`/providers/${providerSlug}`"
+              class="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs text-blue-700 hover:bg-blue-100"
+              title="Повернутись на сторінку провайдера"
+            >
+              ← До провайдера
+            </Link>
             <span
               v-for="chip in activeChips"
               :key="chip.key"
