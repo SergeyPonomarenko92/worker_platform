@@ -256,8 +256,9 @@ function goFirstPage() {
           </div>
         </div>
         <div class="w-full max-w-md">
-          <div class="text-xs text-gray-500">Пошук</div>
+          <label for="catalog-q" class="text-xs text-gray-500">Пошук</label>
           <input
+            id="catalog-q"
             v-model="form.q"
             type="search"
             autocomplete="off"
@@ -268,8 +269,8 @@ function goFirstPage() {
         </div>
 
         <div>
-          <div class="text-xs text-gray-500">Тип</div>
-          <select v-model="form.type" class="mt-1 rounded-md border-gray-300" @change="submit">
+          <label for="catalog-type" class="text-xs text-gray-500">Тип</label>
+          <select id="catalog-type" v-model="form.type" class="mt-1 rounded-md border-gray-300" @change="submit">
             <option value="">Усі</option>
             <option value="service">Послуги</option>
             <option value="product">Товари</option>
@@ -277,8 +278,8 @@ function goFirstPage() {
         </div>
 
         <div>
-          <div class="text-xs text-gray-500">Категорія</div>
-          <select v-model="form.category_id" class="mt-1 rounded-md border-gray-300" @change="submit">
+          <label for="catalog-category" class="text-xs text-gray-500">Категорія</label>
+          <select id="catalog-category" v-model="form.category_id" class="mt-1 rounded-md border-gray-300" @change="submit">
             <option value="">Усі</option>
             <option
               v-for="c in flatCategories"
@@ -291,8 +292,9 @@ function goFirstPage() {
         </div>
 
         <div>
-          <div class="text-xs text-gray-500">Місто</div>
+          <label for="catalog-city" class="text-xs text-gray-500">Місто</label>
           <input
+            id="catalog-city"
             v-model="form.city"
             type="search"
             autocomplete="address-level2"
@@ -303,8 +305,9 @@ function goFirstPage() {
         </div>
 
         <div>
-          <div class="text-xs text-gray-500">Провайдер (slug)</div>
+          <label for="catalog-provider" class="text-xs text-gray-500">Провайдер (slug)</label>
           <input
+            id="catalog-provider"
             v-model="form.provider"
             type="search"
             autocomplete="off"
@@ -315,52 +318,59 @@ function goFirstPage() {
         </div>
 
         <div>
-          <div class="text-xs text-gray-500">Ціна</div>
-          <div class="mt-1 flex items-center gap-2">
-            <input
-              v-model="form.price_from"
-              type="number"
-              min="0"
-              step="1"
-              inputmode="numeric"
-              autocomplete="off"
-              class="w-28 rounded-md border-gray-300"
-              placeholder="від"
-              @keydown.enter.prevent="onSearch"
-            />
-            <span class="text-xs text-gray-400">—</span>
-            <input
-              v-model="form.price_to"
-              type="number"
-              min="0"
-              step="1"
-              inputmode="numeric"
-              autocomplete="off"
-              class="w-28 rounded-md border-gray-300"
-              placeholder="до"
-              @keydown.enter.prevent="onSearch"
-            />
-          </div>
-          <label
-            class="mt-2 inline-flex items-center gap-2 text-xs text-gray-600"
-            :title="!hasPriceBounds ? 'Спочатку задайте межі ціни (від/до), щоб увімкнути цей фільтр.' : ''"
-          >
-            <input
-              type="checkbox"
-              v-model="form.include_no_price"
-              class="rounded border-gray-300"
-              :disabled="!hasPriceBounds"
-            />
-            <span :class="!hasPriceBounds ? 'text-gray-400' : ''">Включати «ціна за домовленістю»</span>
-          </label>
-          <div v-if="!hasPriceBounds" class="mt-1 text-xs text-gray-400">
-            Підказка: цей фільтр активується після введення «від» або «до».
-          </div>
+          <fieldset>
+            <legend class="text-xs text-gray-500">Ціна</legend>
+            <div class="mt-1 flex items-center gap-2">
+              <label for="catalog-price-from" class="sr-only">Ціна від</label>
+              <input
+                id="catalog-price-from"
+                v-model="form.price_from"
+                type="number"
+                min="0"
+                step="1"
+                inputmode="numeric"
+                autocomplete="off"
+                class="w-28 rounded-md border-gray-300"
+                placeholder="від"
+                @keydown.enter.prevent="onSearch"
+              />
+              <span class="text-xs text-gray-400">—</span>
+              <label for="catalog-price-to" class="sr-only">Ціна до</label>
+              <input
+                id="catalog-price-to"
+                v-model="form.price_to"
+                type="number"
+                min="0"
+                step="1"
+                inputmode="numeric"
+                autocomplete="off"
+                class="w-28 rounded-md border-gray-300"
+                placeholder="до"
+                @keydown.enter.prevent="onSearch"
+              />
+            </div>
+            <label
+              class="mt-2 inline-flex items-center gap-2 text-xs text-gray-600"
+              :title="!hasPriceBounds ? 'Спочатку задайте межі ціни (від/до), щоб увімкнути цей фільтр.' : ''"
+            >
+              <input
+                id="catalog-include-no-price"
+                type="checkbox"
+                v-model="form.include_no_price"
+                class="rounded border-gray-300"
+                :disabled="!hasPriceBounds"
+              />
+              <span :class="!hasPriceBounds ? 'text-gray-400' : ''">Включати «ціна за домовленістю»</span>
+            </label>
+            <div v-if="!hasPriceBounds" class="mt-1 text-xs text-gray-400">
+              Підказка: цей фільтр активується після введення «від» або «до».
+            </div>
+          </fieldset>
         </div>
 
         <div>
-          <div class="text-xs text-gray-500">Сортування</div>
-          <select v-model="form.sort" class="mt-1 rounded-md border-gray-300" @change="submit">
+          <label for="catalog-sort" class="text-xs text-gray-500">Сортування</label>
+          <select id="catalog-sort" v-model="form.sort" class="mt-1 rounded-md border-gray-300" @change="submit">
             <option value="newest">Найновіші</option>
             <option value="price_asc">Ціна: зростання</option>
             <option value="price_desc">Ціна: спадання</option>
