@@ -433,20 +433,23 @@ function goFirstPage() {
               <div class="mt-0.5 text-lg font-semibold leading-snug">{{ offer.title }}</div>
 
               <div class="mt-1 text-sm text-gray-600">
-                {{ offer.business_profile?.name }}
+                <Link
+                  v-if="offer.business_profile?.slug"
+                  :href="`/providers/${offer.business_profile.slug}`"
+                  class="font-medium text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+                >
+                  {{ offer.business_profile?.name }}
+                </Link>
+                <span v-else>
+                  {{ offer.business_profile?.name }}
+                </span>
                 <span v-if="offer.business_profile?.city">· {{ offer.business_profile.city }}</span>
               </div>
             </div>
 
             <div class="flex flex-col items-end gap-2">
               <div class="text-sm font-medium text-gray-800 whitespace-nowrap">{{ formatPrice(offer) }}</div>
-              <Link
-                v-if="offer.business_profile?.slug"
-                :href="`/providers/${offer.business_profile.slug}`"
-                class="text-sm text-blue-600 hover:underline"
-              >
-                Перейти в профіль
-              </Link>
+
             </div>
           </div>
 

@@ -48,6 +48,7 @@ class CatalogTest extends TestCase
                 ->component('Catalog/Index')
                 ->has('offers.data', 1)
                 ->where('offers.data.0.title', 'Active offer')
+                ->where('offers.data.0.business_profile.slug', $activeBp->slug)
             );
     }
 
