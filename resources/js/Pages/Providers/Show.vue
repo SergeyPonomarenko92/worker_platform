@@ -237,7 +237,7 @@ onMounted(() => {
           <div v-if="provider.phone">
             <a
               v-if="telHref"
-              class="text-blue-600 hover:underline"
+              class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :href="telHref"
               :aria-label="`Зателефонувати: ${provider.phone}`"
             >
@@ -249,7 +249,7 @@ onMounted(() => {
           <div v-if="provider.address || provider.city">
             <a
               v-if="mapsHref"
-              class="text-blue-600 hover:underline"
+              class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :href="mapsHref"
               target="_blank"
               rel="noopener noreferrer"
@@ -261,7 +261,12 @@ onMounted(() => {
           </div>
 
           <div v-if="provider.website">
-            <a class="text-blue-600 hover:underline" :href="normalizedWebsiteHref" target="_blank" rel="noopener noreferrer">
+            <a
+              class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+              :href="normalizedWebsiteHref"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {{ provider.website }}
             </a>
           </div>
