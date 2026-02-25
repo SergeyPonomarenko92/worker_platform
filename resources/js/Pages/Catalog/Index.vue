@@ -100,7 +100,16 @@ const activeChips = computed(() => {
   }
 
   if (form.type) chips.push({ key: 'type', label: `Тип: ${typeLabel(form.type)}` })
-  if (form.category_id) chips.push({ key: 'category_id', label: `Категорія: ${categoryLabel(form.category_id)}` })
+
+  if (form.category_id) {
+    const full = categoryLabel(form.category_id)
+
+    chips.push({
+      key: 'category_id',
+      label: `Категорія: ${chipDisplayValue(full)}`,
+      title: `Категорія: ${full}`,
+    })
+  }
 
   if (chipValue(form.city)) {
     chips.push({
