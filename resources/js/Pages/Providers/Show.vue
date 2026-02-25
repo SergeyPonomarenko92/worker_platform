@@ -154,7 +154,7 @@ onMounted(() => {
             <button
               v-if="provider.offers_count !== undefined"
               type="button"
-              class="hover:underline"
+              class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :aria-label="`Перейти до секції пропозицій. Пропозицій: ${provider.offers_count}`"
               @click="scrollToSection(offersSectionRef)"
             >
@@ -164,7 +164,7 @@ onMounted(() => {
             <button
               v-if="provider.reviews_count !== undefined"
               type="button"
-              class="hover:underline"
+              class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :aria-label="`Перейти до секції відгуків. Відгуків: ${provider.reviews_count}`"
               @click="scrollToSection(reviewsSectionRef)"
             >
@@ -174,7 +174,7 @@ onMounted(() => {
             <button
               v-if="portfolioTotalCount !== undefined && portfolioTotalCount !== null"
               type="button"
-              class="hover:underline"
+              class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :aria-label="`Перейти до секції портфоліо. Робіт: ${portfolioTotalCount}`"
               @click="scrollToSection(portfolioSectionRef)"
             >
