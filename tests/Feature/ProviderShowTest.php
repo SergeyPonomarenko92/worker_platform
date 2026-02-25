@@ -72,6 +72,7 @@ class ProviderShowTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Providers/Show')
+                ->where('provider.published_portfolio_posts_count', 1)
                 ->where('provider.portfolio_posts', function ($posts) {
                     $posts = $posts instanceof \Illuminate\Support\Collection ? $posts->all() : (array) $posts;
                     $titles = array_map(fn ($p) => $p['title'] ?? null, $posts);

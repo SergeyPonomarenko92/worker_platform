@@ -16,7 +16,8 @@ const portfolioLimit = 6
 const showAllPortfolio = ref(false)
 const portfolioSectionRef = ref(null)
 const portfolioPosts = computed(() => props.provider?.portfolio_posts || [])
-const hasMorePortfolio = computed(() => portfolioPosts.value.length > portfolioLimit)
+const portfolioTotalCount = computed(() => props.provider?.published_portfolio_posts_count ?? portfolioPosts.value.length)
+const hasMorePortfolio = computed(() => portfolioTotalCount.value > portfolioLimit)
 const portfolioPostsToShow = computed(() => (showAllPortfolio.value ? portfolioPosts.value : portfolioPosts.value.slice(0, portfolioLimit)))
 
 const togglePortfolio = () => {
@@ -119,7 +120,7 @@ const toggleReviews = () => {
             class="text-sm text-blue-600 hover:underline"
             @click="togglePortfolio"
           >
-            {{ showAllPortfolio ? 'Згорнути' : `Дивитися всі (${portfolioPosts.length})` }}
+            {{ showAllPortfolio ? 'Згорнути' : `Дивитися всі (${portfolioTotalCount})` }}
           </button>
         </div>
 
@@ -147,7 +148,7 @@ const toggleReviews = () => {
         </div>
 
         <div v-if="hasMorePortfolio && !showAllPortfolio" class="mt-3 text-sm text-gray-500">
-          Показано {{ portfolioLimit }} з {{ portfolioPosts.length }}
+          Показано {{ portfolioLimit }} з {{ portfolioTotalCount }}
         </div>
       </div>
 

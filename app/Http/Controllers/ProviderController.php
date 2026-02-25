@@ -16,6 +16,9 @@ class ProviderController extends Controller
             ->withCount([
                 'offers as offers_count' => fn ($q) => $q->where('is_active', true),
                 'reviews as reviews_count',
+                'portfolioPosts as published_portfolio_posts_count' => fn ($q) => $q
+                    ->whereNotNull('published_at')
+                    ->where('published_at', '<=', now()),
             ])
             ->withAvg('reviews as reviews_avg_rating', 'rating')
             ->with([
@@ -28,7 +31,7 @@ class ProviderController extends Controller
                     ->whereNotNull('published_at')
                     ->where('published_at', '<=', now())
                     ->latest('published_at')
-                    ->limit(12),
+                    ->limit(60),
                 'stories' => fn ($q) => $q->where('expires_at', '>', now())->latest()->limit(20),
                 'reviews' => fn ($q) => $q->with(['client:id,name'])->latest()->limit(20),
             ])
