@@ -527,6 +527,57 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_can_handle_category_price_and_sort_combination(): void
+    {
+        $parent = Category::factory()->create(['name' => 'Ремонт', 'parent_id' => null]);
+        $child = Category::factory()->create(['name' => 'Електрика', 'parent_id' => $parent->id]);
+        $other = Category::factory()->create(['name' => 'Інше', 'parent_id' => null]);
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $child->id,
+            'title' => 'Too cheap',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $child->id,
+            'title' => 'Child 200',
+            'is_active' => true,
+            'price_from' => 200,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $parent->id,
+            'title' => 'Parent 300',
+            'is_active' => true,
+            'price_from' => 300,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $other->id,
+            'title' => 'Other 500',
+            'is_active' => true,
+            'price_from' => 500,
+        ]);
+
+        $this
+            ->get('/catalog?category_id='.$parent->id.'&price_from=150&sort=price_desc')
+            ->assertOk()
+            ->assertSessionHasNoErrors()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.category_id', (string) $parent->id)
+                ->where('filters.price_from', '150')
+                ->where('filters.sort', 'price_desc')
+                ->has('offers.data', 2)
+                ->where('offers.data.0.title', 'Parent 300')
+                ->where('offers.data.1.title', 'Child 200')
+            );
+    }
+
     public function test_catalog_q_filter_matches_business_profile_name(): void
     {
         $cat = Category::factory()->create();
