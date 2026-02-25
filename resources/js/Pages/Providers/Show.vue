@@ -16,6 +16,23 @@ const props = defineProps({
 const ratingText = computed(() => formatAvgRatingUk(props.provider?.reviews_avg_rating))
 const normalizedWebsiteHref = computed(() => normalizeWebsite(props.provider?.website))
 
+const telHref = computed(() => {
+  const raw = String(props.provider?.phone || '').trim()
+  if (!raw) return null
+
+  // Keep digits and an optional leading + (simple & robust for UA numbers).
+  const cleaned = raw.replace(/(?!^)\+|[^\d+]/g, '')
+  return cleaned ? `tel:${cleaned}` : null
+})
+
+const mapsHref = computed(() => {
+  const parts = [props.provider?.country_code, props.provider?.city, props.provider?.address].filter(Boolean)
+  if (!parts.length) return null
+
+  const query = parts.join(', ')
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+})
+
 const providerPageAllOffersUrl = computed(() =>
   providerShowUrl(props.provider.slug, {
     all_offers: true,
@@ -203,7 +220,32 @@ onMounted(() => {
       <div class="mt-6 rounded-lg border border-gray-200 bg-white p-4">
         <div class="text-sm text-gray-700" v-if="provider.about">{{ provider.about }}</div>
         <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
-          <div v-if="provider.phone">☎ {{ provider.phone }}</div>
+          <div v-if="provider.phone">
+            <a
+              v-if="telHref"
+              class="text-blue-600 hover:underline"
+              :href="telHref"
+              :aria-label="`Зателефонувати: ${provider.phone}`"
+            >
+              ☎ {{ provider.phone }}
+            </a>
+            <span v-else>☎ {{ provider.phone }}</span>
+          </div>
+
+          <div v-if="provider.address || provider.city">
+            <a
+              v-if="mapsHref"
+              class="text-blue-600 hover:underline"
+              :href="mapsHref"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="`Відкрити адресу на мапі: ${[provider.city, provider.address].filter(Boolean).join(', ')}`"
+            >
+              📍 {{ [provider.city, provider.address].filter(Boolean).join(', ') }}
+            </a>
+            <span v-else>📍 {{ [provider.city, provider.address].filter(Boolean).join(', ') }}</span>
+          </div>
+
           <div v-if="provider.website">
             <a class="text-blue-600 hover:underline" :href="normalizedWebsiteHref" target="_blank" rel="noopener noreferrer">
               {{ provider.website }}
