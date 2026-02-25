@@ -125,6 +125,7 @@ function clearChip(key) {
 
 let qDebounceTimer = null
 let cityDebounceTimer = null
+let providerDebounceTimer = null
 let priceDebounceTimer = null
 
 watch(
@@ -140,6 +141,14 @@ watch(
   () => {
     if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
     cityDebounceTimer = setTimeout(() => submit(), 400)
+  },
+)
+
+watch(
+  () => form.provider,
+  () => {
+    if (providerDebounceTimer) clearTimeout(providerDebounceTimer)
+    providerDebounceTimer = setTimeout(() => submit(), 400)
   },
 )
 
@@ -164,6 +173,7 @@ function onSearch(e) {
   e.preventDefault()
   if (qDebounceTimer) clearTimeout(qDebounceTimer)
   if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
+  if (providerDebounceTimer) clearTimeout(providerDebounceTimer)
   if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
   submit()
 }
@@ -288,6 +298,18 @@ function goFirstPage() {
             autocomplete="address-level2"
             class="mt-1 w-48 rounded-md border-gray-300"
             placeholder="напр. Київ"
+            @keydown.enter.prevent="onSearch"
+          />
+        </div>
+
+        <div>
+          <div class="text-xs text-gray-500">Провайдер (slug)</div>
+          <input
+            v-model="form.provider"
+            type="search"
+            autocomplete="off"
+            class="mt-1 w-48 rounded-md border-gray-300"
+            placeholder="напр. demo-provider"
             @keydown.enter.prevent="onSearch"
           />
         </div>
