@@ -103,10 +103,11 @@ const toggleReviews = () => {
             rel="noopener noreferrer"
             class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-gray-300 bg-gray-50"
             :title="story.caption || ''"
+            :aria-label="story.caption ? `Історія: ${story.caption}` : 'Історія'"
           >
             <img
               :src="'/' + story.media_path"
-              alt=""
+              :alt="story.caption ? `Історія: ${story.caption}` : 'Історія'"
               class="h-full w-full object-cover"
               loading="lazy"
             />
