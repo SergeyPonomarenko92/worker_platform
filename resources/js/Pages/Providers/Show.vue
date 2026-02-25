@@ -208,7 +208,7 @@ onMounted(() => {
               </button>
 
               <Link
-                v-if="portfolioTotalCount > 18 && !loadAllPortfolio"
+                v-if="hasMorePortfolio && !loadAllPortfolio"
                 class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
                 :href="providerPageAllPortfolioUrl"
                 preserve-scroll
