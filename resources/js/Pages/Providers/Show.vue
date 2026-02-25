@@ -251,9 +251,9 @@ const scrollToSection = (sectionRef) => {
             </div>
           </div>
 
-          <div v-if="hasMorePortfolio && !showAllPortfolio" class="mt-4 flex justify-center">
+          <div v-if="hasMorePortfolio" class="mt-4 flex justify-center">
             <button
-              v-if="portfolioCanToggleWithoutReload"
+              v-if="!showAllPortfolio && portfolioCanToggleWithoutReload"
               type="button"
               class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               @click="togglePortfolio"
@@ -262,13 +262,31 @@ const scrollToSection = (sectionRef) => {
             </button>
 
             <Link
-              v-else
+              v-else-if="!showAllPortfolio"
               class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :href="providerPageAllPortfolioUrl"
               preserve-scroll
             >
               Показати всі роботи ({{ portfolioTotalCount }})
             </Link>
+
+            <Link
+              v-else-if="!portfolioIsFullyLoaded && !loadAllPortfolio"
+              class="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              :href="providerPageAllPortfolioUrl"
+              preserve-scroll
+            >
+              Завантажити всі роботи ({{ portfolioTotalCount }})
+            </Link>
+
+            <button
+              v-else
+              type="button"
+              class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+              @click="togglePortfolio"
+            >
+              Згорнути роботи
+            </button>
           </div>
         </template>
 
