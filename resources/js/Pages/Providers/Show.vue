@@ -152,7 +152,7 @@ onMounted(() => {
 
           <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
             <button
-              v-if="provider.offers_count !== undefined"
+              v-if="provider.offers_count !== undefined && provider.offers_count > 0"
               type="button"
               class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :aria-label="`Перейти до секції пропозицій. Пропозицій: ${provider.offers_count}`"
@@ -160,9 +160,12 @@ onMounted(() => {
             >
               Пропозицій: <span class="font-medium text-gray-800">{{ provider.offers_count }}</span>
             </button>
+            <div v-else-if="provider.offers_count === 0" class="text-gray-600">
+              Пропозицій: <span class="font-medium text-gray-800">0</span>
+            </div>
 
             <button
-              v-if="provider.reviews_count !== undefined"
+              v-if="provider.reviews_count !== undefined && provider.reviews_count > 0"
               type="button"
               class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :aria-label="`Перейти до секції відгуків. Відгуків: ${provider.reviews_count}`"
@@ -170,9 +173,12 @@ onMounted(() => {
             >
               Відгуків: <span class="font-medium text-gray-800">{{ provider.reviews_count }}</span>
             </button>
+            <div v-else-if="provider.reviews_count === 0" class="text-gray-600">
+              Відгуків: <span class="font-medium text-gray-800">0</span>
+            </div>
 
             <button
-              v-if="portfolioTotalCount !== undefined && portfolioTotalCount !== null"
+              v-if="portfolioTotalCount !== undefined && portfolioTotalCount !== null && portfolioTotalCount > 0"
               type="button"
               class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :aria-label="`Перейти до секції портфоліо. Робіт: ${portfolioTotalCount}`"
@@ -180,6 +186,9 @@ onMounted(() => {
             >
               Робіт: <span class="font-medium text-gray-800">{{ portfolioTotalCount }}</span>
             </button>
+            <div v-else-if="portfolioTotalCount === 0" class="text-gray-600">
+              Робіт: <span class="font-medium text-gray-800">0</span>
+            </div>
 
             <div v-if="ratingText">Рейтинг: <span class="font-medium text-gray-800">{{ ratingText }}/5</span></div>
           </div>
