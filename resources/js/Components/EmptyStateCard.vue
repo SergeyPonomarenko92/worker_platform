@@ -1,4 +1,6 @@
 <script setup>
+import Card from '@/Components/Card.vue'
+
 defineProps({
   title: {
     type: String,
@@ -12,11 +14,11 @@ defineProps({
 </script>
 
 <template>
-  <div class="rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-700">
+  <Card padding="p-6" class="text-sm text-gray-700">
     <div v-if="title" class="font-medium">{{ title }}</div>
     <div v-if="description" class="mt-1 text-gray-600">{{ description }}</div>
     <div v-if="$slots.default" class="mt-3">
       <slot />
     </div>
-  </div>
+  </Card>
 </template>
