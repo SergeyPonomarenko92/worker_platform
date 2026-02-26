@@ -59,6 +59,13 @@ function submit() {
   )
 }
 
+function clearDebounceTimers() {
+  if (qDebounceTimer) clearTimeout(qDebounceTimer)
+  if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
+  if (providerDebounceTimer) clearTimeout(providerDebounceTimer)
+  if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
+}
+
 const typeLabel = (type) => offerTypeLabel(type, { plural: true })
 
 const sortLabel = (sort) => {
@@ -174,6 +181,9 @@ const resultsAnnouncement = computed(() => {
 })
 
 function clearChip(key) {
+  suspendAutoSubmit = true
+  clearDebounceTimers()
+
   if (key === 'q') form.q = ''
   if (key === 'type') form.type = ''
   if (key === 'category_id') form.category_id = ''
@@ -185,6 +195,10 @@ function clearChip(key) {
   if (key === 'sort') form.sort = 'newest'
 
   submit()
+
+  setTimeout(() => {
+    suspendAutoSubmit = false
+  }, 0)
 }
 
 let qDebounceTimer = null
@@ -192,9 +206,14 @@ let cityDebounceTimer = null
 let providerDebounceTimer = null
 let priceDebounceTimer = null
 
+// When we programmatically update multiple fields (reset / chip removal), we want
+// to avoid extra debounced submits (double network requests).
+let suspendAutoSubmit = false
+
 watch(
   () => form.q,
   () => {
+    if (suspendAutoSubmit) return
     if (qDebounceTimer) clearTimeout(qDebounceTimer)
     qDebounceTimer = setTimeout(() => submit(), 400)
   },
@@ -203,6 +222,7 @@ watch(
 watch(
   () => form.city,
   () => {
+    if (suspendAutoSubmit) return
     if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
     cityDebounceTimer = setTimeout(() => submit(), 400)
   },
@@ -211,6 +231,7 @@ watch(
 watch(
   () => form.provider,
   () => {
+    if (suspendAutoSubmit) return
     if (providerDebounceTimer) clearTimeout(providerDebounceTimer)
     providerDebounceTimer = setTimeout(() => submit(), 400)
   },
@@ -219,6 +240,7 @@ watch(
 watch(
   () => [form.price_from, form.price_to, form.include_no_price],
   () => {
+    if (suspendAutoSubmit) return
     if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
     priceDebounceTimer = setTimeout(() => submit(), 400)
   },
@@ -243,6 +265,9 @@ function onSearch(e) {
 }
 
 function resetFilters() {
+  suspendAutoSubmit = true
+  clearDebounceTimers()
+
   form.q = ''
   form.type = ''
   form.category_id = ''
@@ -254,6 +279,11 @@ function resetFilters() {
   form.sort = 'newest'
 
   submit()
+
+  // Re-enable auto-submit on the next tick (so watchers won't schedule extra submits).
+  setTimeout(() => {
+    suspendAutoSubmit = false
+  }, 0)
 }
 
 function goFirstPage() {
