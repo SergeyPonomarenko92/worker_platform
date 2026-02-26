@@ -404,8 +404,8 @@ function goFirstPage() {
             </div>
           </div>
 
-          <div class="mt-4 flex flex-wrap gap-3 items-end">
-            <div class="w-full max-w-md">
+          <div class="mt-4 grid grid-cols-1 gap-3 items-end sm:grid-cols-2 lg:grid-cols-4">
+            <div class="w-full lg:col-span-2">
           <label for="catalog-q" class="text-xs text-gray-500">Пошук</label>
           <input
             id="catalog-q"
@@ -414,14 +414,18 @@ function goFirstPage() {
             autocomplete="off"
             class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. електрик, ремонт, булочна"
+            aria-describedby="catalog-q-hint"
             @keydown.enter.prevent="onSearch"
             @blur="normalizeTextField('q')"
           />
+          <div id="catalog-q-hint" class="mt-1 text-[11px] text-gray-400">
+            Підказка: пошук працює по назві оголошення та назві провайдера.
+          </div>
         </div>
 
         <div>
           <label for="catalog-type" class="text-xs text-gray-500">Тип</label>
-          <select id="catalog-type" v-model="form.type" class="mt-1 rounded-md border-gray-300" @change="submit">
+          <select id="catalog-type" v-model="form.type" class="mt-1 w-full rounded-md border-gray-300" @change="submit">
             <option value="">Усі</option>
             <option value="service">Послуги</option>
             <option value="product">Товари</option>
@@ -430,7 +434,7 @@ function goFirstPage() {
 
         <div>
           <label for="catalog-category" class="text-xs text-gray-500">Категорія</label>
-          <select id="catalog-category" v-model="form.category_id" class="mt-1 rounded-md border-gray-300" @change="submit">
+          <select id="catalog-category" v-model="form.category_id" class="mt-1 w-full rounded-md border-gray-300" @change="submit">
             <option value="">Усі</option>
             <option
               v-for="c in flatCategories"
@@ -449,7 +453,7 @@ function goFirstPage() {
             v-model="form.city"
             type="search"
             autocomplete="address-level2"
-            class="mt-1 w-48 rounded-md border-gray-300"
+            class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. Київ"
             @keydown.enter.prevent="onSearch"
             @blur="normalizeTextField('city')"
@@ -463,7 +467,7 @@ function goFirstPage() {
             v-model="form.provider"
             type="search"
             autocomplete="off"
-            class="mt-1 w-48 rounded-md border-gray-300"
+            class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. demo-provider"
             :title="'Slug береться з URL профілю провайдера: /providers/{slug}'"
             aria-describedby="catalog-provider-hint"
@@ -486,7 +490,7 @@ function goFirstPage() {
                 step="1"
                 inputmode="numeric"
                 autocomplete="off"
-                class="w-28 rounded-md border-gray-300"
+                class="w-full min-w-0 rounded-md border-gray-300"
                 placeholder="від"
                 aria-describedby="catalog-price-hint"
                 @keydown.enter.prevent="onSearch"
@@ -501,7 +505,7 @@ function goFirstPage() {
                 step="1"
                 inputmode="numeric"
                 autocomplete="off"
-                class="w-28 rounded-md border-gray-300"
+                class="w-full min-w-0 rounded-md border-gray-300"
                 placeholder="до"
                 aria-describedby="catalog-price-hint"
                 @keydown.enter.prevent="onSearch"
@@ -536,27 +540,30 @@ function goFirstPage() {
 
         <div>
           <label for="catalog-sort" class="text-xs text-gray-500">Сортування</label>
-          <select id="catalog-sort" v-model="form.sort" class="mt-1 rounded-md border-gray-300" @change="submit">
+          <select id="catalog-sort" v-model="form.sort" class="mt-1 w-full rounded-md border-gray-300" @change="submit">
             <option value="newest">Найновіші</option>
             <option value="price_asc">Ціна: зростання</option>
             <option value="price_desc">Ціна: спадання</option>
           </select>
         </div>
 
-        <button
-          class="rounded-md bg-black px-4 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
-        >
-          Шукати
-        </button>
-        <button
-          type="button"
-          class="rounded-md border border-gray-300 px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
-          :disabled="!hasActiveFilters"
-          :title="!hasActiveFilters ? 'Немає активних фільтрів для скидання.' : ''"
-          @click="resetFilters"
-        >
-          Скинути
-        </button>
+        <div class="flex flex-wrap items-center gap-3 lg:col-span-4">
+          <button
+            type="submit"
+            class="rounded-md bg-black px-4 py-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+          >
+            Шукати
+          </button>
+          <button
+            type="button"
+            class="rounded-md border border-gray-300 px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+            :disabled="!hasActiveFilters"
+            :title="!hasActiveFilters ? 'Немає активних фільтрів для скидання.' : ''"
+            @click="resetFilters"
+          >
+            Скинути
+          </button>
+        </div>
           </div>
         </fieldset>
       </form>
