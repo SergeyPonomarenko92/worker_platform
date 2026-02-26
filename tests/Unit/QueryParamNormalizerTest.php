@@ -3,45 +3,45 @@
 namespace Tests\Unit;
 
 use App\Support\QueryParamNormalizer;
-use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class QueryParamNormalizerTest extends TestCase
 {
-    #[Test]
-    public function it_returns_empty_string_for_null_or_empty_input(): void
+    #[DataProvider('providerSlugCases')]
+    public function test_provider_slug_normalization(?string $input, string $expected): void
     {
-        $this->assertSame('', QueryParamNormalizer::providerSlug(null));
-        $this->assertSame('', QueryParamNormalizer::providerSlug(''));
-        $this->assertSame('', QueryParamNormalizer::providerSlug("   \n\t  "));
+        $this->assertSame($expected, QueryParamNormalizer::providerSlug($input));
     }
 
-    #[Test]
-    public function it_normalizes_plain_slug_and_trims_slashes_and_whitespace(): void
+    public static function providerSlugCases(): array
     {
-        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('demo-provider'));
-        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('  demo-provider  '));
-        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('demo-provider/'));
-        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('/demo-provider/'));
-        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug("\n\tDEMO-PROVIDER\t\n"));
-    }
+        return [
+            'null' => [null, ''],
+            'empty' => ['', ''],
+            'whitespace only' => ["   \n\t  ", ''],
 
-    #[Test]
-    public function it_can_extract_slug_from_provider_url_with_query_or_fragment(): void
-    {
-        $this->assertSame(
-            'demo-provider',
-            QueryParamNormalizer::providerSlug('https://example.test/providers/DEMO-PROVIDER?ref=catalog')
-        );
+            'plain slug' => ['demo-provider', 'demo-provider'],
+            'plain slug uppercase' => ['DEMO-PROVIDER', 'demo-provider'],
+            'slug with surrounding whitespace' => ['  demo-provider  ', 'demo-provider'],
 
-        $this->assertSame(
-            'demo-provider',
-            QueryParamNormalizer::providerSlug('https://example.test/providers/demo-provider/#portfolio')
-        );
+            'slug with trailing slash' => ['demo-provider/', 'demo-provider'],
+            'providers path' => ['/providers/demo-provider/', 'demo-provider'],
 
-        $this->assertSame(
-            'demo-provider',
-            QueryParamNormalizer::providerSlug('/providers/demo-provider/?ref=catalog#offers')
-        );
+            'full url with query and fragment' => [
+                'https://example.test/providers/DEMO-PROVIDER/?utm=1#offers',
+                'demo-provider',
+            ],
+
+            'url without scheme (still contains /providers/)' => [
+                'example.test/providers/DEMO-PROVIDER?ref=catalog',
+                'demo-provider',
+            ],
+
+            'providers path with extra segments' => [
+                '/providers/demo-provider/something-else',
+                'demo-provider',
+            ],
+        ];
     }
 }
