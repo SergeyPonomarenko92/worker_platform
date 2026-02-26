@@ -266,7 +266,7 @@ function goFirstPage() {
             <button
               type="button"
               :disabled="!hasActiveFilters"
-              class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs text-white hover:bg-black disabled:opacity-50 disabled:hover:bg-gray-900"
+              class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs text-white hover:bg-black disabled:opacity-50 disabled:hover:bg-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
               @click="resetFilters"
               :title="hasActiveFilters ? 'Очистити всі фільтри' : 'Немає активних фільтрів'"
             >
@@ -276,7 +276,7 @@ function goFirstPage() {
             <Link
               v-if="providerSlug"
               :href="`/providers/${providerSlug}`"
-              class="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs text-blue-700 hover:bg-blue-100"
+              class="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs text-blue-700 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               title="Повернутись на сторінку провайдера"
             >
               ← До провайдера
@@ -290,7 +290,7 @@ function goFirstPage() {
               <span class="whitespace-nowrap">{{ chip.label }}</span>
               <button
                 type="button"
-                class="rounded-full text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                class="rounded-full text-gray-400 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
                 :aria-label="'Прибрати фільтр: ' + (chip.title || chip.label)"
                 @click="clearChip(chip.key)"
               >
