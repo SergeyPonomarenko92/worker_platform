@@ -33,6 +33,6 @@ class QueryParamNormalizer
         // Allow pasted values like "demo-provider/" or "/providers/demo-provider/".
         $providerSlug = trim($providerSlug, '/');
 
-        return mb_strtolower($providerSlug);
+        return mb_strtolower($providerSlug, 'UTF-8');
     }
 }

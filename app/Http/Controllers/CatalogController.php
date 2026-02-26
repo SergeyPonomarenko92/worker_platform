@@ -53,7 +53,7 @@ class CatalogController extends Controller
             $categoryIds = array_values(array_unique(array_map(fn ($r) => (int) $r->id, $rows)));
         }
         $city = preg_replace('/\s+/', ' ', trim((string) ($data['city'] ?? '')));
-        $cityLower = mb_strtolower($city);
+        $cityLower = mb_strtolower($city, 'UTF-8');
         $q = preg_replace('/\s+/', ' ', trim((string) ($data['q'] ?? '')));
 
         $providerSlugLower = \App\Support\QueryParamNormalizer::providerSlug((string) ($data['provider'] ?? ''));

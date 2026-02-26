@@ -13,7 +13,7 @@ class ProviderController extends Controller
     {
         // Slugs are stored normalized (lowercase). Be tolerant to users typing/pasting
         // an uppercase variant in the URL.
-        $slug = mb_strtolower($slug);
+        $slug = mb_strtolower($slug, 'UTF-8');
 
         $now = now();
 
