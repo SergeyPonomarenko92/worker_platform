@@ -255,6 +255,38 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_filters_by_provider_allows_pasting_relative_provider_path(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bpA = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
+        $bpB = BusinessProfile::factory()->create(['slug' => 'other-provider', 'city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bpA)->create([
+            'category_id' => $cat->id,
+            'title' => 'Demo provider offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bpB)->create([
+            'category_id' => $cat->id,
+            'title' => 'Other provider offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?provider=%2Fproviders%2FDEMO-PROVIDER%2F')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.provider', 'demo-provider')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Demo provider offer')
+            );
+    }
+
     public function test_catalog_provider_filter_unknown_slug_returns_empty_list_without_error(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
