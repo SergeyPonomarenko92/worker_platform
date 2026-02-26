@@ -67,7 +67,8 @@ function submit() {
 
 function normalizeProviderField() {
   const normalized = normalizeProviderInputToSlug(form.provider)
-  if (!normalized || normalized === String(form.provider ?? '').trim()) return
+  const current = String(form.provider ?? '')
+  if (normalized === current) return
 
   suspendAutoSubmit = true
   clearDebounceTimers()
@@ -84,7 +85,7 @@ function normalizeTextField(key) {
   const current = String(form[key] ?? '')
   const normalized = normalizeWhitespace(current)
 
-  if (!normalized || normalized === current.trim()) return
+  if (normalized === current) return
 
   suspendAutoSubmit = true
   clearDebounceTimers()
