@@ -39,6 +39,15 @@
   - UI: `formatNumber()` коректно парсить числа з пробілами/NBSP/апострофами.
   - Tests: додано/підтягнуто покриття (provider show preload limits, all_portfolio behavior, deals offer belongs to BP тощо).
 - 2026-02-26: Techborg/Perf — додано Postgres індекс для prefix-пошуку міста: `lower(city) LIKE 'ки%'` (expression index + `text_pattern_ops`).
+- 2026-02-26: Catalog polish/tests/a11y/robustness:
+  - Provider filter: винесено нормалізацію в `App\Support\QueryParamNormalizer::providerSlug()` + unit/feature тести (підтримка full URL / `/providers/{slug}` path, query/hash, пробіли, trailing slashes, upper-case).
+  - Додано `QueryParamNormalizer::text()` (trim + collapse whitespace + NBSP) і застосовано для `q/city`.
+  - Catalog UX: показ кількості результатів, нормалізація інпутів на blur, уникнення double-submit, покращена сітка фільтрів + підказки.
+  - Catalog a11y: `role="search"`/`fieldset` для фільтрів, покращені active-filter chips (семантика + доступність кнопки видалення).
+  - Robustness: екранування спецсимволів (`%`, `_`, `!`) у `city` prefix LIKE.
+  - BusinessProfile: нормалізація `phone` (trim, пусте → null).
+  - Reviews: graceful handling повторної відправки відгуку.
+  - Perf: індекс для лістингу офферів у профілі (bp, active, created_at).
 
 ## Current status
 - Branch: `main`
@@ -81,7 +90,7 @@
 
 ## TODO (next session)
 1) Stage 5 (Polish):
-   - [ ] Catalog: дрібний UI polish фільтрів/чіпів (візуальна ієрархія, підказки)
+   - [x] Catalog: дрібний UI polish фільтрів/чіпів (візуальна ієрархія, підказки)
    - [x] Catalog: edge-case test на query-string комбінації (category+price+sort)
    - [x] Provider public page: CTA/UX для контенту (відгуки/пропозиції: “показати всі”, підвантаження all_offers)
    - [x] Provider public page: CTA/UX для портфоліо (“Показати всі роботи”/load all через all_portfolio=1)
