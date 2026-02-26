@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3'
 import { computed, onMounted, ref } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
+import Card from '@/Components/Card.vue'
 import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk } from '@/lib/formatters'
 import { providerShowUrl } from '@/lib/providerShowUrl'
 
@@ -231,7 +232,7 @@ onMounted(() => {
       </div>
 
       <!-- Header-like block (Instagram-ish direction for MVP) -->
-      <div class="mt-6 rounded-lg border border-gray-200 bg-white p-4">
+      <Card class="mt-6">
         <div class="text-sm text-gray-700" v-if="provider.about">{{ provider.about }}</div>
         <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
           <div v-if="provider.phone">
@@ -271,7 +272,7 @@ onMounted(() => {
             </a>
           </div>
         </div>
-      </div>
+      </Card>
 
       <!-- Stories -->
       <div class="mt-8">
@@ -332,10 +333,9 @@ onMounted(() => {
 
         <template v-if="portfolioPostsToShow.length">
           <div id="provider-portfolio-list" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div
+            <Card
               v-for="post in portfolioPostsToShow"
               :key="post.id"
-              class="rounded-lg border border-gray-200 bg-white p-4"
             >
               <div class="flex items-start justify-between gap-3">
                 <div class="font-medium">{{ post.title }}</div>
@@ -344,7 +344,7 @@ onMounted(() => {
                 </div>
               </div>
               <div v-if="post.body" class="mt-2 text-sm text-gray-600 line-clamp-3">{{ post.body }}</div>
-            </div>
+            </Card>
           </div>
 
           <div v-if="hasMorePortfolio" class="mt-4 flex justify-center">
@@ -434,10 +434,9 @@ onMounted(() => {
 
         <template v-if="offersToShow.length">
           <div id="provider-offers-list" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div
+            <Card
               v-for="offer in offersToShow"
               :key="offer.id"
-              class="rounded-lg border border-gray-200 bg-white p-4"
             >
               <div class="flex items-start justify-between gap-3">
                 <div>
@@ -451,7 +450,7 @@ onMounted(() => {
               </div>
 
               <div v-if="offer.description" class="mt-2 text-sm text-gray-700 line-clamp-3">{{ offer.description }}</div>
-            </div>
+            </Card>
           </div>
 
           <div
@@ -519,10 +518,9 @@ onMounted(() => {
 
         <template v-if="reviewsToShow.length">
           <div id="provider-reviews-list" class="mt-3 space-y-3">
-            <div
+            <Card
               v-for="review in reviewsToShow"
               :key="review.id"
-              class="rounded-lg border border-gray-200 bg-white p-4"
             >
               <div class="flex items-center justify-between gap-3">
                 <div class="text-sm text-gray-500">
@@ -535,7 +533,7 @@ onMounted(() => {
                 </div>
               </div>
               <div v-if="review.body" class="mt-2 text-sm text-gray-700">{{ review.body }}</div>
-            </div>
+            </Card>
           </div>
 
           <div
