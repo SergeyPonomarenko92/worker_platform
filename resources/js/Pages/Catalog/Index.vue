@@ -131,10 +131,15 @@ const activeChips = computed(() => {
   }
 
   if (chipValue(form.provider)) {
+    const slug = normalizeProviderInputToSlug(form.provider)
+
     chips.push({
       key: 'provider',
-      label: `Провайдер: ${chipDisplayValue(form.provider)}`,
-      title: `Провайдер: ${chipValue(form.provider)}`,
+      label: `Провайдер: ${chipDisplayValue(slug || form.provider)}`,
+      title:
+        slug && slug !== chipValue(form.provider)
+          ? `Провайдер: ${slug} (з введеного: ${chipValue(form.provider)})`
+          : `Провайдер: ${chipValue(form.provider)}`,
     })
   }
 
