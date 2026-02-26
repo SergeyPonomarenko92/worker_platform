@@ -11,6 +11,10 @@ class ProviderController extends Controller
 {
     public function show(Request $request, string $slug)
     {
+        // Slugs are stored normalized (lowercase). Be tolerant to users typing/pasting
+        // an uppercase variant in the URL.
+        $slug = mb_strtolower($slug);
+
         $now = now();
 
         $loadAllPortfolio = $request->boolean('all_portfolio');

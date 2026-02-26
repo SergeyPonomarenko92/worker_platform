@@ -88,6 +88,22 @@ class ProviderShowTest extends TestCase
         $this->get('/providers/'.$provider->slug)->assertNotFound();
     }
 
+    public function test_provider_page_allows_uppercase_slug_in_url(): void
+    {
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        $this
+            ->get('/providers/DEMO-PROVIDER')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('provider.slug', 'demo-provider')
+            );
+    }
+
     public function test_provider_page_includes_offer_category(): void
     {
         $category = Category::factory()->create(['name' => 'Електрика']);
