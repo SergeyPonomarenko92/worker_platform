@@ -331,7 +331,14 @@ function goFirstPage() {
         <Link href="/" class="text-sm text-gray-600 hover:text-gray-900">На головну</Link>
       </div>
 
-      <form class="mt-6 flex flex-wrap gap-3 items-end" @submit="onSearch">
+      <form
+        class="mt-6"
+        role="search"
+        aria-label="Фільтри каталогу"
+        @submit="onSearch"
+      >
+        <fieldset class="flex flex-wrap gap-3 items-end">
+          <legend class="sr-only">Фільтри каталогу</legend>
         <div class="w-full">
           <div class="flex flex-wrap items-center gap-2">
             <div v-if="activeChips.length" class="text-xs text-gray-500 mr-2">Активні фільтри:</div>
@@ -521,6 +528,7 @@ function goFirstPage() {
         >
           Скинути
         </button>
+        </fieldset>
       </form>
 
       <div v-if="offers.data?.length" class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
