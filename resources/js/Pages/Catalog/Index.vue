@@ -22,6 +22,12 @@ const form = reactive({
   sort: props.filters?.sort || 'newest',
 })
 
+function normalizeWhitespace(value) {
+  return String(value ?? '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 function normalizeProviderInputToSlug(value) {
   const raw = String(value ?? '').trim()
   if (!raw) return ''
@@ -37,10 +43,10 @@ function submit() {
   router.get(
     '/catalog',
     {
-      q: (form.q || '').trim() || undefined,
+      q: normalizeWhitespace(form.q) || undefined,
       type: form.type || undefined,
       category_id: form.category_id || undefined,
-      city: (form.city || '').trim() || undefined,
+      city: normalizeWhitespace(form.city) || undefined,
       provider: normalizeProviderInputToSlug(form.provider) || undefined,
       price_from: String(form.price_from).trim() || undefined,
       price_to: String(form.price_to).trim() || undefined,
@@ -73,6 +79,24 @@ function normalizeProviderField() {
     suspendAutoSubmit = false
   }, 0)
 }
+
+function normalizeTextField(key) {
+  const current = String(form[key] ?? '')
+  const normalized = normalizeWhitespace(current)
+
+  if (!normalized || normalized === current.trim()) return
+
+  suspendAutoSubmit = true
+  clearDebounceTimers()
+
+  form[key] = normalized
+  submit()
+
+  setTimeout(() => {
+    suspendAutoSubmit = false
+  }, 0)
+}
+
 
 function clearDebounceTimers() {
   if (qDebounceTimer) clearTimeout(qDebounceTimer)
@@ -112,7 +136,7 @@ const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === 
 
 const providerSlug = computed(() => normalizeProviderInputToSlug(form.provider))
 
-const chipValue = (value) => String(value ?? '').trim()
+const chipValue = (value) => normalizeWhitespace(value)
 
 const chipDisplayValue = (value, max = 30) => {
   const trimmed = chipValue(value)
@@ -391,6 +415,7 @@ function goFirstPage() {
             class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. електрик, ремонт, булочна"
             @keydown.enter.prevent="onSearch"
+            @blur="normalizeTextField('q')"
           />
         </div>
 
@@ -427,6 +452,7 @@ function goFirstPage() {
             class="mt-1 w-48 rounded-md border-gray-300"
             placeholder="напр. Київ"
             @keydown.enter.prevent="onSearch"
+            @blur="normalizeTextField('city')"
           />
         </div>
 
