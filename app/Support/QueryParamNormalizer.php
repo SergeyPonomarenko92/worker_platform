@@ -12,7 +12,22 @@ class QueryParamNormalizer
      */
     public static function text(?string $input): string
     {
-        return preg_replace('/\s+/', ' ', trim((string) $input));
+        $value = trim((string) $input);
+
+        if ($value === '') {
+            return '';
+        }
+
+        // Normalize common "non-breaking" spaces that often appear when users copy/paste.
+        // - NBSP (U+00A0)
+        // - Narrow no-break space (U+202F)
+        $value = str_replace([
+            "\u{00A0}",
+            "\u{202F}",
+        ], ' ', $value);
+
+        // Collapse all whitespace (tabs/newlines/multiple spaces) into a single space.
+        return preg_replace('/\s+/u', ' ', $value);
     }
 
     /**
