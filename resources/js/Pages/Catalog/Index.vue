@@ -496,6 +496,7 @@ function goFirstPage() {
         class="mt-8"
         title="Нічого не знайдено"
         description="Спробуйте змінити або очистити фільтри."
+        announce
       >
         <div class="flex flex-wrap gap-2">
           <button
