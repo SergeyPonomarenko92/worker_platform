@@ -55,21 +55,8 @@ class CatalogController extends Controller
         $city = preg_replace('/\s+/', ' ', trim((string) ($data['city'] ?? '')));
         $cityLower = mb_strtolower($city);
         $q = preg_replace('/\s+/', ' ', trim((string) ($data['q'] ?? '')));
-        $providerInput = preg_replace('/\s+/', ' ', trim((string) ($data['provider'] ?? '')));
 
-        // Provider filter can be either a slug ("demo-provider") or a pasted provider URL
-        // (e.g. "https://example.test/providers/demo-provider").
-        $providerSlug = $providerInput;
-        if ($providerSlug !== '' && str_contains($providerSlug, '/providers/')) {
-            $path = parse_url($providerSlug, PHP_URL_PATH) ?: $providerSlug;
-            $after = explode('/providers/', $path, 2)[1] ?? '';
-            $providerSlug = trim(explode('/', ltrim($after, '/'), 2)[0] ?? '');
-        }
-
-        // Allow pasted values like "demo-provider/" or "/providers/demo-provider/".
-        $providerSlug = trim($providerSlug, '/');
-
-        $providerSlugLower = mb_strtolower($providerSlug);
+        $providerSlugLower = \App\Support\QueryParamNormalizer::providerSlug((string) ($data['provider'] ?? ''));
         $priceFrom = $data['price_from'] ?? null;
         $priceTo = $data['price_to'] ?? null;
         $includeNoPrice = (bool) ($data['include_no_price'] ?? false);
