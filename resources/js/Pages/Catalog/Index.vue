@@ -535,7 +535,17 @@ function goFirstPage() {
         </fieldset>
       </form>
 
-      <div v-if="offers.data?.length" class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div
+        class="mt-6 text-sm text-gray-600"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <span class="font-medium text-gray-800">Знайдено:</span>
+        <span>{{ offers.total ?? 0 }}</span>
+        <span v-if="offers.total">· сторінка {{ offers.current_page }} з {{ offers.last_page }}</span>
+      </div>
+
+      <div v-if="offers.data?.length" class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <div
           v-for="offer in offers.data"
           :key="offer.id"
