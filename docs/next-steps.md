@@ -38,6 +38,7 @@
     - focus-visible rings для ключових CTA/лінків; flash messages озвучуються скрінрідерами.
   - UI: `formatNumber()` коректно парсить числа з пробілами/NBSP/апострофами.
   - Tests: додано/підтягнуто покриття (provider show preload limits, all_portfolio behavior, deals offer belongs to BP тощо).
+- 2026-02-26: Techborg/Perf — додано Postgres індекс для prefix-пошуку міста: `lower(city) LIKE 'ки%'` (expression index + `text_pattern_ops`).
 
 ## Current status
 - Branch: `main`
@@ -86,4 +87,5 @@
    - [x] Provider public page: CTA/UX для портфоліо (“Показати всі роботи”/load all через all_portfolio=1)
 2) Техборг:
    - [ ] ревізія індексів під реальні запити (EXPLAIN) + аудит N+1
-   - [ ] привести до спільних UI-компонентів (empty-state/card) там, де ще залишився “сирий” текст
+   - [x] уніфікація UI-компонентів (Card/EmptyStateCard) + a11y для empty-state (announce)
+   - [x] perf: індекс під prefix-пошук міста (Postgres `text_pattern_ops`)
