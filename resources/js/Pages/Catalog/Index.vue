@@ -358,9 +358,10 @@ function goFirstPage() {
             class="mt-1 w-48 rounded-md border-gray-300"
             placeholder="напр. demo-provider"
             :title="'Slug береться з URL профілю провайдера: /providers/{slug}'"
+            aria-describedby="catalog-provider-hint"
             @keydown.enter.prevent="onSearch"
           />
-          <div class="mt-1 text-[11px] text-gray-400">Підказка: slug = частина URL профілю провайдера (<span class="font-mono">/providers/{slug}</span>).</div>
+          <div id="catalog-provider-hint" class="mt-1 text-[11px] text-gray-400">Підказка: slug = частина URL профілю провайдера (<span class="font-mono">/providers/{slug}</span>).</div>
         </div>
 
         <div>
@@ -378,6 +379,7 @@ function goFirstPage() {
                 autocomplete="off"
                 class="w-28 rounded-md border-gray-300"
                 placeholder="від"
+                aria-describedby="catalog-price-hint"
                 @keydown.enter.prevent="onSearch"
               />
               <span class="text-xs text-gray-400">—</span>
@@ -392,10 +394,11 @@ function goFirstPage() {
                 autocomplete="off"
                 class="w-28 rounded-md border-gray-300"
                 placeholder="до"
+                aria-describedby="catalog-price-hint"
                 @keydown.enter.prevent="onSearch"
               />
             </div>
-            <div class="mt-1 text-[11px] text-gray-400">
+            <div id="catalog-price-hint" class="mt-1 text-[11px] text-gray-400">
               Можна заповнити тільки одне поле («від» або «до») або обидва.
             </div>
             <label
@@ -408,10 +411,15 @@ function goFirstPage() {
                 v-model="form.include_no_price"
                 class="rounded border-gray-300"
                 :disabled="!hasPriceBounds"
+                aria-describedby="catalog-include-no-price-hint"
               />
               <span :class="!hasPriceBounds ? 'text-gray-400' : ''">Включати «ціна за домовленістю»</span>
             </label>
-            <div v-if="!hasPriceBounds" class="mt-1 text-xs text-gray-400">
+            <div
+              id="catalog-include-no-price-hint"
+              v-if="!hasPriceBounds"
+              class="mt-1 text-xs text-gray-400"
+            >
               Підказка: цей фільтр активується після введення «від» або «до».
             </div>
           </fieldset>
