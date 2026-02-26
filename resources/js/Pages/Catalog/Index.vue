@@ -337,48 +337,51 @@ function goFirstPage() {
         aria-label="Фільтри каталогу"
         @submit="onSearch"
       >
-        <fieldset class="flex flex-wrap gap-3 items-end">
+        <fieldset class="rounded-lg border border-gray-200 bg-white p-4">
           <legend class="sr-only">Фільтри каталогу</legend>
-        <div class="w-full">
-          <div class="flex flex-wrap items-center gap-2">
-            <div v-if="activeChips.length" class="text-xs text-gray-500 mr-2">Активні фільтри:</div>
-            <button
-              type="button"
-              :disabled="!hasActiveFilters"
-              class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs text-white hover:bg-black disabled:opacity-50 disabled:hover:bg-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
-              @click="resetFilters"
-              :title="hasActiveFilters ? 'Очистити всі фільтри' : 'Немає активних фільтрів'"
-            >
-              Очистити всі фільтри
-            </button>
 
-            <Link
-              v-if="providerSlug"
-              :href="`/providers/${providerSlug}`"
-              class="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs text-blue-700 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              title="Повернутись на сторінку провайдера"
-            >
-              ← До провайдера
-            </Link>
-            <span
-              v-for="chip in activeChips"
-              :key="chip.key"
-              class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700"
-              :title="chip.title || chip.label"
-            >
-              <span class="whitespace-nowrap">{{ chip.label }}</span>
+          <div class="w-full">
+            <div class="flex flex-wrap items-center gap-2">
+              <div v-if="activeChips.length" class="text-xs text-gray-500 mr-2">Активні фільтри:</div>
               <button
                 type="button"
-                class="rounded-full text-gray-400 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
-                :aria-label="'Прибрати фільтр: ' + (chip.title || chip.label)"
-                @click="clearChip(chip.key)"
+                :disabled="!hasActiveFilters"
+                class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs text-white hover:bg-black disabled:opacity-50 disabled:hover:bg-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                @click="resetFilters"
+                :title="hasActiveFilters ? 'Очистити всі фільтри' : 'Немає активних фільтрів'"
               >
-                ×
+                Очистити всі фільтри
               </button>
-            </span>
+
+              <Link
+                v-if="providerSlug"
+                :href="`/providers/${providerSlug}`"
+                class="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs text-blue-700 hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                title="Повернутись на сторінку провайдера"
+              >
+                ← До провайдера
+              </Link>
+              <span
+                v-for="chip in activeChips"
+                :key="chip.key"
+                class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700"
+                :title="chip.title || chip.label"
+              >
+                <span class="whitespace-nowrap">{{ chip.label }}</span>
+                <button
+                  type="button"
+                  class="rounded-full text-gray-400 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                  :aria-label="'Прибрати фільтр: ' + (chip.title || chip.label)"
+                  @click="clearChip(chip.key)"
+                >
+                  ×
+                </button>
+              </span>
+            </div>
           </div>
-        </div>
-        <div class="w-full max-w-md">
+
+          <div class="mt-4 flex flex-wrap gap-3 items-end">
+            <div class="w-full max-w-md">
           <label for="catalog-q" class="text-xs text-gray-500">Пошук</label>
           <input
             id="catalog-q"
@@ -528,6 +531,7 @@ function goFirstPage() {
         >
           Скинути
         </button>
+          </div>
         </fieldset>
       </form>
 
