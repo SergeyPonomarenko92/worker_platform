@@ -519,6 +519,42 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_ignores_include_no_price_when_no_price_bounds_are_set(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'No price offer',
+            'is_active' => true,
+            'price_from' => null,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Priced offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?include_no_price=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.include_no_price', false)
+                ->has('offers.data', 2)
+                ->where('offers.data', function ($offers) {
+                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
+                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
+                    sort($titles);
+
+                    return $titles === ['No price offer', 'Priced offer'];
+                })
+            );
+    }
+
     public function test_catalog_category_filter_includes_child_categories(): void
     {
         $parent = Category::factory()->create(['name' => 'Ремонт', 'parent_id' => null]);
