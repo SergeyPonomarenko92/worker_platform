@@ -223,6 +223,29 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_provider_filter_unknown_slug_returns_empty_list_without_error(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bp = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Demo provider offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?provider=missing-provider')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.provider', 'missing-provider')
+                ->has('offers.data', 0)
+            );
+    }
+
     public function test_catalog_filters_by_city_prefix_case_insensitive(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
