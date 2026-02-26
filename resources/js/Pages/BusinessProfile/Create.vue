@@ -31,7 +31,7 @@ const submit = () => {
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
                     Створити профіль бізнесу
                 </h2>
-                <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">До списку</Link>
+                <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">До списку</Link>
             </div>
         </template>
 

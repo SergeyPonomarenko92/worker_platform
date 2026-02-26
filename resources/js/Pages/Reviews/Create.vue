@@ -30,7 +30,7 @@ const submit = () => {
           Відгук — {{ businessProfile.name }}
         </h2>
         <div class="flex gap-3">
-          <Link :href="route('providers.show', businessProfile.slug)" class="text-sm text-indigo-600 hover:underline">
+          <Link :href="route('providers.show', businessProfile.slug)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">
             До сторінки провайдера
           </Link>
         </div>

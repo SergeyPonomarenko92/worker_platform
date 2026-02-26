@@ -21,11 +21,11 @@ const props = defineProps({
                     Пропозиції — {{ businessProfile.name }}
                 </h2>
                 <div class="flex gap-3 flex-wrap justify-end">
-                    <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">Профілі бізнесу</Link>
-                    <Link :href="route('dashboard.business-profiles.edit', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Профіль</Link>
-                    <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Портфоліо</Link>
-                    <Link :href="route('dashboard.stories.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Історії</Link>
-                    <Link :href="route('dashboard.deals.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Угоди</Link>
+                    <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Профілі бізнесу</Link>
+                    <Link :href="route('dashboard.business-profiles.edit', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Профіль</Link>
+                    <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Портфоліо</Link>
+                    <Link :href="route('dashboard.stories.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Історії</Link>
+                    <Link :href="route('dashboard.deals.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Угоди</Link>
                     <Link :href="route('dashboard.offers.create', businessProfile.id)">
                         <PrimaryButton>Створити пропозицію</PrimaryButton>
                     </Link>
@@ -48,7 +48,7 @@ const props = defineProps({
                             <Link
                                 v-if="businessProfile.slug"
                                 :href="route('providers.show', businessProfile.slug)"
-                                class="text-sm text-indigo-600 hover:underline"
+                                class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
                             >
                                 Переглянути публічну сторінку
                             </Link>
@@ -66,7 +66,7 @@ const props = defineProps({
                                     <span class="font-medium text-gray-800">{{ formatPrice(offer) }}</span>
                                 </div>
                             </div>
-                            <Link :href="route('dashboard.offers.edit', [businessProfile.id, offer.id])" class="text-sm text-indigo-600 hover:underline">Редагувати</Link>
+                            <Link :href="route('dashboard.offers.edit', [businessProfile.id, offer.id])" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Редагувати</Link>
                         </li>
                     </ul>
                 </div>

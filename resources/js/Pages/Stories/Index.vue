@@ -47,11 +47,11 @@ const destroy = (storyId) => {
                     Історії — {{ businessProfile.name }}
                 </h2>
                 <div class="flex gap-3 flex-wrap justify-end">
-                    <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">Профілі бізнесу</Link>
-                    <Link :href="route('dashboard.business-profiles.edit', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Профіль</Link>
-                    <Link :href="route('dashboard.offers.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Пропозиції</Link>
-                    <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Портфоліо</Link>
-                    <Link :href="route('dashboard.deals.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Угоди</Link>
+                    <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Профілі бізнесу</Link>
+                    <Link :href="route('dashboard.business-profiles.edit', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Профіль</Link>
+                    <Link :href="route('dashboard.offers.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Пропозиції</Link>
+                    <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Портфоліо</Link>
+                    <Link :href="route('dashboard.deals.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Угоди</Link>
                     <Link :href="route('dashboard.stories.create', businessProfile.id)">
                         <PrimaryButton>Створити історію</PrimaryButton>
                     </Link>
@@ -65,7 +65,7 @@ const destroy = (storyId) => {
                     <div class="mb-4 flex items-center justify-between gap-3">
                         <div class="text-sm text-gray-600">За замовчуванням показані лише активні історії.</div>
                         <Link
-                            class="text-sm text-indigo-600 hover:underline"
+                            class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
                             :href="route('dashboard.stories.index', businessProfile.id) + (showExpired ? '' : '?show_expired=1')"
                         >
                             {{ showExpired ? 'Сховати протерміновані' : 'Показати протерміновані' }}
@@ -84,7 +84,7 @@ const destroy = (storyId) => {
                             <Link
                                 v-if="businessProfile.slug"
                                 :href="route('providers.show', businessProfile.slug)"
-                                class="text-sm text-indigo-600 hover:underline"
+                                class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
                             >
                                 Переглянути публічну сторінку
                             </Link>
@@ -105,7 +105,7 @@ const destroy = (storyId) => {
                             <div class="flex items-center gap-3">
                                 <Link
                                     :href="route('dashboard.stories.edit', [businessProfile.id, story.id])"
-                                    class="text-sm text-indigo-600 hover:underline"
+                                    class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
                                 >
                                     Редагувати
                                 </Link>

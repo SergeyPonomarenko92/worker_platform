@@ -35,11 +35,11 @@ const statusLabel = (status) => {
                     Угоди — {{ businessProfile.name }}
                 </h2>
                 <div class="flex gap-3 flex-wrap justify-end">
-                    <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline">Профілі бізнесу</Link>
-                    <Link :href="route('dashboard.business-profiles.edit', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Профіль</Link>
-                    <Link :href="route('dashboard.offers.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Пропозиції</Link>
-                    <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Портфоліо</Link>
-                    <Link :href="route('dashboard.stories.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline">Історії</Link>
+                    <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Профілі бізнесу</Link>
+                    <Link :href="route('dashboard.business-profiles.edit', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Профіль</Link>
+                    <Link :href="route('dashboard.offers.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Пропозиції</Link>
+                    <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Портфоліо</Link>
+                    <Link :href="route('dashboard.stories.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Історії</Link>
                     <Link :href="route('dashboard.deals.create', businessProfile.id)">
                         <PrimaryButton>Створити угоду</PrimaryButton>
                     </Link>
@@ -72,7 +72,7 @@ const statusLabel = (status) => {
                                     <span v-if="deal.offer"> · Офер: {{ deal.offer.title }}</span>
                                 </div>
                             </div>
-                            <Link :href="route('dashboard.deals.show', [businessProfile.id, deal.id])" class="text-sm text-indigo-600 hover:underline">Відкрити</Link>
+                            <Link :href="route('dashboard.deals.show', [businessProfile.id, deal.id])" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Відкрити</Link>
                         </li>
                     </ul>
                 </div>
