@@ -13,6 +13,44 @@ class CatalogTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_catalog_category_filter_includes_descendant_categories(): void
+    {
+        $parent = Category::factory()->create(['name' => 'Будівництво']);
+        $child = Category::factory()->create(['parent_id' => $parent->id, 'name' => 'Електрика']);
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $parent->id,
+            'title' => 'Parent offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $child->id,
+            'title' => 'Child offer',
+            'is_active' => true,
+            'price_from' => 200,
+        ]);
+
+        $this
+            ->get('/catalog?category_id='.$parent->id)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.category_id', (string) $parent->id)
+                ->has('offers.data', 2)
+                ->where('offers.data', function ($offers) {
+                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
+                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
+                    sort($titles);
+
+                    return $titles === ['Child offer', 'Parent offer'];
+                })
+            );
+    }
+
     public function test_catalog_shows_only_active_offers_from_active_business_profiles(): void
     {
         $cat = Category::factory()->create();
