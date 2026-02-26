@@ -302,6 +302,7 @@ onMounted(() => {
           <EmptyStateCard
             title="Поки що немає історій"
             description="Історії з’являються, коли провайдер публікує короткі оновлення (фото/відео) з обмеженим терміном."
+            announce
           />
         </div>
       </div>
@@ -394,6 +395,7 @@ onMounted(() => {
           <EmptyStateCard
             title="Поки що немає робіт"
             description="Коли провайдер опублікує портфоліо — воно з’явиться тут."
+            announce
           />
         </div>
 
@@ -477,6 +479,7 @@ onMounted(() => {
           <EmptyStateCard
             title="Поки що немає пропозицій"
             description="Коли провайдер додасть оголошення — воно з’явиться тут."
+            announce
           />
         </div>
       </div>
@@ -551,7 +554,11 @@ onMounted(() => {
         </template>
 
         <div v-else class="mt-3">
-          <EmptyStateCard title="Поки що немає відгуків" description="Відгуки з’являються після завершення угоди.">
+          <EmptyStateCard
+            title="Поки що немає відгуків"
+            description="Відгуки з’являються після завершення угоди."
+            announce
+          >
             <span v-if="eligibleDealId" class="text-gray-600">Можете залишити свій відгук вище.</span>
           </EmptyStateCard>
         </div>

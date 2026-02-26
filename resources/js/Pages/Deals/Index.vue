@@ -54,6 +54,7 @@ const statusLabel = (status) => {
                         v-if="deals.length === 0"
                         title="Поки що немає угод"
                         description="Створіть першу угоду — після завершення клієнт зможе залишити відгук."
+                        announce
                     >
                         <div class="flex flex-wrap gap-3">
                             <Link :href="route('dashboard.deals.create', businessProfile.id)">

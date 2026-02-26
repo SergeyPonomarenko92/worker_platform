@@ -60,6 +60,7 @@ const statusFor = (post) => {
                         v-if="posts.length === 0"
                         title="Поки що немає робіт у портфоліо"
                         description="Додайте перший пост — він з’явиться на публічній сторінці провайдера."
+                        announce
                     >
                         <div class="flex flex-wrap items-center gap-3">
                             <Link :href="route('dashboard.portfolio-posts.create', businessProfile.id)">

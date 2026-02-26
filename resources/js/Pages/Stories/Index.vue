@@ -76,6 +76,7 @@ const destroy = (storyId) => {
                         v-if="stories.length === 0"
                         :title="showExpired ? 'Поки що немає історій' : 'Поки що немає активних історій'"
                         description="Створіть історію — вона з’явиться на публічній сторінці провайдера й буде активною до дати завершення."
+                        announce
                     >
                         <div class="flex flex-wrap items-center gap-3">
                             <Link :href="route('dashboard.stories.create', businessProfile.id)">

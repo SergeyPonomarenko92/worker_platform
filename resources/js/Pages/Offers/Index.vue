@@ -40,6 +40,7 @@ const props = defineProps({
                         v-if="offers.length === 0"
                         title="Поки що немає пропозицій"
                         description="Додайте першу пропозицію — вона з’явиться у каталозі та на публічній сторінці провайдера."
+                        announce
                     >
                         <div class="flex flex-wrap items-center gap-3">
                             <Link :href="route('dashboard.offers.create', businessProfile.id)">

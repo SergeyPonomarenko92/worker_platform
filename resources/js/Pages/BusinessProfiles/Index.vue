@@ -29,6 +29,7 @@ const props = defineProps({
                         v-if="profiles.length === 0"
                         title="Поки що немає профілів бізнесу"
                         description="Створіть перший профіль — він стане вашою публічною сторінкою та основою для пропозицій, портфоліо, історій і угод."
+                        announce
                     >
                         <div class="flex flex-wrap gap-3">
                             <Link :href="route('dashboard.business-profiles.create')">
