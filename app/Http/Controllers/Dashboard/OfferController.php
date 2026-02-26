@@ -47,6 +47,8 @@ class OfferController extends Controller
             'category_id' => $request->input('category_id') ?: null,
             'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
             'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
+            // Allow users to paste currency with extra spaces (e.g. " uah ")
+            'currency' => is_string($request->input('currency')) ? trim($request->input('currency')) : $request->input('currency'),
         ]);
 
         $data = $request->validate([
@@ -66,7 +68,7 @@ class OfferController extends Controller
         ]);
 
         $data['business_profile_id'] = $businessProfile->id;
-        $data['currency'] = strtoupper($data['currency']);
+        $data['currency'] = strtoupper(trim($data['currency']));
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
         Offer::create($data);
@@ -98,6 +100,8 @@ class OfferController extends Controller
             'category_id' => $request->input('category_id') ?: null,
             'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
             'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
+            // Allow users to paste currency with extra spaces (e.g. " uah ")
+            'currency' => is_string($request->input('currency')) ? trim($request->input('currency')) : $request->input('currency'),
         ]);
 
         $data = $request->validate([
@@ -116,7 +120,7 @@ class OfferController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $data['currency'] = strtoupper($data['currency']);
+        $data['currency'] = strtoupper(trim($data['currency']));
 
         if (array_key_exists('is_active', $data)) {
             $data['is_active'] = (bool) $data['is_active'];
