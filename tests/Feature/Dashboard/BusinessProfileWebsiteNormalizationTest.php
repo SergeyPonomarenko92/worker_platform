@@ -48,6 +48,27 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
         $this->assertSame('https://foo.test', $profile->website);
     }
 
+    public function test_business_profile_website_with_http_scheme_is_not_double_prefixed_even_if_uppercase(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+            'website' => null,
+        ]);
+
+        $this->actingAs($user)
+            ->patch(route('dashboard.business-profiles.update', $profile), [
+                'name' => $profile->name,
+                'website' => 'HTTP://foo.test',
+            ])
+            ->assertRedirect();
+
+        $profile->refresh();
+
+        $this->assertSame('HTTP://foo.test', $profile->website);
+    }
+
     public function test_empty_business_profile_website_becomes_null(): void
     {
         $user = User::factory()->create();

@@ -20,7 +20,7 @@ class BusinessProfileController extends Controller
             return null;
         }
 
-        if (str_starts_with($v, 'http://') || str_starts_with($v, 'https://')) {
+        if (preg_match('#^https?://#i', $v) === 1) {
             return $v;
         }
 
