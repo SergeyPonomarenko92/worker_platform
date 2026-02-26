@@ -152,6 +152,22 @@ const hasPriceBounds = computed(() => Boolean(String(form.price_from || '').trim
 
 const hasActiveFilters = computed(() => activeChips.value.length > 0)
 
+const resultsAnnouncement = computed(() => {
+  const o = props.offers || {}
+  const total = Number(o.total ?? o.data?.length ?? 0)
+  const parts = [`Каталог: ${total} результатів.`]
+
+  if (o.from && o.to) {
+    parts.push(`Показано ${o.from}–${o.to}.`)
+  }
+
+  if (hasActiveFilters.value) {
+    parts.push(`Активні фільтри: ${activeChips.value.length}.`)
+  }
+
+  return parts.join(' ')
+})
+
 function clearChip(key) {
   if (key === 'q') form.q = ''
   if (key === 'type') form.type = ''
@@ -249,6 +265,12 @@ function goFirstPage() {
       <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
           <h1 class="text-2xl font-semibold">Каталог</h1>
+
+          <!-- a11y: announce results count updates when filters change (Inertia updates keep us on the same page) -->
+          <div class="sr-only" aria-live="polite" aria-atomic="true">
+            {{ resultsAnnouncement }}
+          </div>
+
           <div class="mt-1 text-sm text-gray-500">
             <span class="font-medium text-gray-700">{{ offers.total ?? offers.data?.length ?? 0 }}</span> результатів
             <template v-if="offers.from && offers.to">
