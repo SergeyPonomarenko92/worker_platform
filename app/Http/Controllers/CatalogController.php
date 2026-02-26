@@ -66,6 +66,9 @@ class CatalogController extends Controller
             $providerSlug = trim(explode('/', ltrim($after, '/'), 2)[0] ?? '');
         }
 
+        // Allow pasted values like "demo-provider/" or "/providers/demo-provider/".
+        $providerSlug = trim($providerSlug, '/');
+
         $providerSlugLower = mb_strtolower($providerSlug);
         $priceFrom = $data['price_from'] ?? null;
         $priceTo = $data['price_to'] ?? null;
