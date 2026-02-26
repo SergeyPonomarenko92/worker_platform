@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Deal;
 use App\Models\Review;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -35,13 +36,25 @@ class ReviewController extends Controller
             'body' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        Review::create([
-            'deal_id' => $deal->id,
-            'business_profile_id' => $deal->business_profile_id,
-            'client_user_id' => $request->user()->id,
-            'rating' => $data['rating'],
-            'body' => $data['body'] ?? null,
-        ]);
+        try {
+            Review::create([
+                'deal_id' => $deal->id,
+                'business_profile_id' => $deal->business_profile_id,
+                'client_user_id' => $request->user()->id,
+                'rating' => $data['rating'],
+                'body' => $data['body'] ?? null,
+            ]);
+        } catch (QueryException $e) {
+            // Race-condition safety: reviews.deal_id is UNIQUE (1 review per deal).
+            // If two submissions happen at the same time, return a friendly message.
+            if ((string) $e->getCode() === '23505') {
+                return redirect()
+                    ->route('providers.show', $deal->businessProfile->slug)
+                    ->with('error', 'Відгук для цієї угоди вже існує.');
+            }
+
+            throw $e;
+        }
 
         return redirect()
             ->route('providers.show', $deal->businessProfile->slug)
