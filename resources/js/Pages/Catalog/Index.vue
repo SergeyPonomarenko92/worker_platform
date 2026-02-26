@@ -59,6 +59,21 @@ function submit() {
   )
 }
 
+function normalizeProviderField() {
+  const normalized = normalizeProviderInputToSlug(form.provider)
+  if (!normalized || normalized === String(form.provider ?? '').trim()) return
+
+  suspendAutoSubmit = true
+  clearDebounceTimers()
+
+  form.provider = normalized
+  submit()
+
+  setTimeout(() => {
+    suspendAutoSubmit = false
+  }, 0)
+}
+
 function clearDebounceTimers() {
   if (qDebounceTimer) clearTimeout(qDebounceTimer)
   if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
@@ -417,6 +432,7 @@ function goFirstPage() {
             :title="'Slug береться з URL профілю провайдера: /providers/{slug}'"
             aria-describedby="catalog-provider-hint"
             @keydown.enter.prevent="onSearch"
+            @blur="normalizeProviderField"
           />
           <div id="catalog-provider-hint" class="mt-1 text-[11px] text-gray-400">Підказка: slug = частина URL профілю провайдера (<span class="font-mono">/providers/{slug}</span>).</div>
         </div>
