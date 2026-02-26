@@ -386,22 +386,30 @@ function goFirstPage() {
               >
                 ← До провайдера
               </Link>
-              <span
-                v-for="chip in activeChips"
-                :key="chip.key"
-                class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700"
-                :title="chip.title || chip.label"
-              >
-                <span class="whitespace-nowrap">{{ chip.label }}</span>
-                <button
-                  type="button"
-                  class="rounded-full text-gray-400 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
-                  :aria-label="'Прибрати фільтр: ' + (chip.title || chip.label)"
-                  @click="clearChip(chip.key)"
+
+              <ul v-if="activeChips.length" class="flex flex-wrap items-center gap-2" aria-label="Активні фільтри">
+                <li
+                  v-for="chip in activeChips"
+                  :key="chip.key"
                 >
-                  ×
-                </button>
-              </span>
+                  <span
+                    class="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-700"
+                    :title="chip.title || chip.label"
+                  >
+                    <span class="whitespace-nowrap">{{ chip.label }}</span>
+                    <button
+                      type="button"
+                      class="inline-flex h-5 w-5 items-center justify-center rounded-full text-gray-400 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+                      :aria-label="'Прибрати фільтр: ' + (chip.title || chip.label)"
+                      :title="'Прибрати: ' + (chip.title || chip.label)"
+                      @click="clearChip(chip.key)"
+                    >
+                      <span aria-hidden="true">×</span>
+                      <span class="sr-only">Прибрати</span>
+                    </button>
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
 
