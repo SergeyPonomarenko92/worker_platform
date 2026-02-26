@@ -30,6 +30,10 @@ class BusinessProfileController extends Controller
     private function uniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $base = Str::slug($name);
+        if ($base === '') {
+            $base = 'profile';
+        }
+
         $slug = $base;
 
         $i = 2;
