@@ -348,6 +348,38 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_escapes_city_like_special_chars_to_avoid_wildcards(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bpPercent = BusinessProfile::factory()->create(['city' => '100% Київ', 'is_active' => true]);
+        $bpWildcardMatch = BusinessProfile::factory()->create(['city' => '1000 Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bpPercent)->create([
+            'category_id' => $cat->id,
+            'title' => 'Percent city offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bpWildcardMatch)->create([
+            'category_id' => $cat->id,
+            'title' => 'Wildcard city offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        // Without escaping, "100%" would match both "100% Київ" and "1000 Київ".
+        $this
+            ->get('/catalog?city=100%25')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Percent city offer')
+            );
+    }
+
     public function test_catalog_filters_by_city_prefix_case_insensitive(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);

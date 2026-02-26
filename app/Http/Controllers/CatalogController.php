@@ -54,6 +54,10 @@ class CatalogController extends Controller
         }
         $city = preg_replace('/\s+/', ' ', trim((string) ($data['city'] ?? '')));
         $cityLower = mb_strtolower($city, 'UTF-8');
+        // Escape user input for a LIKE prefix query.
+        // Otherwise values like "100%" would be interpreted as wildcards.
+        // We use `!` as an escape char (portable and avoids backslash edge-cases in SQL literals).
+        $cityLike = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $cityLower);
         $q = preg_replace('/\s+/', ' ', trim((string) ($data['q'] ?? '')));
 
         $providerSlugLower = \App\Support\QueryParamNormalizer::providerSlug((string) ($data['provider'] ?? ''));
@@ -97,7 +101,7 @@ class CatalogController extends Controller
             ->when(is_array($categoryIds) && count($categoryIds), fn ($query) => $query->whereIn('category_id', $categoryIds))
             ->when($categoryId && (!is_array($categoryIds) || !count($categoryIds)), fn ($query) => $query->where('category_id', $categoryId))
             ->when($providerSlugLower, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->where('slug', $providerSlugLower)))
-            ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->whereRaw('lower(city) like ?', ["{$cityLower}%"])))
+            ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->whereRaw("lower(city) like ? escape '!'", ["{$cityLike}%"])))
             ->when($q, fn ($query) => $query->where(function ($sub) use ($q) {
                 $sub->where('title', 'ilike', "%{$q}%")
                     ->orWhere('description', 'ilike', "%{$q}%")
