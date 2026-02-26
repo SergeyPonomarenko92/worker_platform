@@ -42,7 +42,7 @@ const closeModal = () => {
     <section class="space-y-6">
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Delete Account
+                Видалити акаунт
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
@@ -52,14 +52,14 @@ const closeModal = () => {
             </p>
         </header>
 
-        <DangerButton @click="confirmUserDeletion">Delete Account</DangerButton>
+        <DangerButton @click="confirmUserDeletion">Видалити акаунт</DangerButton>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
                 <h2
                     class="text-lg font-medium text-gray-900"
                 >
-                    Are you sure you want to delete your account?
+                    Ви впевнені, що хочете видалити акаунт?
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
@@ -71,7 +71,7 @@ const closeModal = () => {
                 <div class="mt-6">
                     <InputLabel
                         for="password"
-                        value="Password"
+                        value="Пароль"
                         class="sr-only"
                     />
 
@@ -81,7 +81,7 @@ const closeModal = () => {
                         v-model="form.password"
                         type="password"
                         class="mt-1 block w-3/4"
-                        placeholder="Password"
+                        placeholder="Пароль"
                         @keyup.enter="deleteUser"
                     />
 
@@ -90,7 +90,7 @@ const closeModal = () => {
 
                 <div class="mt-6 flex justify-end">
                     <SecondaryButton @click="closeModal">
-                        Cancel
+                        Скасувати
                     </SecondaryButton>
 
                     <DangerButton
@@ -99,7 +99,7 @@ const closeModal = () => {
                         :disabled="form.processing"
                         @click="deleteUser"
                     >
-                        Delete Account
+                        Видалити акаунт
                     </DangerButton>
                 </div>
             </div>
