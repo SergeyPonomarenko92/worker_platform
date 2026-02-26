@@ -8,10 +8,27 @@ use Tests\TestCase;
 
 class QueryParamNormalizerTest extends TestCase
 {
+    #[DataProvider('textCases')]
+    public function test_text_normalization(?string $input, string $expected): void
+    {
+        $this->assertSame($expected, QueryParamNormalizer::text($input));
+    }
+
     #[DataProvider('providerSlugCases')]
     public function test_provider_slug_normalization(?string $input, string $expected): void
     {
         $this->assertSame($expected, QueryParamNormalizer::providerSlug($input));
+    }
+
+    public static function textCases(): array
+    {
+        return [
+            'null' => [null, ''],
+            'empty string' => ['', ''],
+            'spaces only' => ['   ', ''],
+            'keeps single spaces' => ['a b', 'a b'],
+            'collapses whitespace' => ["  a\t b\n c  ", 'a b c'],
+        ];
     }
 
     public static function providerSlugCases(): array

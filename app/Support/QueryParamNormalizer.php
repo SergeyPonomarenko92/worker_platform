@@ -5,6 +5,17 @@ namespace App\Support;
 class QueryParamNormalizer
 {
     /**
+     * Normalize a free-form text query param.
+     *
+     * - trims
+     * - collapses whitespace
+     */
+    public static function text(?string $input): string
+    {
+        return preg_replace('/\s+/', ' ', trim((string) $input));
+    }
+
+    /**
      * Normalize a provider slug passed via query string.
      *
      * Accepts:
@@ -15,7 +26,7 @@ class QueryParamNormalizer
      */
     public static function providerSlug(?string $input): string
     {
-        $providerInput = preg_replace('/\s+/', ' ', trim((string) $input));
+        $providerInput = self::text($input);
 
         if ($providerInput === '') {
             return '';

@@ -52,13 +52,13 @@ class CatalogController extends Controller
 
             $categoryIds = array_values(array_unique(array_map(fn ($r) => (int) $r->id, $rows)));
         }
-        $city = preg_replace('/\s+/', ' ', trim((string) ($data['city'] ?? '')));
+        $city = \App\Support\QueryParamNormalizer::text((string) ($data['city'] ?? ''));
         $cityLower = mb_strtolower($city, 'UTF-8');
         // Escape user input for a LIKE prefix query.
         // Otherwise values like "100%" would be interpreted as wildcards.
         // We use `!` as an escape char (portable and avoids backslash edge-cases in SQL literals).
         $cityLike = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $cityLower);
-        $q = preg_replace('/\s+/', ' ', trim((string) ($data['q'] ?? '')));
+        $q = \App\Support\QueryParamNormalizer::text((string) ($data['q'] ?? ''));
 
         $providerSlugLower = \App\Support\QueryParamNormalizer::providerSlug((string) ($data['provider'] ?? ''));
         $priceFrom = $data['price_from'] ?? null;
