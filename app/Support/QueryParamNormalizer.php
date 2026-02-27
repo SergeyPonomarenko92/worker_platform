@@ -18,16 +18,22 @@ class QueryParamNormalizer
             return '';
         }
 
-        // Normalize common "non-breaking" spaces that often appear when users copy/paste.
+        // Normalize common "non-breaking" and thin spaces that often appear when users copy/paste.
         // - NBSP (U+00A0)
+        // - Figure space (U+2007)
+        // - Thin space (U+2009)
+        // - Hair space (U+200A)
         // - Narrow no-break space (U+202F)
         $value = str_replace([
             "\u{00A0}",
+            "\u{2007}",
+            "\u{2009}",
+            "\u{200A}",
             "\u{202F}",
         ], ' ', $value);
 
         // Collapse all whitespace (tabs/newlines/multiple spaces) into a single space.
-        return preg_replace('/\s+/u', ' ', $value);
+        return (string) preg_replace('/\s+/u', ' ', $value);
     }
 
     /**

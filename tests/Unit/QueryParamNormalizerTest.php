@@ -29,6 +29,7 @@ class QueryParamNormalizerTest extends TestCase
             'keeps single spaces' => ['a b', 'a b'],
             'collapses whitespace' => ["  a\t b\n c  ", 'a b c'],
             'collapses nbsp and narrow nbsp' => ["a\u{00A0}\u{202F}b", 'a b'],
+            'collapses thin spaces' => ["a\u{2007}\u{2009}\u{200A}b", 'a b'],
         ];
     }
 
