@@ -215,6 +215,31 @@ class ProviderShowTest extends TestCase
             );
     }
 
+    public function test_provider_page_caps_preloaded_offers_when_all_offers_enabled(): void
+    {
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        $category = Category::factory()->create(['name' => 'Електрика']);
+
+        Offer::factory()->count(250)->for($provider)->create([
+            'category_id' => $category->id,
+            'is_active' => true,
+        ]);
+
+        $this
+            ->get('/providers/'.$provider->slug.'?all_offers=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('loadAllOffers', true)
+                ->where('provider.offers_count', 250)
+                ->has('provider.offers', 200)
+            );
+    }
+
     public function test_provider_page_all_portfolio_does_not_load_all_offers_or_reviews_by_default(): void
     {
         Carbon::setTestNow(now());
