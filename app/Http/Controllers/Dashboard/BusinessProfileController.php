@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\BusinessProfile;
+use App\Support\ContactFieldNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -14,28 +15,12 @@ class BusinessProfileController extends Controller
 {
     private function normalizeWebsite(?string $raw): ?string
     {
-        $v = trim((string) ($raw ?? ''));
-
-        if ($v === '') {
-            return null;
-        }
-
-        if (preg_match('#^https?://#i', $v) === 1) {
-            return $v;
-        }
-
-        return 'https://'.$v;
+        return ContactFieldNormalizer::website($raw);
     }
 
     private function normalizePhone(?string $raw): ?string
     {
-        $v = trim((string) ($raw ?? ''));
-
-        if ($v === '') {
-            return null;
-        }
-
-        return $v;
+        return ContactFieldNormalizer::phone($raw);
     }
 
     private function uniqueSlug(string $name, ?int $ignoreId = null): string
