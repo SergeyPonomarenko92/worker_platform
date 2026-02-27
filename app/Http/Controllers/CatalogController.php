@@ -59,6 +59,10 @@ class CatalogController extends Controller
         // We use `!` as an escape char (portable and avoids backslash edge-cases in SQL literals).
         $cityLike = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $cityLower);
         $q = \App\Support\QueryParamNormalizer::text((string) ($data['q'] ?? ''));
+        // Escape user input for ILIKE queries so that characters like "%" and "_"
+        // are treated literally (not as wildcards).
+        // We use `!` as an escape char (same as city prefix filter).
+        $qLike = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $q);
 
         $providerSlugLower = \App\Support\QueryParamNormalizer::providerSlug((string) ($data['provider'] ?? ''));
         $priceFrom = $data['price_from'] ?? null;
@@ -102,10 +106,12 @@ class CatalogController extends Controller
             ->when($categoryId && (!is_array($categoryIds) || !count($categoryIds)), fn ($query) => $query->where('category_id', $categoryId))
             ->when($providerSlugLower, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->where('slug', $providerSlugLower)))
             ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->whereRaw("lower(city) like ? escape '!'", ["{$cityLike}%"])))
-            ->when($q, fn ($query) => $query->where(function ($sub) use ($q) {
-                $sub->where('title', 'ilike', "%{$q}%")
-                    ->orWhere('description', 'ilike', "%{$q}%")
-                    ->orWhereHas('businessProfile', fn ($bp) => $bp->where('name', 'ilike', "%{$q}%"));
+            ->when($q, fn ($query) => $query->where(function ($sub) use ($qLike) {
+                $pattern = "%{$qLike}%";
+
+                $sub->whereRaw("title ilike ? escape '!'", [$pattern])
+                    ->orWhereRaw("description ilike ? escape '!'", [$pattern])
+                    ->orWhereHas('businessProfile', fn ($bp) => $bp->whereRaw("name ilike ? escape '!'", [$pattern]));
             }))
             // Price filter:
             // - if user sets price_from: show offers with known price_from >= price_from

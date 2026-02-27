@@ -1123,5 +1123,39 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_q_treats_like_special_characters_as_literals(): void
+    {
+        $cat = Category::factory()->create();
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => '100% quality',
+            'description' => null,
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => '1000 quality',
+            'description' => null,
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $this
+            ->get('/catalog?q=100%25')
+            ->assertOk()
+            ->assertSessionHasNoErrors()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.q', '100%')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', '100% quality')
+            );
+    }
 
 }
+
