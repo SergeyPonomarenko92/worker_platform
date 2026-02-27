@@ -13,7 +13,9 @@ class ContactFieldNormalizerTest extends TestCase
         return [
             'null stays null' => [null, null],
             'empty becomes null' => ['   ', null],
+            'nbspace-only becomes null' => ["\u{00A0}\u{202F}", null],
             'adds https when missing scheme' => ['example.com', 'https://example.com'],
+            'normalizes unicode spaces around value' => ["\u{00A0}example.com\u{202F}", 'https://example.com'],
             'keeps http scheme case' => [' HTTP://foo.test ', 'HTTP://foo.test'],
             'keeps https scheme' => ['https://bar.test', 'https://bar.test'],
         ];
