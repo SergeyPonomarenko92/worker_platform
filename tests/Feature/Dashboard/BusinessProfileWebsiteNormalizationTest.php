@@ -43,6 +43,22 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
         $this->assertSame('HTTP://foo.test', $profile->website);
     }
 
+    public function test_business_profile_website_normalizes_unicode_spaces_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => "\u{00A0}example.com\u{202F}",
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertSame('https://example.com', $profile->website);
+    }
+
     public function test_empty_business_profile_website_becomes_null_on_store(): void
     {
         $user = User::factory()->create();
