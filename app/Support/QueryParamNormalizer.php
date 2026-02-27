@@ -9,6 +9,7 @@ class QueryParamNormalizer
      *
      * - trims
      * - collapses whitespace
+     * - removes/normalizes invisible unicode separators that may appear on copy/paste
      */
     public static function text(?string $input): string
     {
@@ -27,6 +28,17 @@ class QueryParamNormalizer
             "\u{2009}",
             "\u{200A}",
             "\u{202F}",
+        ], ' ', $value);
+
+        // Normalize invisible separators that are not matched by trim() and can break search.
+        // Treat them as spaces to avoid accidentally concatenating words.
+        // - Zero width space (U+200B)
+        // - Word joiner (U+2060)
+        // - Zero width no-break space / BOM (U+FEFF)
+        $value = str_replace([
+            "\u{200B}",
+            "\u{2060}",
+            "\u{FEFF}",
         ], ' ', $value);
 
         $value = trim($value);
