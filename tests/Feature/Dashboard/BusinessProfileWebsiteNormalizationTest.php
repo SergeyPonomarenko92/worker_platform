@@ -121,4 +121,21 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
 
         $this->assertNull($profile->website);
     }
+
+    public function test_business_profile_website_must_be_http_or_https_url(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => 'javascript:alert(1)',
+            ])
+            ->assertSessionHasErrors(['website']);
+
+        $this->assertDatabaseMissing('business_profiles', [
+            'user_id' => $user->id,
+            'name' => 'Test Provider',
+        ]);
+    }
 }

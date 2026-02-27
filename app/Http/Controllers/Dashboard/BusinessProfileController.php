@@ -8,6 +8,7 @@ use App\Support\ContactFieldNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,6 +47,27 @@ class BusinessProfileController extends Controller
         return $slug;
     }
 
+    private function validateWebsiteOrFail(?string $website): void
+    {
+        if ($website === null) {
+            return;
+        }
+
+        // Extra safety: do not persist non-URL / non-http(s) values (e.g. "javascript:...").
+        if (filter_var($website, FILTER_VALIDATE_URL) === false) {
+            throw ValidationException::withMessages([
+                'website' => 'Некоректний URL вебсайту.',
+            ]);
+        }
+
+        $scheme = parse_url($website, PHP_URL_SCHEME);
+        if (! in_array(strtolower((string) $scheme), ['http', 'https'], true)) {
+            throw ValidationException::withMessages([
+                'website' => 'URL вебсайту має починатися з http:// або https://',
+            ]);
+        }
+    }
+
     public function index(Request $request): Response
     {
         $profiles = $request->user()
@@ -82,6 +104,8 @@ class BusinessProfileController extends Controller
         $data['slug'] = $this->uniqueSlug($data['name']);
         $data['is_active'] = (bool)($data['is_active'] ?? true);
         $data['website'] = $this->normalizeWebsite($data['website'] ?? null);
+        $this->validateWebsiteOrFail($data['website']);
+
         $data['phone'] = $this->normalizePhone($data['phone'] ?? null);
 
         $profile = BusinessProfile::create($data);
@@ -115,6 +139,8 @@ class BusinessProfileController extends Controller
 
         $data['slug'] = $this->uniqueSlug($data['name'], $businessProfile->id);
         $data['website'] = $this->normalizeWebsite($data['website'] ?? null);
+        $this->validateWebsiteOrFail($data['website']);
+
         $data['phone'] = $this->normalizePhone($data['phone'] ?? null);
         if (array_key_exists('is_active', $data)) {
             $data['is_active'] = (bool)$data['is_active'];
