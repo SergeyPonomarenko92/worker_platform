@@ -380,6 +380,38 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_escapes_city_like_underscore_to_avoid_wildcards(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bpUnderscore = BusinessProfile::factory()->create(['city' => 'ab_cd', 'is_active' => true]);
+        $bpWildcardMatch = BusinessProfile::factory()->create(['city' => 'abXcd', 'is_active' => true]);
+
+        Offer::factory()->for($bpUnderscore)->create([
+            'category_id' => $cat->id,
+            'title' => 'Underscore city offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bpWildcardMatch)->create([
+            'category_id' => $cat->id,
+            'title' => 'Wildcard underscore city offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        // Without escaping, "ab_" would match both "ab_cd" and "abXcd".
+        $this
+            ->get('/catalog?city=ab_')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Underscore city offer')
+            );
+    }
+
     public function test_catalog_filters_by_city_prefix_case_insensitive(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
