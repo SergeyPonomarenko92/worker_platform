@@ -27,6 +27,22 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
         $this->assertSame('+380 99 123 45 67', $profile->phone);
     }
 
+    public function test_business_profile_phone_normalizes_unicode_spaces_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'phone' => "\u{00A0}+380\u{202F}99\u{00A0}123\u{202F}45\u{00A0}67\u{00A0}",
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertSame('+380 99 123 45 67', $profile->phone);
+    }
+
     public function test_empty_business_profile_phone_becomes_null_on_store(): void
     {
         $user = User::factory()->create();

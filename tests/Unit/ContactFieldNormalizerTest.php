@@ -30,7 +30,9 @@ class ContactFieldNormalizerTest extends TestCase
         return [
             'null stays null' => [null, null],
             'empty becomes null' => ['  ', null],
+            'nbspace-only becomes null' => ["\u{00A0}\u{202F}", null],
             'trims' => ['  +380 99 123 45 67  ', '+380 99 123 45 67'],
+            'normalizes unicode spaces' => ["\u{00A0}+380\u{202F}99\u{00A0}123\u{202F}45\u{00A0}67\u{00A0}", '+380 99 123 45 67'],
         ];
     }
 

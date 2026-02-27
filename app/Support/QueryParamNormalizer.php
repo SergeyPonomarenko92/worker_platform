@@ -12,13 +12,10 @@ class QueryParamNormalizer
      */
     public static function text(?string $input): string
     {
-        $value = trim((string) $input);
-
-        if ($value === '') {
-            return '';
-        }
+        $value = (string) $input;
 
         // Normalize common "non-breaking" and thin spaces that often appear when users copy/paste.
+        // Do it BEFORE trim(), because PHP's trim() does not remove NBSP.
         // - NBSP (U+00A0)
         // - Figure space (U+2007)
         // - Thin space (U+2009)
@@ -32,8 +29,16 @@ class QueryParamNormalizer
             "\u{202F}",
         ], ' ', $value);
 
+        $value = trim($value);
+
+        if ($value === '') {
+            return '';
+        }
+
         // Collapse all whitespace (tabs/newlines/multiple spaces) into a single space.
-        return (string) preg_replace('/\s+/u', ' ', $value);
+        $value = (string) preg_replace('/\s+/u', ' ', $value);
+
+        return trim($value);
     }
 
     /**

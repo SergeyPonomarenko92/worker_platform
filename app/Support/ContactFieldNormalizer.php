@@ -21,7 +21,9 @@ class ContactFieldNormalizer
 
     public static function phone(?string $raw): ?string
     {
-        $v = trim((string) ($raw ?? ''));
+        // `trim()` does not remove NBSP and some other unicode spaces.
+        // For phone numbers we want predictable whitespace normalization.
+        $v = QueryParamNormalizer::text($raw);
 
         if ($v === '') {
             return null;
