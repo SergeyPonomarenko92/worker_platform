@@ -7,11 +7,44 @@ use App\Models\Category;
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class CatalogTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_catalog_page_does_not_trigger_n_plus_one_queries(): void
+    {
+        Carbon::setTestNow(now());
+
+        $category = Category::factory()->create(['name' => 'Електрика']);
+
+        // Enough offers/profiles to amplify potential N+1 regressions.
+        $profiles = BusinessProfile::factory()->count(10)->create([
+            'city' => 'Київ',
+            'is_active' => true,
+        ]);
+
+        foreach ($profiles as $bp) {
+            Offer::factory()->count(12)->for($bp)->create([
+                'category_id' => $category->id,
+                'is_active' => true,
+                'price_from' => 100,
+            ]);
+        }
+
+        $queries = 0;
+        DB::listen(function () use (&$queries) {
+            $queries++;
+        });
+
+        $this->get('/catalog')->assertOk();
+
+        // Query budget guard: keep CatalogController@index bounded.
+        // If an N+1 sneaks in (e.g. per-offer category or provider), this number will jump.
+        $this->assertLessThanOrEqual(20, $queries);
+    }
 
     public function test_catalog_category_filter_includes_descendant_categories(): void
     {
