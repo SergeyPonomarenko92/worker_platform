@@ -412,6 +412,71 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_escapes_city_like_escape_char_to_avoid_broken_patterns(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bpBang = BusinessProfile::factory()->create(['city' => 'Київ!центр', 'is_active' => true]);
+        $bpOther = BusinessProfile::factory()->create(['city' => 'Київ центр', 'is_active' => true]);
+
+        Offer::factory()->for($bpBang)->create([
+            'category_id' => $cat->id,
+            'title' => 'Bang city offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bpOther)->create([
+            'category_id' => $cat->id,
+            'title' => 'Other city offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        // "!" is used as ESCAPE char in SQL LIKE, so we must escape it in user input.
+        $this
+            ->get('/catalog?city=Київ!')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Bang city offer')
+            );
+    }
+
+    public function test_catalog_escapes_q_ilike_escape_char_to_avoid_broken_patterns(): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Hello! world',
+            'description' => 'desc',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Hello world',
+            'description' => 'desc',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        // "!" is used as ESCAPE char in SQL ILIKE, so we must escape it in user input.
+        $this
+            ->get('/catalog?q=Hello!')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Hello! world')
+            );
+    }
+
     public function test_catalog_filters_by_city_prefix_case_insensitive(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
