@@ -61,6 +61,15 @@ const providerPageAllReviewsUrl = computed(() =>
   })
 )
 
+const catalogProviderHref = computed(() => {
+  const slug = String(props.provider?.slug || '').trim()
+  if (!slug) return '/catalog'
+
+  const params = new URLSearchParams()
+  params.set('provider', slug)
+  return `/catalog?${params.toString()}`
+})
+
 const portfolioLimit = 6
 const showAllPortfolio = ref(!!props.loadAllPortfolio)
 const portfolioSectionRef = ref(null)
@@ -227,7 +236,7 @@ onMounted(() => {
         </div>
         <div class="flex gap-3">
           <Link href="/catalog" class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded">Каталог</Link>
-          <Link :href="`/catalog?provider=${provider.slug}`" class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded">Пропозиції цього провайдера</Link>
+          <Link :href="catalogProviderHref" class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded">Пропозиції цього провайдера</Link>
         </div>
       </div>
 
