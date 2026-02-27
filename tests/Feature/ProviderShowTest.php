@@ -189,7 +189,7 @@ class ProviderShowTest extends TestCase
             'is_active' => true,
         ]);
 
-        // More than the default preload limit (10)
+        // More than the default preload limit (6)
         Offer::factory()->count(15)->for($provider)->create([
             'is_active' => true,
         ]);
@@ -229,7 +229,7 @@ class ProviderShowTest extends TestCase
             'published_at' => now()->subDay(),
         ]);
 
-        // Active offers (more than default preload limit 10)
+        // Active offers (more than default preload limit 6)
         Offer::factory()->count(15)->for($provider)->create([
             'is_active' => true,
         ]);
