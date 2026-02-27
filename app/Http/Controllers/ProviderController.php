@@ -66,7 +66,7 @@ class ProviderController extends Controller
                     ->with(['category:id,name'])
                     ->where('is_active', true)
                     ->latest()
-                    ->when(! $loadAllOffers, fn ($q) => $q->limit(10))
+                    ->when(! $loadAllOffers, fn ($q) => $q->limit(6))
                     ->when($loadAllOffers, fn ($q) => $q->limit(200)),
                 'portfolioPosts' => fn ($q) => $q
                     ->select([

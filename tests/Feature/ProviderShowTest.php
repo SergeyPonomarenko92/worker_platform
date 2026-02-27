@@ -201,7 +201,7 @@ class ProviderShowTest extends TestCase
                 ->component('Providers/Show')
                 ->where('loadAllOffers', false)
                 ->where('provider.offers_count', 15)
-                ->has('provider.offers', 10)
+                ->has('provider.offers', 6)
             );
 
         $this
@@ -263,7 +263,7 @@ class ProviderShowTest extends TestCase
                 ->where('provider.offers_count', 15)
                 ->where('provider.reviews_count', 30)
                 ->has('provider.portfolio_posts', 80)
-                ->has('provider.offers', 10)
+                ->has('provider.offers', 6)
                 ->has('provider.reviews', 20)
             );
     }
