@@ -27,6 +27,38 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
         $this->assertSame('https://example.com', $profile->website);
     }
 
+    public function test_business_profile_website_is_trimmed_on_store_and_keeps_http_scheme_case(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => '  HTTP://foo.test  ',
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertSame('HTTP://foo.test', $profile->website);
+    }
+
+    public function test_empty_business_profile_website_becomes_null_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => '   ',
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertNull($profile->website);
+    }
+
     public function test_business_profile_website_is_normalized_on_update(): void
     {
         $user = User::factory()->create();
