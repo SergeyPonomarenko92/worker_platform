@@ -12,11 +12,67 @@ use App\Models\Story;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ProviderShowTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_provider_page_does_not_trigger_n_plus_one_queries(): void
+    {
+        Carbon::setTestNow(now());
+
+        $category = Category::factory()->create(['name' => 'Електрика']);
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        // Enough related models to amplify potential N+1 regressions.
+        Offer::factory()->count(40)->for($provider)->create([
+            'category_id' => $category->id,
+            'is_active' => true,
+        ]);
+
+        PortfolioPost::factory()->for($provider)->count(40)->create([
+            'published_at' => now()->subDay(),
+        ]);
+
+        Story::factory()->for($provider)->count(10)->create([
+            'expires_at' => now()->addDay(),
+        ]);
+
+        // Use distinct clients to make sure reviews->client is eager loaded in one query.
+        for ($i = 0; $i < 25; $i++) {
+            $client = User::factory()->create();
+            $deal = Deal::factory()->create([
+                'business_profile_id' => $provider->id,
+                'client_user_id' => $client->id,
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
+
+            Review::factory()->create([
+                'deal_id' => $deal->id,
+                'business_profile_id' => $provider->id,
+                'client_user_id' => $client->id,
+            ]);
+        }
+
+        $queries = 0;
+        DB::listen(function () use (&$queries) {
+            $queries++;
+        });
+
+        $this
+            ->get('/providers/'.$provider->slug)
+            ->assertOk();
+
+        // Query budget guard: keep ProviderController@show bounded.
+        // If an N+1 sneaks in (e.g. per-offer category or per-review client), this number will jump.
+        $this->assertLessThanOrEqual(15, $queries);
+    }
 
     public function test_provider_page_loads_limited_portfolio_and_reviews_by_default_and_can_load_all_via_query_params(): void
     {
