@@ -57,12 +57,12 @@ class CatalogController extends Controller
         // Escape user input for a LIKE prefix query.
         // Otherwise values like "100%" would be interpreted as wildcards.
         // We use `!` as an escape char (portable and avoids backslash edge-cases in SQL literals).
-        $cityLike = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $cityLower);
+        $cityLike = \App\Support\SqlLikeEscaper::escape($cityLower);
         $q = \App\Support\QueryParamNormalizer::text((string) ($data['q'] ?? ''));
         // Escape user input for ILIKE queries so that characters like "%" and "_"
         // are treated literally (not as wildcards).
         // We use `!` as an escape char (same as city prefix filter).
-        $qLike = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $q);
+        $qLike = \App\Support\SqlLikeEscaper::escape($q);
 
         $providerSlugLower = \App\Support\QueryParamNormalizer::providerSlug((string) ($data['provider'] ?? ''));
         $priceFrom = $data['price_from'] ?? null;
