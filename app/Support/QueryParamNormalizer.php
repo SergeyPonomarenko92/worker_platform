@@ -50,9 +50,13 @@ class QueryParamNormalizer
         $providerSlug = $providerInput;
 
         // Provider filter can be either a slug ("demo-provider") or a pasted provider URL.
-        if (str_contains($providerSlug, '/providers/')) {
+        // Be robust to different casing in the path ("/Providers/...") when users copy/paste.
+        if (stripos($providerSlug, '/providers/') !== false) {
             $path = parse_url($providerSlug, PHP_URL_PATH) ?: $providerSlug;
-            $after = explode('/providers/', $path, 2)[1] ?? '';
+
+            $parts = preg_split('~/providers/~i', (string) $path, 2);
+            $after = $parts[1] ?? '';
+
             $providerSlug = trim(explode('/', ltrim($after, '/'), 2)[0] ?? '');
         }
 

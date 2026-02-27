@@ -45,6 +45,7 @@ class QueryParamNormalizerTest extends TestCase
             'slug wrapped in slashes' => ['/demo-provider/', 'demo-provider'],
 
             'relative providers url' => ['/providers/demo-provider', 'demo-provider'],
+            'relative providers url (case-insensitive)' => ['/Providers/Demo-provider', 'demo-provider'],
             'relative providers url trailing slash' => ['/providers/demo-provider/', 'demo-provider'],
             'relative providers url with extra segments' => ['/providers/demo-provider/offers', 'demo-provider'],
 
