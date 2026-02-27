@@ -27,6 +27,22 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
         $this->assertSame('+380 99 123 45 67', $profile->phone);
     }
 
+    public function test_empty_business_profile_phone_becomes_null_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'phone' => '   ',
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertNull($profile->phone);
+    }
+
     public function test_business_profile_phone_is_trimmed_on_update(): void
     {
         $user = User::factory()->create();
