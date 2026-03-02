@@ -74,3 +74,19 @@ export const formatAvgRatingUk = (avg) => {
   if (Number.isNaN(rounded)) return ''
   return String(rounded).replace('.', ',')
 }
+
+// Category path like "Батьківська → Дочірня".
+// Accepts a category that may have `parent` (nested) loaded.
+export const formatCategoryPath = (category) => {
+  if (!category) return ''
+
+  const names = []
+  let node = category
+  // Keep it safe in case of unexpected cycles.
+  for (let i = 0; i < 10 && node; i++) {
+    if (node.name) names.unshift(node.name)
+    node = node.parent
+  }
+
+  return names.filter(Boolean).join(' → ')
+}

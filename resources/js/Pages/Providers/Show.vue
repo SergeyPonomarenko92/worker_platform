@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import { computed, onMounted, ref } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import Card from '@/Components/Card.vue'
-import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk } from '@/lib/formatters'
+import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk, formatCategoryPath } from '@/lib/formatters'
 import { providerShowUrl } from '@/lib/providerShowUrl'
 
 const props = defineProps({
@@ -453,7 +453,7 @@ onMounted(() => {
                 <div>
                   <div class="text-sm text-gray-500">
                     {{ offerTypeLabel(offer.type) }}
-                    <span v-if="offer.category">· {{ offer.category.name }}</span>
+                    <span v-if="offer.category">· {{ formatCategoryPath(offer.category) || offer.category.name }}</span>
                   </div>
                   <div class="text-lg font-semibold">{{ offer.title }}</div>
                 </div>

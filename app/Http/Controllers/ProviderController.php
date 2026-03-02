@@ -63,7 +63,13 @@ class ProviderController extends Controller
                         'created_at',
                         'updated_at',
                     ])
-                    ->with(['category:id,name'])
+                    ->with([
+                        // Provider page: show full category path (parent → child) when available.
+                        // Load a small ancestor chain to avoid N+1 queries.
+                        'category:id,name,parent_id',
+                        'category.parent:id,name,parent_id',
+                        'category.parent.parent:id,name,parent_id',
+                    ])
                     ->where('is_active', true)
                     ->latest()
                     ->when(! $loadAllOffers, fn ($q) => $q->limit(6))
