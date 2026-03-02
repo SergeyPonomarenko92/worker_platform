@@ -27,6 +27,9 @@
 > php artisan perf:audit --explain
 > php artisan perf:audit --analyze
 > php artisan perf:audit --provider=demo-provider
+> # Catalog-only variants:
+> php artisan perf:audit --city=ки
+> php artisan perf:audit --price_from=100 --include_no_price=1
 > ```
 >
 > Команда друкує SQL (та bindings), а з `--explain/--analyze` — також план виконання (Postgres).

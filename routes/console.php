@@ -9,11 +9,15 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--provider=demo-provider : Provider slug for provider-show queries}', function () {
+Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--provider=demo-provider : Provider slug for provider-show queries} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)}', function () {
     $connection = DB::connection();
     $driver = (string) $connection->getDriverName();
 
     $providerSlug = (string) $this->option('provider');
+    $cityPrefix = (string) $this->option('city');
+    $priceFrom = (int) $this->option('price_from');
+    $includeNoPrice = (bool) ((int) $this->option('include_no_price'));
+
     $explain = (bool) $this->option('explain') || (bool) $this->option('analyze');
     $analyze = (bool) $this->option('analyze');
 
@@ -34,6 +38,43 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
             ->select('offers.id')
             ->active()
             ->whereHas('businessProfile', fn ($bp) => $bp->active())
+            ->latest('offers.created_at')
+            ->limit(20),
+
+        // Mirrors the city prefix filter in /catalog (case-insensitive). Uses ESCAPE to align with the real UI behavior.
+        'catalog:city_prefix' => Offer::query()
+            ->select('offers.id')
+            ->active()
+            ->whereHas('businessProfile', function ($bp) use ($cityPrefix) {
+                $escaped = addcslashes(mb_strtolower($cityPrefix), "%_!").'%';
+
+                $bp
+                    ->active()
+                    ->whereRaw("lower(city) LIKE ? ESCAPE '!'", [$escaped]);
+            })
+            ->latest('offers.created_at')
+            ->limit(20),
+
+        // Mirrors the price range filter (+ optional include-no-price) in /catalog.
+        'catalog:price_range' => Offer::query()
+            ->select('offers.id')
+            ->active()
+            ->whereHas('businessProfile', fn ($bp) => $bp->active())
+            ->where(function ($q) use ($priceFrom, $includeNoPrice) {
+                $q->where(function ($q) use ($priceFrom) {
+                    $q
+                        ->whereNotNull('offers.price_from')
+                        ->where('offers.price_from', '>=', $priceFrom);
+                });
+
+                if ($includeNoPrice) {
+                    $q->orWhere(function ($q) {
+                        $q
+                            ->whereNull('offers.price_from')
+                            ->whereNull('offers.price_to');
+                    });
+                }
+            })
             ->latest('offers.created_at')
             ->limit(20),
 
