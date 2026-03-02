@@ -182,6 +182,41 @@ class ProviderShowTest extends TestCase
             );
     }
 
+    public function test_provider_page_eager_loads_offer_category_ancestor_chain_to_avoid_n_plus_one(): void
+    {
+        $root = Category::factory()->create(['name' => 'Ремонт']);
+        $parent = Category::factory()->create([
+            'name' => 'Електрика',
+            'parent_id' => $root->id,
+        ]);
+        $leaf = Category::factory()->create([
+            'name' => 'Розетки',
+            'parent_id' => $parent->id,
+        ]);
+
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        Offer::factory()->for($provider)->create([
+            'category_id' => $leaf->id,
+            'title' => 'Demo offer',
+            'is_active' => true,
+        ]);
+
+        $this
+            ->get('/providers/'.$provider->slug)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->has('provider.offers', 1)
+                ->where('provider.offers.0.category.name', 'Розетки')
+                ->where('provider.offers.0.category.parent.name', 'Електрика')
+                ->where('provider.offers.0.category.parent.parent.name', 'Ремонт')
+            );
+    }
+
     public function test_provider_page_can_load_all_offers_via_query_param(): void
     {
         $provider = BusinessProfile::factory()->create([
