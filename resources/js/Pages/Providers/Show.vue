@@ -17,6 +17,14 @@ const props = defineProps({
 const ratingText = computed(() => formatAvgRatingUk(props.provider?.reviews_avg_rating))
 const normalizedWebsiteHref = computed(() => normalizeWebsite(props.provider?.website))
 
+const websiteDisplayText = computed(() => {
+  const raw = String(props.provider?.website || '').trim()
+  if (!raw) return ''
+
+  // Keep it readable in UI (strip protocol + trailing slashes), while href stays fully normalized.
+  return raw.replace(/^https?:\/\//i, '').replace(/\/+$/, '')
+})
+
 const telHref = computed(() => {
   const raw = String(props.provider?.phone || '').trim()
   if (!raw) return null
@@ -277,7 +285,7 @@ onMounted(() => {
               target="_blank"
               rel="noopener noreferrer nofollow"
             >
-              {{ provider.website }}
+              {{ websiteDisplayText }}
             </a>
           </div>
         </div>
