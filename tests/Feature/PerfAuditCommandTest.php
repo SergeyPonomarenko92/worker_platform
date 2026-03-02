@@ -2,20 +2,18 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class PerfAuditCommandTest extends TestCase
 {
-    public function test_perf_audit_can_filter_queries_by_only_option(): void
+    public function test_perf_audit_explain_is_gracefully_disabled_on_non_pgsql(): void
     {
-        $exitCode = Artisan::call('perf:audit', ['--only' => 'catalog:newest']);
-
-        $output = Artisan::output();
-
-        $this->assertSame(0, $exitCode);
-        $this->assertStringContainsString('catalog:newest', $output);
-        $this->assertStringContainsString('from "offers"', $output);
-        $this->assertStringNotContainsString('provider:offers', $output);
+        // In the test environment we typically use sqlite. The command should not crash
+        // when --explain is requested; it should still print SQL output.
+        $this->artisan('perf:audit --explain')
+            ->expectsOutputToContain('Perf audit helper')
+            ->expectsOutputToContain('DB driver:')
+            ->expectsOutputToContain('catalog:newest')
+            ->assertSuccessful();
     }
 }
