@@ -48,4 +48,13 @@ class PerfAuditCommandTest extends TestCase
             ->doesntExpectOutputToContain('provider:stories')
             ->assertSuccessful();
     }
+
+    public function test_perf_audit_only_filter_warns_and_exits_nonzero_when_no_queries_match(): void
+    {
+        $this->artisan('perf:audit --only=does-not-exist')
+            ->expectsOutputToContain('No queries matched')
+            ->expectsOutputToContain('Available queries:')
+            ->expectsOutputToContain('catalog:newest')
+            ->assertFailed();
+    }
 }

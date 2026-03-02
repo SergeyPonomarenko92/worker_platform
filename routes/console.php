@@ -35,7 +35,7 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
 
     $prefix = $analyze ? 'EXPLAIN (ANALYZE, BUFFERS) ' : 'EXPLAIN ';
 
-    $queries = [
+    $allQueries = [
         'catalog:newest' => Offer::query()
             ->select('offers.id')
             ->active()
@@ -107,11 +107,13 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
             ->limit(6),
     ];
 
+    $queries = $allQueries;
+
     if ($only !== '') {
         $filters = array_values(array_filter(array_map(static fn ($v) => trim((string) $v), explode(',', $only))));
 
         $queries = array_filter(
-            $queries,
+            $allQueries,
             static function ($query, string $name) use ($filters) {
                 foreach ($filters as $filter) {
                     if ($filter === '') {
@@ -139,6 +141,17 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
             },
             ARRAY_FILTER_USE_BOTH,
         );
+    }
+
+    if (count($queries) === 0) {
+        $this->warn('No queries matched the provided --only filter.');
+        $this->line('Available queries:');
+
+        foreach (array_keys($allQueries) as $name) {
+            $this->line("- {$name}");
+        }
+
+        return 1;
     }
 
     foreach ($queries as $name => $query) {
