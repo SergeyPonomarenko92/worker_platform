@@ -40,7 +40,7 @@ class ProviderController extends Controller
             ->where('slug', $slug)
             ->active()
             ->withCount([
-                'offers as offers_count' => fn ($q) => $q->where('is_active', true),
+                'offers as offers_count' => fn ($q) => $q->active(),
                 'reviews as reviews_count',
                 'portfolioPosts as published_portfolio_posts_count' => fn ($q) => $q
                     ->whereNotNull('published_at')
@@ -70,7 +70,7 @@ class ProviderController extends Controller
                         'category.parent:id,name,parent_id',
                         'category.parent.parent:id,name,parent_id',
                     ])
-                    ->where('is_active', true)
+                    ->active()
                     ->latest()
                     ->when(! $loadAllOffers, fn ($q) => $q->limit(6))
                     ->when($loadAllOffers, fn ($q) => $q->limit(200)),
