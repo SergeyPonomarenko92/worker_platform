@@ -105,6 +105,13 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
             ->where('expires_at', '>', now())
             ->orderByDesc('created_at')
             ->limit(6),
+
+        // Reviews list for provider show (latest reviews block).
+        'provider:reviews' => \App\Models\Review::query()
+            ->select('reviews.id')
+            ->whereHas('businessProfile', fn ($bp) => $bp->active()->where('slug', $providerSlug))
+            ->latest('reviews.created_at')
+            ->limit(20),
     ];
 
     $queries = $allQueries;
