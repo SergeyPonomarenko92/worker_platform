@@ -24,4 +24,9 @@ class SqlLikeEscaperTest extends TestCase
             'combo' => ['!%_', '!!!%!_'],
         ];
     }
+
+    public function test_escape_with_custom_escape_char(): void
+    {
+        $this->assertSame('###%#_', SqlLikeEscaper::escape('#%_', '#'));
+    }
 }
