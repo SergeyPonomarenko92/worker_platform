@@ -38,4 +38,14 @@ class PerfAuditCommandTest extends TestCase
             ->doesntExpectOutputToContain('provider:stories')
             ->assertSuccessful();
     }
+
+    public function test_perf_audit_only_filter_accepts_multiple_queries(): void
+    {
+        $this->artisan('perf:audit --only=catalog:newest,provider:offers')
+            ->expectsOutputToContain('catalog:newest')
+            ->expectsOutputToContain('provider:offers')
+            ->doesntExpectOutputToContain('catalog:city_prefix')
+            ->doesntExpectOutputToContain('provider:stories')
+            ->assertSuccessful();
+    }
 }
