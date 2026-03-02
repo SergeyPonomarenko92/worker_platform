@@ -64,7 +64,10 @@ export const formatPrice = (offer) => {
 export const normalizeWebsite = (raw) => {
   const v = String(raw || '').trim()
   if (!v) return ''
-  if (v.startsWith('http://') || v.startsWith('https://')) return v
+
+  // Be robust to different casing (e.g. "HTTP://...") coming from backend normalization.
+  if (/^https?:\/\//i.test(v)) return v
+
   return `https://${v}`
 }
 
