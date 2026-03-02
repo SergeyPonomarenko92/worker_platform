@@ -19,6 +19,15 @@ class ProviderShowTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_provider_page_returns_404_for_unknown_slug(): void
+    {
+        Carbon::setTestNow(now());
+
+        $this
+            ->get('/providers/unknown-provider')
+            ->assertNotFound();
+    }
+
     public function test_provider_page_does_not_trigger_n_plus_one_queries(): void
     {
         Carbon::setTestNow(now());
