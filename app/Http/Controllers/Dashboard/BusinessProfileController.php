@@ -121,6 +121,7 @@ class BusinessProfileController extends Controller
         $data['slug'] = $this->uniqueSlug($data['name']);
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
+        $data['about'] = $this->normalizeNullableText($data['about'] ?? null);
         $data['city'] = $this->normalizeNullableText($data['city'] ?? null);
         $data['address'] = $this->normalizeNullableText($data['address'] ?? null);
 
@@ -151,6 +152,7 @@ class BusinessProfileController extends Controller
 
         $data['slug'] = $this->uniqueSlug($data['name'], $businessProfile->id);
 
+        $data['about'] = $this->normalizeNullableText($data['about'] ?? null);
         $data['city'] = $this->normalizeNullableText($data['city'] ?? null);
         $data['address'] = $this->normalizeNullableText($data['address'] ?? null);
 
