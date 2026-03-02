@@ -4,6 +4,11 @@
 - Docker + Docker Compose (recommended via Laravel Sail)
 - or: PHP 8.2+, Composer, Node + npm, Postgres (recommended) or MySQL
 
+### Optional (quality of life)
+- `ripgrep` (`rg`) for fast code search (docs sometimes reference it). If you don't have it, you can always use `grep -R`.
+  - Ubuntu/Debian: `sudo apt-get install ripgrep`
+- `psql` client for quick `EXPLAIN (ANALYZE, BUFFERS)` checks when doing perf work.
+
 ## 2) Install
 ```bash
 composer install
