@@ -29,12 +29,15 @@ class ContactFieldNormalizerTest extends TestCase
             'nbps only' => ["\u{00A0}\u{00A0}", null],
 
             'adds https:// when missing' => ['example.com', 'https://example.com'],
+            'adds https:// when missing (keeps path)' => ['example.com/path', 'https://example.com/path'],
             'keeps https://' => ['https://example.com', 'https://example.com'],
             'keeps http://' => ['http://example.com', 'http://example.com'],
+            'keeps HTTPS:// (case-insensitive scheme check)' => ['HTTPS://example.com', 'HTTPS://example.com'],
             'normalizes protocol-relative url' => ['//example.com', 'https://example.com'],
 
             'trims and collapses whitespace' => ["  example.com\n ", 'https://example.com'],
             'normalizes nbsp around' => ["example.com\u{00A0}", 'https://example.com'],
+            'single nbsp only is treated as empty' => ["\u{00A0}", null],
         ];
     }
 
