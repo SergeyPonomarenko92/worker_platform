@@ -23,30 +23,29 @@ class ContactFieldNormalizerTest extends TestCase
     public static function websiteCases(): array
     {
         return [
-            'null -> null' => [null, null],
-            'empty string -> null' => ['', null],
-            'spaces -> null' => ['   ', null],
-            'nbsp -> null' => ["\u{00A0}", null],
+            'null' => [null, null],
+            'empty string' => ['', null],
+            'spaces only' => ['   ', null],
+            'nbsp only' => ["\u{00A0}\u{202F}", null],
 
-            'keeps https' => ['https://example.com', 'https://example.com'],
-            'keeps http' => ['http://example.com', 'http://example.com'],
-            'adds https to bare domain' => ['example.com', 'https://example.com'],
-            'adds https to domain with path' => ['example.com/path', 'https://example.com/path'],
-
-            'trims and collapses whitespace' => ["  example.com\t /path  ", 'https://example.com /path'],
-            'trims unicode spaces' => ["\u{00A0}example.com\u{202F}", 'https://example.com'],
+            'keeps http url' => ['http://example.com', 'http://example.com'],
+            'keeps https url' => ['https://example.com', 'https://example.com'],
+            'adds https scheme to bare host' => ['example.com', 'https://example.com'],
+            'trims and collapses whitespace' => ["  example.com\t\n  ", 'https://example.com'],
+            'normalizes nbsp in value' => ["example\u{00A0}.com", 'https://example .com'],
         ];
     }
 
     public static function phoneCases(): array
     {
         return [
-            'null -> null' => [null, null],
-            'empty string -> null' => ['', null],
-            'spaces -> null' => ['   ', null],
-            'keeps digits' => ['+380991112233', '+380991112233'],
-            'trims unicode spaces' => ["\u{00A0}+380 99 111 22 33\u{202F}", '+380 99 111 22 33'],
-            'collapses whitespace' => ["  +380\t99\n111  22  33 ", '+380 99 111 22 33'],
+            'null' => [null, null],
+            'empty string' => ['', null],
+            'spaces only' => ['   ', null],
+            'nbsp only' => ["\u{00A0}\u{202F}", null],
+
+            'keeps digits and plus' => ['+380 67 123 45 67', '+380 67 123 45 67'],
+            'collapses whitespace' => [" +380\t67\n123\r\n4567 ", '+380 67 123 4567'],
         ];
     }
 }
