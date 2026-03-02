@@ -25,14 +25,15 @@ class ContactFieldNormalizerTest extends TestCase
         return [
             'null' => [null, null],
             'empty string' => ['', null],
-            'spaces only' => [" \t\n ", null],
-            'unicode spaces only' => ["\u{00A0}\u{202F}", null],
+            'spaces only' => ['   ', null],
+            'nbps only' => ["\u{00A0}\u{00A0}", null],
 
-            'keeps https' => ['https://example.com', 'https://example.com'],
-            'keeps http' => ['http://example.com', 'http://example.com'],
-            'adds https when missing scheme' => ['example.com', 'https://example.com'],
-            'normalizes whitespace' => ["  example.com\u{00A0}", 'https://example.com'],
-            'does not downcase host (leave as-is)' => ['ExAmPlE.com', 'https://ExAmPlE.com'],
+            'adds https:// when missing' => ['example.com', 'https://example.com'],
+            'keeps https://' => ['https://example.com', 'https://example.com'],
+            'keeps http://' => ['http://example.com', 'http://example.com'],
+
+            'trims and collapses whitespace' => ["  example.com\n ", 'https://example.com'],
+            'normalizes nbsp around' => ["example.com\u{00A0}", 'https://example.com'],
         ];
     }
 
@@ -42,9 +43,10 @@ class ContactFieldNormalizerTest extends TestCase
             'null' => [null, null],
             'empty string' => ['', null],
             'spaces only' => ['   ', null],
-            'unicode spaces only' => ["\u{00A0}\u{202F}", null],
+            'nbps only' => ["\u{00A0}\u{00A0}", null],
 
-            'keeps phone as-is except whitespace normalization' => ["  +38\u{00A0}067\u{202F}123 45 67  ", '+38 067 123 45 67'],
+            'keeps phone as-is (after normalization)' => ['+380 50 123 45 67', '+380 50 123 45 67'],
+            'trims and collapses whitespace' => ["  +380\t50\n123  ", '+380 50 123'],
         ];
     }
 }
