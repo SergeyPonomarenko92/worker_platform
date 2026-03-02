@@ -46,7 +46,8 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
             ->select('offers.id')
             ->active()
             ->whereHas('businessProfile', function ($bp) use ($cityPrefix) {
-                $escaped = addcslashes(mb_strtolower($cityPrefix), "%_!").'%';
+                $normalized = \App\Support\QueryParamNormalizer::text($cityPrefix);
+                $escaped = \App\Support\SqlLikeEscaper::escape(mb_strtolower($normalized, 'UTF-8')).'%';
 
                 $bp
                     ->active()

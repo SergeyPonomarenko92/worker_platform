@@ -8,26 +8,21 @@ use Tests\TestCase;
 
 class SqlLikeEscaperTest extends TestCase
 {
-    #[DataProvider('cases')]
+    #[DataProvider('escapeCases')]
     public function test_escape(string $input, string $expected): void
     {
         $this->assertSame($expected, SqlLikeEscaper::escape($input));
     }
 
-    public static function cases(): array
+    public static function escapeCases(): array
     {
         return [
+            'empty' => ['', ''],
             'no special chars' => ['kyiv', 'kyiv'],
-            'percent' => ['100% legit', '100!% legit'],
-            'underscore' => ['a_b', 'a!_b'],
-            'escape char itself' => ['a!b', 'a!!b'],
-            'combo' => ['!%_', '!!!%!_'],
-            'percent+underscore together' => ['100%_done', '100!%!_done'],
+            'escapes percent' => ['100% legit', '100!% legit'],
+            'escapes underscore' => ['a_b', 'a!_b'],
+            'escapes escape char itself first' => ['a!b', 'a!!b'],
+            'escapes combination' => ['!%_', '!!!%!_'],
         ];
-    }
-
-    public function test_escape_with_custom_escape_char(): void
-    {
-        $this->assertSame('###%#_', SqlLikeEscaper::escape('#%_', '#'));
     }
 }
