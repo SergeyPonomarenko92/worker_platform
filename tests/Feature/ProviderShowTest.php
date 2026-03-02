@@ -215,6 +215,34 @@ class ProviderShowTest extends TestCase
             );
     }
 
+    public function test_provider_page_does_not_include_inactive_offers_even_when_all_offers_is_enabled(): void
+    {
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        Offer::factory()->for($provider)->create([
+            'title' => 'Active offer',
+            'is_active' => true,
+        ]);
+
+        Offer::factory()->for($provider)->create([
+            'title' => 'Inactive offer',
+            'is_active' => false,
+        ]);
+
+        $this
+            ->get('/providers/'.$provider->slug.'?all_offers=1')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Providers/Show')
+                ->where('provider.offers_count', 1)
+                ->has('provider.offers', 1)
+                ->where('provider.offers.0.title', 'Active offer')
+            );
+    }
+
     public function test_provider_page_caps_preloaded_offers_when_all_offers_enabled(): void
     {
         $provider = BusinessProfile::factory()->create([
