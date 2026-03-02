@@ -22,6 +22,7 @@ class SqlLikeEscaperTest extends TestCase
             'underscore' => ['a_b', 'a!_b'],
             'escape char itself' => ['a!b', 'a!!b'],
             'combo' => ['!%_', '!!!%!_'],
+            'percent+underscore together' => ['100%_done', '100!%!_done'],
         ];
     }
 
