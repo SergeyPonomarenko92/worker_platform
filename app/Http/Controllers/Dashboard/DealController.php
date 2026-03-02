@@ -18,6 +18,14 @@ class DealController extends Controller
         $this->authorize('update', $businessProfile);
 
         $deals = $businessProfile->deals()
+            ->select([
+                'id',
+                'business_profile_id',
+                'client_user_id',
+                'offer_id',
+                'status',
+                'created_at',
+            ])
             ->with(['client:id,name,email', 'offer:id,title'])
             ->latest()
             ->get();
