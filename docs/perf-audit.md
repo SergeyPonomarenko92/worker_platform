@@ -40,6 +40,24 @@ DB::listen(fn ($q) => dump($q->sql, $q->bindings));
 
 Після того як отримали SQL → запускаємо його у `psql` з `EXPLAIN (ANALYZE, BUFFERS)`.
 
+### 2.1 Швидкий запуск psql через Sail
+
+> Підійде, якщо у вас Postgres у docker-compose (Laravel Sail).
+
+```bash
+./vendor/bin/sail psql -U "${DB_USERNAME:-sail}" -d "${DB_DATABASE:-laravel}" -h "${DB_HOST:-pgsql}" -p "${DB_PORT:-5432}"
+```
+
+Далі вставляємо запит з префіксом:
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+-- ваш SELECT ...
+;
+```
+
+> Якщо у проєкті використовується інша назва сервісу БД або інші креденшали — звірте `.env` / `docker-compose.yml`.
+
 ---
 
 ## 3) EXPLAIN шаблони (catalog)
