@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--provider=demo-provider : Provider slug for provider-show queries} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)}', function () {
+Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)}', function () {
     $connection = DB::connection();
     $driver = (string) $connection->getDriverName();
 
@@ -17,6 +17,8 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
     $cityPrefix = (string) $this->option('city');
     $priceFrom = (int) $this->option('price_from');
     $includeNoPrice = (bool) ((int) $this->option('include_no_price'));
+
+    $only = (string) ($this->option('only') ?? '');
 
     $explain = (bool) $this->option('explain') || (bool) $this->option('analyze');
     $analyze = (bool) $this->option('analyze');
@@ -104,6 +106,40 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
             ->orderByDesc('created_at')
             ->limit(6),
     ];
+
+    if ($only !== '') {
+        $filters = array_values(array_filter(array_map(static fn ($v) => trim((string) $v), explode(',', $only))));
+
+        $queries = array_filter(
+            $queries,
+            static function ($query, string $name) use ($filters) {
+                foreach ($filters as $filter) {
+                    if ($filter === '') {
+                        continue;
+                    }
+
+                    if ($filter === $name) {
+                        return true;
+                    }
+
+                    if (str_ends_with($filter, ':') && str_starts_with($name, $filter)) {
+                        return true;
+                    }
+
+                    if ($filter === 'catalog' && str_starts_with($name, 'catalog:')) {
+                        return true;
+                    }
+
+                    if ($filter === 'provider' && str_starts_with($name, 'provider:')) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            ARRAY_FILTER_USE_BOTH,
+        );
+    }
 
     foreach ($queries as $name => $query) {
         $this->line('---');
