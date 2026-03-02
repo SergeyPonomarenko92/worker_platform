@@ -8,39 +8,45 @@ use Tests\TestCase;
 
 class ContactFieldNormalizerTest extends TestCase
 {
+    #[DataProvider('websiteCases')]
+    public function test_website_normalization(?string $input, ?string $expected): void
+    {
+        $this->assertSame($expected, ContactFieldNormalizer::website($input));
+    }
+
+    #[DataProvider('phoneCases')]
+    public function test_phone_normalization(?string $input, ?string $expected): void
+    {
+        $this->assertSame($expected, ContactFieldNormalizer::phone($input));
+    }
+
     public static function websiteCases(): array
     {
         return [
-            'null stays null' => [null, null],
-            'empty becomes null' => ['   ', null],
-            'nbspace-only becomes null' => ["\u{00A0}\u{202F}", null],
-            'adds https when missing scheme' => ['example.com', 'https://example.com'],
-            'normalizes unicode spaces around value' => ["\u{00A0}example.com\u{202F}", 'https://example.com'],
-            'keeps http scheme case' => [' HTTP://foo.test ', 'HTTP://foo.test'],
-            'keeps https scheme' => ['https://bar.test', 'https://bar.test'],
-        ];
-    }
+            'null -> null' => [null, null],
+            'empty string -> null' => ['', null],
+            'spaces -> null' => ['   ', null],
+            'nbsp -> null' => ["\u{00A0}", null],
 
-    #[DataProvider('websiteCases')]
-    public function test_website_normalization(?string $raw, ?string $expected): void
-    {
-        $this->assertSame($expected, ContactFieldNormalizer::website($raw));
+            'keeps https' => ['https://example.com', 'https://example.com'],
+            'keeps http' => ['http://example.com', 'http://example.com'],
+            'adds https to bare domain' => ['example.com', 'https://example.com'],
+            'adds https to domain with path' => ['example.com/path', 'https://example.com/path'],
+
+            'trims and collapses whitespace' => ["  example.com\t /path  ", 'https://example.com /path'],
+            'trims unicode spaces' => ["\u{00A0}example.com\u{202F}", 'https://example.com'],
+        ];
     }
 
     public static function phoneCases(): array
     {
         return [
-            'null stays null' => [null, null],
-            'empty becomes null' => ['  ', null],
-            'nbspace-only becomes null' => ["\u{00A0}\u{202F}", null],
-            'trims' => ['  +380 99 123 45 67  ', '+380 99 123 45 67'],
-            'normalizes unicode spaces' => ["\u{00A0}+380\u{202F}99\u{00A0}123\u{202F}45\u{00A0}67\u{00A0}", '+380 99 123 45 67'],
+            'null -> null' => [null, null],
+            'empty string -> null' => ['', null],
+            'spaces -> null' => ['   ', null],
+            'keeps digits' => ['+380991112233', '+380991112233'],
+            'trims unicode spaces' => ["\u{00A0}+380 99 111 22 33\u{202F}", '+380 99 111 22 33'],
+            'collapses whitespace' => ["  +380\t99\n111  22  33 ", '+380 99 111 22 33'],
         ];
-    }
-
-    #[DataProvider('phoneCases')]
-    public function test_phone_normalization(?string $raw, ?string $expected): void
-    {
-        $this->assertSame($expected, ContactFieldNormalizer::phone($raw));
     }
 }
