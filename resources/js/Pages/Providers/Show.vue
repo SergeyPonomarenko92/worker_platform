@@ -262,7 +262,7 @@ onMounted(() => {
               class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :href="mapsHref"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener noreferrer nofollow"
               :aria-label="`Відкрити адресу на мапі: ${[provider.city, provider.address].filter(Boolean).join(', ')}`"
             >
               📍 {{ [provider.city, provider.address].filter(Boolean).join(', ') }}
@@ -275,7 +275,7 @@ onMounted(() => {
               class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :href="normalizedWebsiteHref"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener noreferrer nofollow"
             >
               {{ provider.website }}
             </a>
@@ -293,7 +293,7 @@ onMounted(() => {
             :key="story.id"
             :href="'/' + story.media_path"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer nofollow"
             class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-gray-300 bg-gray-50"
             :title="story.caption || ''"
             :aria-label="story.caption ? `Історія: ${story.caption}` : 'Історія'"
