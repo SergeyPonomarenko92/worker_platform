@@ -38,7 +38,7 @@ class ProviderController extends Controller
                 'updated_at',
             ])
             ->where('slug', $slug)
-            ->where('is_active', true)
+            ->active()
             ->withCount([
                 'offers as offers_count' => fn ($q) => $q->where('is_active', true),
                 'reviews as reviews_count',

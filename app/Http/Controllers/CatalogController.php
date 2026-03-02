@@ -100,7 +100,7 @@ class CatalogController extends Controller
                 'category:id,name',
             ])
             ->where('is_active', true)
-            ->whereHas('businessProfile', fn ($bp) => $bp->where('is_active', true))
+            ->whereHas('businessProfile', fn ($bp) => $bp->active())
             ->when($type, fn ($query) => $query->where('type', $type))
             ->when(is_array($categoryIds) && count($categoryIds), fn ($query) => $query->whereIn('category_id', $categoryIds))
             ->when($categoryId && (!is_array($categoryIds) || !count($categoryIds)), fn ($query) => $query->where('category_id', $categoryId))
