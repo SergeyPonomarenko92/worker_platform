@@ -31,6 +31,7 @@ class ContactFieldNormalizerTest extends TestCase
             'adds https:// when missing' => ['example.com', 'https://example.com'],
             'keeps https://' => ['https://example.com', 'https://example.com'],
             'keeps http://' => ['http://example.com', 'http://example.com'],
+            'normalizes protocol-relative url' => ['//example.com', 'https://example.com'],
 
             'trims and collapses whitespace' => ["  example.com\n ", 'https://example.com'],
             'normalizes nbsp around' => ["example.com\u{00A0}", 'https://example.com'],

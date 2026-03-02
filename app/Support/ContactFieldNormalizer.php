@@ -14,6 +14,12 @@ class ContactFieldNormalizer
             return null;
         }
 
+        // Some users paste protocol-relative URLs like "//example.com".
+        // We store normalized http(s) URLs only.
+        if (str_starts_with($v, '//')) {
+            return 'https:'.$v;
+        }
+
         if (preg_match('#^https?://#i', $v) === 1) {
             return $v;
         }

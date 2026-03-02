@@ -27,6 +27,22 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
         $this->assertSame('https://example.com', $profile->website);
     }
 
+    public function test_business_profile_website_normalizes_protocol_relative_url_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => '//example.com',
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertSame('https://example.com', $profile->website);
+    }
+
     public function test_business_profile_website_is_trimmed_on_store_and_keeps_http_scheme_case(): void
     {
         $user = User::factory()->create();
