@@ -42,6 +42,11 @@ const mapsHref = computed(() => {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
 })
 
+function storyMediaUrl(path) {
+  if (!path) return null
+  return path.startsWith('/') ? path : `/${path}`
+}
+
 const providerPageAllOffersUrl = computed(() =>
   providerShowUrl(props.provider.slug, {
     all_offers: true,
@@ -299,7 +304,7 @@ onMounted(() => {
           <a
             v-for="story in provider.stories"
             :key="story.id"
-            :href="'/' + story.media_path"
+            :href="storyMediaUrl(story.media_path)"
             target="_blank"
             rel="noopener noreferrer nofollow"
             class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-gray-300 bg-gray-50"
@@ -307,7 +312,7 @@ onMounted(() => {
             :aria-label="story.caption ? `Історія: ${story.caption}` : 'Історія'"
           >
             <img
-              :src="'/' + story.media_path"
+              :src="storyMediaUrl(story.media_path)"
               :alt="story.caption ? `Історія: ${story.caption}` : 'Історія'"
               class="h-full w-full object-cover"
               loading="lazy"
