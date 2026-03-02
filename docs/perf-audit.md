@@ -161,3 +161,18 @@ LIMIT 6;
 
 - `docs/testing-db.md` — як влаштована тестова схема `testing` і базові підказки
 - Feature тести каталогу/провайдера — як «золота сітка» проти регресій
+
+---
+
+## 7) Примітка про індекси для provider show (stories/portfolio posts)
+
+Для публічної сторінки провайдера критичні запити по:
+- `stories` (активні: `expires_at > now()`)
+- `portfolio_posts` (опубліковані: `published_at <= now()`)
+
+У репозиторії є міграція, яка **фіксує явні назви** композитних індексів (і при цьому намагається не падати при `migrate:fresh`), див.:
+- `database/migrations/2026_03_02_133117_add_provider_public_page_indexes_to_stories_and_portfolio_posts.php`
+
+Чому це важливо:
+- Laravel для індексів без явного імені генерує auto-name на кшталт `stories_business_profile_id_expires_at_index`.
+- Якщо пізніше захочемо підтримувати `dropIndex()` у `down()` або стандартизувати імена — краще мати стабільні, явні назви.
