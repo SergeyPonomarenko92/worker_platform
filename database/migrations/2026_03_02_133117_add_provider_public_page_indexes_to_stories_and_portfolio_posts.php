@@ -47,11 +47,17 @@ return new class extends Migration
             // When running migrations from scratch, adding it again would fail.
             // Drop the auto-generated index name first (if present), then re-add with an explicit name.
             $autoIndex = 'stories_business_profile_id_expires_at_index';
+            $explicitIndex = 'stories_bp_expires_at_index';
+
+            if ($indexExists('stories', $explicitIndex)) {
+                return;
+            }
+
             if ($indexExists('stories', $autoIndex)) {
                 $table->dropIndex($autoIndex);
             }
 
-            $table->index(['business_profile_id', 'expires_at'], 'stories_bp_expires_at_index');
+            $table->index(['business_profile_id', 'expires_at'], $explicitIndex);
         });
 
         Schema::table('portfolio_posts', function (Blueprint $table) use ($indexExists) {
@@ -59,11 +65,17 @@ return new class extends Migration
             // When running migrations from scratch, adding it again would fail.
             // Drop the auto-generated index name first (if present), then re-add with an explicit name.
             $autoIndex = 'portfolio_posts_business_profile_id_published_at_index';
+            $explicitIndex = 'portfolio_posts_bp_published_at_index';
+
+            if ($indexExists('portfolio_posts', $explicitIndex)) {
+                return;
+            }
+
             if ($indexExists('portfolio_posts', $autoIndex)) {
                 $table->dropIndex($autoIndex);
             }
 
-            $table->index(['business_profile_id', 'published_at'], 'portfolio_posts_bp_published_at_index');
+            $table->index(['business_profile_id', 'published_at'], $explicitIndex);
         });
     }
 
