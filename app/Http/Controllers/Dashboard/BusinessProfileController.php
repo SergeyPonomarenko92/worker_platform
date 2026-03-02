@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\BusinessProfile;
 use App\Support\ContactFieldNormalizer;
+use App\Support\QueryParamNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -22,6 +23,17 @@ class BusinessProfileController extends Controller
     private function normalizePhone(?string $raw): ?string
     {
         return ContactFieldNormalizer::phone($raw);
+    }
+
+    private function normalizeNullableText(?string $raw): ?string
+    {
+        $v = QueryParamNormalizer::text($raw);
+
+        if ($v === '') {
+            return null;
+        }
+
+        return $v;
     }
 
     private function uniqueSlug(string $name, ?int $ignoreId = null): string
@@ -103,6 +115,10 @@ class BusinessProfileController extends Controller
         $data['user_id'] = $user->id;
         $data['slug'] = $this->uniqueSlug($data['name']);
         $data['is_active'] = (bool)($data['is_active'] ?? true);
+
+        $data['city'] = $this->normalizeNullableText($data['city'] ?? null);
+        $data['address'] = $this->normalizeNullableText($data['address'] ?? null);
+
         $data['website'] = $this->normalizeWebsite($data['website'] ?? null);
         $this->validateWebsiteOrFail($data['website']);
 
@@ -138,6 +154,10 @@ class BusinessProfileController extends Controller
         ]);
 
         $data['slug'] = $this->uniqueSlug($data['name'], $businessProfile->id);
+
+        $data['city'] = $this->normalizeNullableText($data['city'] ?? null);
+        $data['address'] = $this->normalizeNullableText($data['address'] ?? null);
+
         $data['website'] = $this->normalizeWebsite($data['website'] ?? null);
         $this->validateWebsiteOrFail($data['website']);
 
