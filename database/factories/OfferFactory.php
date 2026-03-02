@@ -29,4 +29,43 @@ class OfferFactory extends Factory
             'is_active' => true,
         ];
     }
+
+    public function inactive(): static
+    {
+        return $this->state(fn () => [
+            'is_active' => false,
+        ]);
+    }
+
+    public function noPrice(): static
+    {
+        return $this->state(fn () => [
+            'price_from' => null,
+            'price_to' => null,
+        ]);
+    }
+
+    public function priceFromOnly(?int $priceFrom = 100): static
+    {
+        return $this->state(fn () => [
+            'price_from' => $priceFrom,
+            'price_to' => null,
+        ]);
+    }
+
+    public function priceToOnly(?int $priceTo = 1000): static
+    {
+        return $this->state(fn () => [
+            'price_from' => null,
+            'price_to' => $priceTo,
+        ]);
+    }
+
+    public function priceRange(?int $priceFrom = 100, ?int $priceTo = 1000): static
+    {
+        return $this->state(fn () => [
+            'price_from' => $priceFrom,
+            'price_to' => $priceTo,
+        ]);
+    }
 }
