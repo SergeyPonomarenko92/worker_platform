@@ -36,6 +36,17 @@ class BusinessProfileController extends Controller
         return $v;
     }
 
+    private function normalizeCountryCode(?string $raw): string
+    {
+        $v = QueryParamNormalizer::text($raw);
+
+        if ($v === '') {
+            return 'UA';
+        }
+
+        return strtoupper($v);
+    }
+
     private function uniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $base = Str::slug($name);
@@ -122,6 +133,7 @@ class BusinessProfileController extends Controller
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
         $data['about'] = $this->normalizeNullableText($data['about'] ?? null);
+        $data['country_code'] = $this->normalizeCountryCode($data['country_code'] ?? null);
         $data['city'] = $this->normalizeNullableText($data['city'] ?? null);
         $data['address'] = $this->normalizeNullableText($data['address'] ?? null);
 
@@ -153,6 +165,7 @@ class BusinessProfileController extends Controller
         $data['slug'] = $this->uniqueSlug($data['name'], $businessProfile->id);
 
         $data['about'] = $this->normalizeNullableText($data['about'] ?? null);
+        $data['country_code'] = $this->normalizeCountryCode($data['country_code'] ?? null);
         $data['city'] = $this->normalizeNullableText($data['city'] ?? null);
         $data['address'] = $this->normalizeNullableText($data['address'] ?? null);
 
