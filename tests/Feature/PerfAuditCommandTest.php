@@ -16,4 +16,26 @@ class PerfAuditCommandTest extends TestCase
             ->expectsOutputToContain('catalog:newest')
             ->assertSuccessful();
     }
+
+    public function test_perf_audit_only_filter_can_limit_output_to_catalog_group(): void
+    {
+        $this->artisan('perf:audit --only=catalog')
+            ->expectsOutputToContain('catalog:newest')
+            ->expectsOutputToContain('catalog:city_prefix')
+            ->expectsOutputToContain('catalog:price_range')
+            ->doesntExpectOutputToContain('provider:offers')
+            ->doesntExpectOutputToContain('provider:portfolio_posts')
+            ->doesntExpectOutputToContain('provider:stories')
+            ->assertSuccessful();
+    }
+
+    public function test_perf_audit_only_filter_can_limit_output_to_specific_query(): void
+    {
+        $this->artisan('perf:audit --only=provider:offers')
+            ->expectsOutputToContain('provider:offers')
+            ->doesntExpectOutputToContain('catalog:newest')
+            ->doesntExpectOutputToContain('provider:portfolio_posts')
+            ->doesntExpectOutputToContain('provider:stories')
+            ->assertSuccessful();
+    }
 }
