@@ -20,6 +20,17 @@
    - `tests/Feature/ProviderShowTest.php::test_provider_page_does_not_trigger_n_plus_one_queries`
 3) Якщо змінювали SQL/індекси/фільтри — зробити `EXPLAIN` для 1–2 кейсів каталогу + 1 кейса provider show.
 
+> Швидкий варіант (є в репозиторії):
+>
+> ```bash
+> php artisan perf:audit
+> php artisan perf:audit --explain
+> php artisan perf:audit --analyze
+> php artisan perf:audit --provider=demo-provider
+> ```
+>
+> Команда друкує SQL (та bindings), а з `--explain/--analyze` — також план виконання (Postgres).
+
 ---
 
 ## 2) Як швидко отримати SQL з Laravel
