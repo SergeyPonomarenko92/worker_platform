@@ -80,6 +80,20 @@ class BusinessProfileController extends Controller
         }
     }
 
+    private function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'about' => ['nullable', 'string', 'max:5000'],
+            'country_code' => ['nullable', 'string', 'max:2'],
+            'city' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:50'],
+            'website' => ['nullable', 'string', 'max:255'],
+            'is_active' => ['nullable', 'boolean'],
+        ];
+    }
+
     public function index(Request $request): Response
     {
         $profiles = $request->user()
@@ -101,16 +115,7 @@ class BusinessProfileController extends Controller
     {
         $user = $request->user();
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'about' => ['nullable', 'string', 'max:5000'],
-            'country_code' => ['nullable', 'string', 'max:2'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'website' => ['nullable', 'string', 'max:255'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validate($this->rules());
 
         $data['user_id'] = $user->id;
         $data['slug'] = $this->uniqueSlug($data['name']);
@@ -142,16 +147,7 @@ class BusinessProfileController extends Controller
     {
         $this->authorize('update', $businessProfile);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'about' => ['nullable', 'string', 'max:5000'],
-            'country_code' => ['nullable', 'string', 'max:2'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'website' => ['nullable', 'string', 'max:255'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
+        $data = $request->validate($this->rules());
 
         $data['slug'] = $this->uniqueSlug($data['name'], $businessProfile->id);
 
