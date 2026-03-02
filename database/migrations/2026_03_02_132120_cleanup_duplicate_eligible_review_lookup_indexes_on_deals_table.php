@@ -34,7 +34,14 @@ return new class extends Migration
                 ));
             }
 
-            // Unknown driver: best-effort (assume doesn't exist, Schema builder may error if duplicate).
+            if ($driver === 'sqlite') {
+                // PRAGMA returns: seq, name, unique, origin, partial
+                return collect(DB::select("pragma index_list('deals')"))
+                    ->pluck('name')
+                    ->contains($indexName);
+            }
+
+            // Unknown driver: best-effort (assume doesn't exist). We avoid trying to be clever here.
             return false;
         };
 
@@ -48,6 +55,22 @@ return new class extends Migration
         if ($hasShort && $hasLong) {
             Schema::table('deals', function (Blueprint $table) use ($longName) {
                 $table->dropIndex($longName);
+            });
+
+            return;
+        }
+
+        // If only the legacy long name exists, replace it with the canonical short name.
+        if (! $hasShort && $hasLong) {
+            Schema::table('deals', function (Blueprint $table) use ($longName) {
+                $table->dropIndex($longName);
+            });
+
+            Schema::table('deals', function (Blueprint $table) use ($shortName) {
+                $table->index(
+                    ['business_profile_id', 'client_user_id', 'status', 'completed_at'],
+                    $shortName
+                );
             });
 
             return;
