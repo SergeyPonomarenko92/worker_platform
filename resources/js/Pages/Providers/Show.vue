@@ -292,7 +292,7 @@ onMounted(() => {
               target="_blank"
               rel="noopener noreferrer nofollow"
               :title="websiteDisplayText || normalizedWebsiteHref"
-              :aria-label="`Відкрити сайт провайдера: ${websiteDisplayText}`"
+              :aria-label="`Відкрити сайт провайдера: ${websiteDisplayText || normalizedWebsiteHref}`"
             >
               {{ websiteDisplayText }}
             </a>
