@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Dashboard\StoreOfferRequest;
+use App\Http\Requests\Dashboard\UpdateOfferRequest;
 use App\Models\Category;
 use App\Models\BusinessProfile;
 use App\Models\Offer;
-use App\Support\QueryParamNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -39,50 +39,13 @@ class OfferController extends Controller
         ]);
     }
 
-    public function store(Request $request, BusinessProfile $businessProfile): RedirectResponse
+    public function store(StoreOfferRequest $request, BusinessProfile $businessProfile): RedirectResponse
     {
         $this->authorize('update', $businessProfile);
 
-        // Normalize text/numeric/select fields from HTML forms.
-        // - text: trim/collapse whitespace + NBSP
-        // - optional numeric/select: "" -> null
-        $request->merge([
-            'title' => QueryParamNormalizer::text($request->input('title')),
-            'description' => QueryParamNormalizer::text($request->input('description')),
-
-            'category_id' => $request->input('category_id') ?: null,
-            'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
-            'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
-
-            // Allow users to paste currency with extra spaces (e.g. " uah ", "u a h", NBSPs)
-            // Keep only letters/digits by removing whitespace, then validate length=3.
-            'currency' => is_string($request->input('currency'))
-                ? str_replace(' ', '', QueryParamNormalizer::text($request->input('currency')))
-                : $request->input('currency'),
-        ]);
-
-        $data = $request->validate([
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'type' => ['required', 'in:service,product'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:5000'],
-            'price_from' => ['nullable', 'integer', 'min:0'],
-            'price_to' => [
-                'nullable',
-                'integer',
-                'min:0',
-                Rule::when($request->filled('price_from'), ['gte:price_from']),
-            ],
-            'currency' => ['required', 'string', 'size:3'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
-
-        if (($data['description'] ?? null) === '') {
-            $data['description'] = null;
-        }
+        $data = $request->normalized();
 
         $data['business_profile_id'] = $businessProfile->id;
-        $data['currency'] = strtoupper(trim($data['currency']));
         $data['is_active'] = (bool)($data['is_active'] ?? true);
 
         Offer::create($data);
@@ -104,54 +67,12 @@ class OfferController extends Controller
         ]);
     }
 
-    public function update(Request $request, BusinessProfile $businessProfile, Offer $offer): RedirectResponse
+    public function update(UpdateOfferRequest $request, BusinessProfile $businessProfile, Offer $offer): RedirectResponse
     {
         $this->authorize('update', $businessProfile);
         $this->authorize('update', $offer);
 
-        // Normalize text/numeric/select fields from HTML forms.
-        // - text: trim/collapse whitespace + NBSP
-        // - optional numeric/select: "" -> null
-        $request->merge([
-            'title' => QueryParamNormalizer::text($request->input('title')),
-            'description' => QueryParamNormalizer::text($request->input('description')),
-
-            'category_id' => $request->input('category_id') ?: null,
-            'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
-            'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
-
-            // Allow users to paste currency with extra spaces (e.g. " uah ", "u a h", NBSPs)
-            // Keep only letters/digits by removing whitespace, then validate length=3.
-            'currency' => is_string($request->input('currency'))
-                ? str_replace(' ', '', QueryParamNormalizer::text($request->input('currency')))
-                : $request->input('currency'),
-        ]);
-
-        $data = $request->validate([
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'type' => ['required', 'in:service,product'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:5000'],
-            'price_from' => ['nullable', 'integer', 'min:0'],
-            'price_to' => [
-                'nullable',
-                'integer',
-                'min:0',
-                Rule::when($request->filled('price_from'), ['gte:price_from']),
-            ],
-            'currency' => ['required', 'string', 'size:3'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
-
-        if (($data['description'] ?? null) === '') {
-            $data['description'] = null;
-        }
-
-        $data['currency'] = strtoupper(trim($data['currency']));
-
-        if (array_key_exists('is_active', $data)) {
-            $data['is_active'] = (bool) $data['is_active'];
-        }
+        $data = $request->normalized();
 
         $offer->update($data);
 
