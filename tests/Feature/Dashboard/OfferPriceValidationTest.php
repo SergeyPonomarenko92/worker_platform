@@ -73,4 +73,67 @@ class OfferPriceValidationTest extends TestCase
         $offer->refresh();
         $this->assertSame('USD', $offer->currency);
     }
+
+    public function test_provider_cannot_create_offer_when_price_to_is_less_than_price_from(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $category = Category::factory()->create();
+
+        $this->actingAs($user)
+            ->from(route('dashboard.offers.create', [$profile]))
+            ->post(route('dashboard.offers.store', [$profile]), [
+                'category_id' => $category->id,
+                'type' => 'service',
+                'title' => 'Invalid price range',
+                'description' => 'Test description',
+                'price_from' => 100,
+                'price_to' => 50,
+                'currency' => 'UAH',
+                'is_active' => 1,
+            ])
+            ->assertRedirect(route('dashboard.offers.create', [$profile]))
+            ->assertSessionHasErrors(['price_to']);
+
+        $this->assertDatabaseMissing('offers', [
+            'title' => 'Invalid price range',
+        ]);
+    }
+
+    public function test_provider_cannot_update_offer_when_price_to_is_less_than_price_from(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $offer = Offer::factory()->for($profile)->create([
+            'price_from' => 100,
+            'price_to' => 150,
+        ]);
+
+        $this->actingAs($user)
+            ->from(route('dashboard.offers.edit', [$profile, $offer]))
+            ->patch(route('dashboard.offers.update', [$profile, $offer]), [
+                'category_id' => $offer->category_id,
+                'type' => $offer->type,
+                'title' => $offer->title,
+                'description' => $offer->description,
+                'price_from' => 200,
+                'price_to' => 100,
+                'currency' => $offer->currency,
+                'is_active' => $offer->is_active ? 1 : 0,
+            ])
+            ->assertRedirect(route('dashboard.offers.edit', [$profile, $offer]))
+            ->assertSessionHasErrors(['price_to']);
+
+        $offer->refresh();
+        $this->assertSame(100, $offer->price_from);
+        $this->assertSame(150, $offer->price_to);
+    }
 }
