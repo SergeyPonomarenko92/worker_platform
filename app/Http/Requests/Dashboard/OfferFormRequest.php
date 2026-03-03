@@ -22,7 +22,7 @@ abstract class OfferFormRequest extends FormRequest
                 'min:0',
                 Rule::when($this->filled('price_from'), ['gte:price_from']),
             ],
-            'currency' => ['required', 'string', 'size:3'],
+            'currency' => ['required', 'string', 'size:3', Rule::in(['UAH', 'USD', 'EUR'])],
             'is_active' => ['nullable', 'boolean'],
         ];
     }
@@ -40,10 +40,10 @@ abstract class OfferFormRequest extends FormRequest
             'price_from' => $this->input('price_from') === '' ? null : $this->input('price_from'),
             'price_to' => $this->input('price_to') === '' ? null : $this->input('price_to'),
 
-            // Allow users to paste currency with extra spaces (e.g. " uah ", "u a h", NBSPs)
-            // Keep only letters/digits by removing whitespace, then validate length=3.
+            // Allow users to paste currency with extra whitespace (e.g. " uah ", "u a h", NBSPs)
+            // and accept case-insensitive input.
             'currency' => is_string($this->input('currency'))
-                ? str_replace(' ', '', QueryParamNormalizer::text($this->input('currency')))
+                ? strtoupper(preg_replace('/\s+/u', '', QueryParamNormalizer::text($this->input('currency'))))
                 : $this->input('currency'),
         ]);
     }

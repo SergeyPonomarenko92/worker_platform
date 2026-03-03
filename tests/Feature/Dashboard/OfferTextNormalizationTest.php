@@ -72,6 +72,32 @@ class OfferTextNormalizationTest extends TestCase
         $this->assertSame('UAH', $offer->currency);
     }
 
+    public function test_offer_currency_invalid_value_is_rejected_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $category = Category::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.offers.store', [$profile]), [
+                'category_id' => $category->id,
+                'type' => 'service',
+                'title' => 'Test Offer',
+                'description' => 'desc',
+                'price_from' => '',
+                'price_to' => '',
+                'currency' => 'btc',
+                'is_active' => 1,
+            ])
+            ->assertSessionHasErrors(['currency']);
+
+        $this->assertDatabaseCount('offers', 0);
+    }
+
     public function test_offer_description_empty_string_becomes_null_on_store(): void
     {
         $user = User::factory()->create();
