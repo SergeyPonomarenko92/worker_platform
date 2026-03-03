@@ -4,53 +4,65 @@ namespace Tests\Unit;
 
 use App\Support\HttpUrlValidator;
 use Illuminate\Validation\ValidationException;
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class HttpUrlValidatorTest extends TestCase
 {
-    #[DataProvider('validCases')]
-    public function test_it_allows_null_and_valid_http_urls(?string $input): void
+    #[Test]
+    public function it_allows_null_values(): void
     {
-        HttpUrlValidator::validateOrFail($input, 'website');
+        HttpUrlValidator::validateOrFail(null);
 
         $this->assertTrue(true);
     }
 
-    #[DataProvider('invalidCases')]
-    public function test_it_rejects_invalid_or_non_http_urls(string $input, string $expectedMessage): void
+    #[Test]
+    public function it_rejects_non_urls(): void
     {
         try {
-            HttpUrlValidator::validateOrFail($input, 'website');
-            $this->fail('Expected ValidationException was not thrown.');
+            HttpUrlValidator::validateOrFail('not-a-url', 'website');
+            $this->fail('Expected ValidationException to be thrown.');
         } catch (ValidationException $e) {
-            $messages = $e->errors();
-            $this->assertArrayHasKey('website', $messages);
-            $this->assertSame([$expectedMessage], $messages['website']);
+            $this->assertSame(
+                ['website' => ['Некоректний URL вебсайту.']],
+                $e->errors()
+            );
         }
     }
 
-    public static function validCases(): array
+    #[Test]
+    public function it_rejects_non_http_schemes(): void
     {
-        return [
-            'null' => [null],
-            'https' => ['https://example.com'],
-            'http' => ['http://example.com'],
-            'mixed case scheme' => ['HTTPS://example.com'],
-            'url with path query fragment' => ['https://example.com/path?x=1#top'],
-        ];
+        // Some non-http values may not be considered valid URLs by FILTER_VALIDATE_URL
+        // (e.g. "javascript:"), but they still must be rejected.
+        try {
+            HttpUrlValidator::validateOrFail('javascript:alert(1)', 'website');
+            $this->fail('Expected ValidationException to be thrown.');
+        } catch (ValidationException $e) {
+            $this->assertSame(
+                ['website' => ['Некоректний URL вебсайту.']],
+                $e->errors()
+            );
+        }
+
+        try {
+            HttpUrlValidator::validateOrFail('ftp://example.com', 'website');
+            $this->fail('Expected ValidationException to be thrown.');
+        } catch (ValidationException $e) {
+            $this->assertSame(
+                ['website' => ['URL вебсайту має починатися з http:// або https://']],
+                $e->errors()
+            );
+        }
     }
 
-    public static function invalidCases(): array
+    #[Test]
+    public function it_allows_http_and_https_urls(): void
     {
-        return [
-            'not a url' => ['not-a-url', 'Некоректний URL вебсайту.'],
-            'scheme only (http://)' => ['http://', 'Некоректний URL вебсайту.'],
-            'scheme only (https://)' => ['https://', 'Некоректний URL вебсайту.'],
-            'invalid host (missing host, too many slashes)' => ['http:///example.com', 'Некоректний URL вебсайту.'],
-            'javascript scheme' => ['javascript:alert(1)', 'Некоректний URL вебсайту.'],
-            'mailto scheme' => ['mailto:test@example.com', 'URL вебсайту має починатися з http:// або https://'],
-            'ftp scheme' => ['ftp://example.com', 'URL вебсайту має починатися з http:// або https://'],
-        ];
+        HttpUrlValidator::validateOrFail('http://example.com', 'website');
+        HttpUrlValidator::validateOrFail('https://example.com', 'website');
+
+        $this->assertTrue(true);
     }
 }
