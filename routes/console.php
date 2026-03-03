@@ -82,6 +82,14 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
             ->latest('offers.created_at')
             ->limit(20),
 
+        // Mirrors the provider filter in /catalog (by business_profiles.slug).
+        'catalog:provider_slug' => Offer::query()
+            ->select('offers.id')
+            ->active()
+            ->whereHas('businessProfile', fn ($bp) => $bp->active()->where('slug', $providerSlug))
+            ->latest('offers.created_at')
+            ->limit(20),
+
         // Mirrors provider show offers block.
         'provider:offers' => Offer::query()
             ->select('offers.id')

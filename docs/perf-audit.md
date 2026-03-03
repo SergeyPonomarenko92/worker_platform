@@ -30,6 +30,7 @@
 > # Catalog-only variants:
 > php artisan perf:audit --city=ки
 > php artisan perf:audit --price_from=100 --include_no_price=1
+> php artisan perf:audit --provider=demo-provider --only=catalog:provider_slug
 > ```
 >
 > Команда друкує SQL (та bindings), а з `--explain/--analyze` — також план виконання (Postgres).
