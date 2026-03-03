@@ -31,6 +31,14 @@ class QueryParamNormalizerTest extends TestCase
     }
 
     #[Test]
+    public function it_normalizes_bidi_control_marks_as_spaces(): void
+    {
+        $input = "hello\u{200E}world\u{202E}again\u{2066}done"; // LRM + RLO + LRI
+
+        $this->assertSame('hello world again done', QueryParamNormalizer::text($input));
+    }
+
+    #[Test]
     public function it_returns_empty_string_for_null_or_whitespace_only(): void
     {
         $this->assertSame('', QueryParamNormalizer::text(null));

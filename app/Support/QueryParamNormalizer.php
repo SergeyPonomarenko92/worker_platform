@@ -55,13 +55,28 @@ class QueryParamNormalizer
         // - Zero width space (U+200B)
         // - Zero width non-joiner (U+200C)
         // - Zero width joiner (U+200D)
+        // - Left-to-right mark (U+200E)
+        // - Right-to-left mark (U+200F)
+        // - Bidi embedding/override controls (U+202A..U+202E)
         // - Word joiner (U+2060)
+        // - Bidi isolate controls (U+2066..U+2069)
         // - Zero width no-break space / BOM (U+FEFF)
         $value = str_replace([
             "\u{200B}",
             "\u{200C}",
             "\u{200D}",
+            "\u{200E}",
+            "\u{200F}",
+            "\u{202A}",
+            "\u{202B}",
+            "\u{202C}",
+            "\u{202D}",
+            "\u{202E}",
             "\u{2060}",
+            "\u{2066}",
+            "\u{2067}",
+            "\u{2068}",
+            "\u{2069}",
             "\u{FEFF}",
         ], ' ', $value);
 
