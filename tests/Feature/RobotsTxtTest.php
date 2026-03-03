@@ -2,18 +2,20 @@
 
 namespace Tests\Feature;
 
-use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class RobotsTxtTest extends TestCase
 {
-    #[Test]
-    public function robots_txt_is_accessible(): void
+    public function test_it_serves_robots_txt(): void
     {
-        $this->get('/robots.txt')
+        $response = $this->get('/robots.txt');
+
+        $response
             ->assertOk()
-            ->assertHeader('content-type', 'text/plain; charset=UTF-8')
-            ->assertSee('User-agent: *')
-            ->assertSee('Disallow: /dashboard/');
+            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertSee("User-agent: *")
+            ->assertSee('Disallow: /dashboard/')
+            ->assertSee('Disallow: /login')
+            ->assertSee('Allow: /');
     }
 }
