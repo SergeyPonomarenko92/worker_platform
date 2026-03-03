@@ -15,6 +15,13 @@ class HttpUrlValidator
             return;
         }
 
+        // Be tolerant to accidental whitespace around the URL (including unicode spaces).
+        // This validator may be used outside of our normalizers.
+        $url = preg_replace('/^\s+|\s+$/u', '', $url) ?? '';
+        if ($url === '') {
+            return;
+        }
+
         // Extra safety: do not persist non-URL / non-http(s) values (e.g. "javascript:...").
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw ValidationException::withMessages([

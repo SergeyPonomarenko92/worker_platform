@@ -13,8 +13,13 @@ class HttpUrlValidatorTest extends TestCase
     {
         return [
             'null is allowed' => [null],
+            'empty string is treated as missing' => [''],
+            'spaces-only string is treated as missing' => ["   \n\t"],
+            'unicode spaces-only string is treated as missing' => ["\u{00A0}\u{202F}"],
+
             'https url is allowed' => ['https://example.com'],
             'http url is allowed' => ['http://example.com/path?x=1#y'],
+            'url with surrounding whitespace is allowed' => ["  https://example.com/path  \n"],
         ];
     }
 
