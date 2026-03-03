@@ -18,7 +18,7 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $providerSlug = \App\Support\QueryParamNormalizer::providerSlug((string) $this->option('provider'));
     $clientUserId = (int) $this->option('client');
     $categoryId = (int) $this->option('category_id');
-    $cityPrefix = (string) $this->option('city');
+    $cityPrefix = \App\Support\QueryParamNormalizer::text((string) $this->option('city'));
     $priceFrom = (int) $this->option('price_from');
     $includeNoPrice = (bool) ((int) $this->option('include_no_price'));
 
@@ -37,6 +37,15 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     };
 
     $printHeader();
+
+    $this->line('Effective params:');
+    $this->line("- provider_slug: {$providerSlug}");
+    $this->line("- client_user_id: {$clientUserId}");
+    $this->line("- category_id: {$categoryId}");
+    $this->line("- city_prefix: {$cityPrefix}");
+    $this->line("- price_from: {$priceFrom}");
+    $this->line('- include_no_price: '.($includeNoPrice ? '1' : '0'));
+    $this->line('- limit_override: '.($limitOverride === null ? 'null' : (string) $limitOverride));
 
     if ($explain && $driver !== 'pgsql') {
         $this->warn('EXPLAIN is only supported in this helper for Postgres (pgsql). Re-run without --explain to just print SQL.');
@@ -78,8 +87,7 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
             ->select('offers.id')
             ->active()
             ->whereHas('businessProfile', function ($bp) use ($cityPrefix) {
-                $normalized = \App\Support\QueryParamNormalizer::text($cityPrefix);
-                $escaped = \App\Support\SqlLikeEscaper::escape(mb_strtolower($normalized, 'UTF-8')).'%';
+                $escaped = \App\Support\SqlLikeEscaper::escape(mb_strtolower($cityPrefix, 'UTF-8')).'%';
 
                 $bp
                     ->active()
