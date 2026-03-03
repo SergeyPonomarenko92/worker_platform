@@ -49,6 +49,14 @@
   - Reviews: graceful handling повторної відправки відгуку.
   - Perf: індекс для лістингу офферів у профілі (bp, active, created_at).
 
+- 2026-03-03: Micro-polish / robustness / tests (серія невеликих безпечних змін):
+  - Contact fields: посилено нормалізацію/валідацію website/URL/phone (trim unicode whitespace, обробка «порожніх» значень, trim пунктуації для доменів) + unit/feature тести.
+  - Offers: allowlist для `currency` (`UAH|USD|EUR`) + нормалізація в `OfferFormRequest` + feature-тест.
+  - Catalog/UI: `formatNumber()` у фронтенді тепер прибирає також thin unicode spaces (`\u202F`, `\u2009`).
+  - Sitemap: `catalog <lastmod>` узгоджено з фактично видимими офферами та оновленнями активних провайдерів + feature-тести.
+  - A11y/UX: дрібні покращення в кабінеті (aria-label/title для action links, autocomplete hints у формі BusinessProfile).
+  - Tech-debt/tests: cleanup дубльованих тестів, додаткове покриття `QueryParamNormalizer::providerSlug()`, невеликий refactor констант preload у `ProviderController`.
+
 ## Current status
 - Branch: `main`
 - Postgres configured and working locally.
@@ -89,14 +97,11 @@
   - `published_at <= now()`
 
 ## TODO (next session)
-1) Stage 5 (Polish):
-   - [x] Catalog: дрібний UI polish фільтрів/чіпів (візуальна ієрархія, підказки)
-   - [x] Catalog: edge-case test на query-string комбінації (category+price+sort)
-   - [x] Provider public page: CTA/UX для контенту (відгуки/пропозиції: “показати всі”, підвантаження all_offers)
-   - [x] Provider public page: CTA/UX для портфоліо (“Показати всі роботи”/load all через all_portfolio=1)
-2) Техборг:
-   - [x] ревізія індексів під реальні запити (EXPLAIN) + аудит N+1
-     - Перевірено через `php artisan perf:audit --explain/--analyze` для `/catalog` та `/providers/{slug}` (див. `docs/perf-audit.md`).
-     - На локальній малій вибірці Postgres може обирати `Seq Scan` попри наявні індекси — це очікувано; важливо, що індекси під ключові фільтри/CTA присутні.
-   - [x] уніфікація UI-компонентів (Card/EmptyStateCard) + a11y для empty-state (announce)
-   - [x] perf: індекс під prefix-пошук міста (Postgres `text_pattern_ops`)
+1) Stage 5 (Polish / robustness — safe micro-steps)
+   - [ ] Пройтись по публічних сторінках (catalog/provider) і знайти ще 1 маленьке UX/a11y покращення без зміни логіки (aria-label/title, autocomplete, focus states, дрібні підказки).
+   - [ ] Перевірити sitemap/robots на дрібні SEO-деталі:
+     - чи додавати `/` як окремий `<url>` у sitemap (або залишити тільки `/catalog`)
+     - переконатись, що `robots.txt` посилається на sitemap (якщо ще ні)
+2) Tests / tech-debt (без зміни поведінки)
+   - [ ] Ще 1 точковий cleanup у тестах (очевидні дублікати/надмірності, особливо в `CatalogTest`) без втрати реального покриття.
+   - [ ] Додати 1-2 regression тести на edge-cases для form requests / normalizers (наприклад, unicode-whitespace у числових/URL полях або неочікуваний формат query params).
