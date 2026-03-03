@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\BusinessProfile;
 use App\Models\Offer;
+use App\Support\QueryParamNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -42,11 +43,17 @@ class OfferController extends Controller
     {
         $this->authorize('update', $businessProfile);
 
-        // Normalize optional numeric/select fields from HTML forms ("" -> null)
+        // Normalize text/numeric/select fields from HTML forms.
+        // - text: trim/collapse whitespace + NBSP
+        // - optional numeric/select: "" -> null
         $request->merge([
+            'title' => QueryParamNormalizer::text($request->input('title')),
+            'description' => QueryParamNormalizer::text($request->input('description')),
+
             'category_id' => $request->input('category_id') ?: null,
             'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
             'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
+
             // Allow users to paste currency with extra spaces (e.g. " uah ")
             'currency' => is_string($request->input('currency')) ? trim($request->input('currency')) : $request->input('currency'),
         ]);
@@ -66,6 +73,10 @@ class OfferController extends Controller
             'currency' => ['required', 'string', 'size:3'],
             'is_active' => ['nullable', 'boolean'],
         ]);
+
+        if (($data['description'] ?? null) === '') {
+            $data['description'] = null;
+        }
 
         $data['business_profile_id'] = $businessProfile->id;
         $data['currency'] = strtoupper(trim($data['currency']));
@@ -95,11 +106,17 @@ class OfferController extends Controller
         $this->authorize('update', $businessProfile);
         $this->authorize('update', $offer);
 
-        // Normalize optional numeric/select fields from HTML forms ("" -> null)
+        // Normalize text/numeric/select fields from HTML forms.
+        // - text: trim/collapse whitespace + NBSP
+        // - optional numeric/select: "" -> null
         $request->merge([
+            'title' => QueryParamNormalizer::text($request->input('title')),
+            'description' => QueryParamNormalizer::text($request->input('description')),
+
             'category_id' => $request->input('category_id') ?: null,
             'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
             'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
+
             // Allow users to paste currency with extra spaces (e.g. " uah ")
             'currency' => is_string($request->input('currency')) ? trim($request->input('currency')) : $request->input('currency'),
         ]);
@@ -119,6 +136,10 @@ class OfferController extends Controller
             'currency' => ['required', 'string', 'size:3'],
             'is_active' => ['nullable', 'boolean'],
         ]);
+
+        if (($data['description'] ?? null) === '') {
+            $data['description'] = null;
+        }
 
         $data['currency'] = strtoupper(trim($data['currency']));
 
