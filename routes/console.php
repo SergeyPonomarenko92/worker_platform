@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--category_id=1 : Category id for the catalog:category_tree query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
+Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--category_id=1 : Category id for the catalog:category_tree query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--q=майстер : Free-text search for the catalog:q_search query (escaped for ILIKE)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
     $connection = DB::connection();
     $driver = (string) $connection->getDriverName();
 
@@ -19,6 +19,7 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $clientUserId = (int) $this->option('client');
     $categoryId = (int) $this->option('category_id');
     $cityPrefix = \App\Support\QueryParamNormalizer::text((string) $this->option('city'));
+    $q = \App\Support\QueryParamNormalizer::text((string) $this->option('q'));
     $priceFrom = (int) $this->option('price_from');
     $includeNoPrice = (bool) ((int) $this->option('include_no_price'));
 
@@ -43,6 +44,7 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $this->line("- client_user_id: {$clientUserId}");
     $this->line("- category_id: {$categoryId}");
     $this->line("- city_prefix: {$cityPrefix}");
+    $this->line("- q: {$q}");
     $this->line("- price_from: {$priceFrom}");
     $this->line('- include_no_price: '.($includeNoPrice ? '1' : '0'));
     $this->line('- limit_override: '.($limitOverride === null ? 'null' : (string) $limitOverride));
@@ -92,6 +94,23 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
                 $bp
                     ->active()
                     ->whereRaw("lower(city) LIKE ? ESCAPE '!'", [$escaped]);
+            })
+            ->latest('offers.created_at')
+            ->limit(20),
+
+        // Mirrors the free-text search filter (q) in /catalog.
+        // Useful for checking ILIKE performance/indexes and ensuring the escape strategy stays consistent.
+        'catalog:q_search' => Offer::query()
+            ->select('offers.id')
+            ->active()
+            ->whereHas('businessProfile', fn ($bp) => $bp->active())
+            ->where(function ($sub) use ($q) {
+                $escaped = \App\Support\SqlLikeEscaper::escape($q);
+                $pattern = "%{$escaped}%";
+
+                $sub->whereRaw("title ilike ? escape '!'", [$pattern])
+                    ->orWhereRaw("description ilike ? escape '!'", [$pattern])
+                    ->orWhereHas('businessProfile', fn ($bp) => $bp->whereRaw("name ilike ? escape '!'", [$pattern]));
             })
             ->latest('offers.created_at')
             ->limit(20),

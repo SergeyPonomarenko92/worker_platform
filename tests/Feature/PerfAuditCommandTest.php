@@ -13,6 +13,7 @@ class PerfAuditCommandTest extends TestCase
             ->expectsOutputToContain('Perf audit helper')
             ->expectsOutputToContain('Available queries:')
             ->expectsOutputToContain('catalog:newest')
+            ->expectsOutputToContain('catalog:q_search')
             ->expectsOutputToContain('provider:offers')
             ->expectsOutputToContain('Tip: for more context see docs/perf-audit.md')
             ->assertSuccessful();
@@ -34,6 +35,7 @@ class PerfAuditCommandTest extends TestCase
         $this->artisan('perf:audit --only=catalog')
             ->expectsOutputToContain('catalog:newest')
             ->expectsOutputToContain('catalog:city_prefix')
+            ->expectsOutputToContain('catalog:q_search')
             ->expectsOutputToContain('catalog:price_range')
             ->doesntExpectOutputToContain('provider:offers')
             ->doesntExpectOutputToContain('provider:portfolio_posts')
@@ -48,6 +50,7 @@ class PerfAuditCommandTest extends TestCase
         $this->artisan('perf:audit --only=catalog:')
             ->expectsOutputToContain('catalog:newest')
             ->expectsOutputToContain('catalog:city_prefix')
+            ->expectsOutputToContain('catalog:q_search')
             ->expectsOutputToContain('catalog:price_range')
             ->doesntExpectOutputToContain('provider:offers')
             ->doesntExpectOutputToContain('provider:portfolio_posts')
