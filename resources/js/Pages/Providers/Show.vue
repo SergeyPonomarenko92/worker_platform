@@ -263,6 +263,7 @@ onMounted(() => {
               class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :href="telHref"
               :aria-label="`Зателефонувати: ${provider.phone}`"
+              :title="`Зателефонувати: ${provider.phone}`"
             >
               ☎ {{ provider.phone }}
             </a>
@@ -277,6 +278,7 @@ onMounted(() => {
               target="_blank"
               rel="noopener noreferrer nofollow"
               :aria-label="`Відкрити адресу на мапі: ${[provider.city, provider.address].filter(Boolean).join(', ')}`"
+              :title="`Відкрити адресу на мапі: ${[provider.city, provider.address].filter(Boolean).join(', ')}`"
             >
               📍 {{ [provider.city, provider.address].filter(Boolean).join(', ') }}
             </a>
@@ -289,7 +291,7 @@ onMounted(() => {
               :href="normalizedWebsiteHref"
               target="_blank"
               rel="noopener noreferrer nofollow"
-              :title="normalizedWebsiteHref"
+              :title="websiteDisplayText || normalizedWebsiteHref"
               :aria-label="`Відкрити сайт провайдера: ${websiteDisplayText}`"
             >
               {{ websiteDisplayText }}
