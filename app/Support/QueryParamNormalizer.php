@@ -33,10 +33,14 @@ class QueryParamNormalizer
         // Normalize invisible separators that are not matched by trim() and can break search.
         // Treat them as spaces to avoid accidentally concatenating words.
         // - Zero width space (U+200B)
+        // - Zero width non-joiner (U+200C)
+        // - Zero width joiner (U+200D)
         // - Word joiner (U+2060)
         // - Zero width no-break space / BOM (U+FEFF)
         $value = str_replace([
             "\u{200B}",
+            "\u{200C}",
+            "\u{200D}",
             "\u{2060}",
             "\u{FEFF}",
         ], ' ', $value);
