@@ -80,6 +80,12 @@ class QueryParamNormalizerTest extends TestCase
             QueryParamNormalizer::providerSlug('https://example.test/catalog?provider=demo-provider')
         );
 
+        // Extract provider even when catalog URL has extra params/fragments.
+        $this->assertSame(
+            'demo-provider',
+            QueryParamNormalizer::providerSlug('https://example.test/catalog?sort=newest&provider=demo-provider#top')
+        );
+
         // Provider value itself might be a pasted provider URL (and could be percent-encoded).
         $this->assertSame(
             'demo-provider',
