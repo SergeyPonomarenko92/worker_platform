@@ -1,7 +1,8 @@
 # Perf audit playbook (Postgres)
 
 > Quick add-on: `/catalog` uses a recursive CTE for category descendants.
-> You can EXPLAIN it via `php artisan perf:audit --only=catalog:category_tree --category_id=<id>`.
+> You can EXPLAIN it via `php artisan perf:audit --only=catalog:category_tree --category_id=<id>
+php artisan perf:audit --only=catalog:category_filter --category_id=<id>`.
 
 ## 0) Perf audit command (repo helper)
 

@@ -114,6 +114,32 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
                 [$categoryId]
             ),
 
+        // Mirrors the category_id filter in /catalog including descendant categories.
+        // Useful for EXPLAIN-ing the full query shape (CTE + offers join + ordering).
+        'catalog:category_filter' => Offer::query()
+            ->select('offers.id')
+            ->active()
+            ->whereHas('businessProfile', fn ($bp) => $bp->active())
+            ->whereIn('offers.category_id', DB::query()
+                ->select('id')
+                ->fromRaw(
+                    <<<SQL
+                    (
+                        with recursive category_tree as (
+                            select id from categories where id = ?
+                            union all
+                            select c.id from categories c
+                            join category_tree ct on c.parent_id = ct.id
+                        )
+                        select id from category_tree
+                    ) as category_tree
+                    SQL,
+                    [$categoryId]
+                )
+            )
+            ->latest('offers.created_at')
+            ->limit(20),
+
         'catalog:newest' => Offer::query()
             ->select('offers.id')
             ->active()
