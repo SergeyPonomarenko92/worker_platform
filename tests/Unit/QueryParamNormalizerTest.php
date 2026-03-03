@@ -72,6 +72,12 @@ class QueryParamNormalizerTest extends TestCase
             QueryParamNormalizer::providerSlug('https://example.test/catalog?provider=demo-provider')
         );
 
+        // Provider value itself might be a pasted provider URL (and could be percent-encoded).
+        $this->assertSame(
+            'demo-provider',
+            QueryParamNormalizer::providerSlug('https://example.test/catalog?provider=https%3A%2F%2Fexample.test%2Fproviders%2Fdemo-provider%2F')
+        );
+
         // Be robust to extra punctuation/quotes around a pasted slug.
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('("demo-provider"),'));
 
