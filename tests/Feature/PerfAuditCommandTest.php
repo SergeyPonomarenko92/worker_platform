@@ -136,4 +136,20 @@ class PerfAuditCommandTest extends TestCase
         $this->assertStringContainsString('provider:eligible_deal', $output);
         $this->assertStringContainsString('limit 1', strtolower($output));
     }
+
+    public function test_perf_audit_provider_option_is_normalized_like_catalog_provider_filter(): void
+    {
+        $exitCode = Artisan::call('perf:audit', [
+            '--only' => 'catalog:provider_slug',
+            '--provider' => ' https://example.test/providers/Demo-Provider?ref=catalog#offers ',
+        ]);
+
+        $this->assertSame(0, $exitCode);
+
+        $output = Artisan::output();
+
+        $this->assertStringContainsString('catalog:provider_slug', $output);
+        // Binding should contain normalized slug.
+        $this->assertStringContainsString('demo-provider', strtolower($output));
+    }
 }

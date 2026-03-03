@@ -15,7 +15,7 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
 
     $list = (bool) $this->option('list');
 
-    $providerSlug = (string) $this->option('provider');
+    $providerSlug = \App\Support\QueryParamNormalizer::providerSlug((string) $this->option('provider'));
     $clientUserId = (int) $this->option('client');
     $categoryId = (int) $this->option('category_id');
     $cityPrefix = (string) $this->option('city');
