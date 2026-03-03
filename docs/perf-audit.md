@@ -3,6 +3,28 @@
 > Quick add-on: `/catalog` uses a recursive CTE for category descendants.
 > You can EXPLAIN it via `php artisan perf:audit --only=catalog:category_tree --category_id=<id>`.
 
+## 0) Perf audit command (repo helper)
+
+This repo ships with an artisan helper that prints the exact SQL produced by Eloquent for the key public pages (and can run `EXPLAIN`/`EXPLAIN ANALYZE` on Postgres):
+
+```bash
+php artisan perf:audit --list
+php artisan perf:audit
+php artisan perf:audit --only=catalog      # all catalog queries
+php artisan perf:audit --only=provider     # all provider show queries
+php artisan perf:audit --only=provider:eligible_deal
+php artisan perf:audit --explain
+php artisan perf:audit --analyze
+```
+
+> Tip: use `--only=<name1>,<name2>` to narrow down. Run with `--list` to see the exact names available.
+
+Notes:
+- `--explain` is supported only for Postgres (`pgsql`) in this helper (it will still print SQL on other drivers).
+- For provider queries you can override the slug: `--provider=demo-provider`.
+
+
+
 Цей документ — «шпаргалка» для швидкої перевірки, що **публічні сторінки** не деградують по перфомансу і не з’являються **N+1** після змін.
 
 Сторінки, які мають бути стабільними:
