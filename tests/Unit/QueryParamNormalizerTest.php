@@ -75,6 +75,9 @@ class QueryParamNormalizerTest extends TestCase
         // Be robust to extra punctuation/quotes around a pasted slug.
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('("demo-provider"),'));
 
+        // Some apps include an @ prefix (e.g. "@demo-provider") when sharing handles.
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('@demo-provider'));
+
         // Support percent-encoded values in the URL path.
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('/providers/demo%2Dprovider/'));
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('https://example.test/providers/demo%2Dprovider'));
