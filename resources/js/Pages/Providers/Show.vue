@@ -290,7 +290,7 @@ onMounted(() => {
             <span v-else>📍 {{ [provider.city, provider.address].filter(Boolean).join(', ') }}</span>
           </div>
 
-          <div v-if="provider.website" class="min-w-0">
+          <div v-if="normalizedWebsiteHref" class="min-w-0">
             <a
               class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded inline-block max-w-full truncate"
               :href="normalizedWebsiteHref"

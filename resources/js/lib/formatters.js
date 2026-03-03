@@ -71,6 +71,10 @@ export const normalizeWebsite = (raw) => {
   // Be robust to different casing (e.g. "HTTP://...") coming from backend normalization.
   if (/^https?:\/\//i.test(v)) return v
 
+  // If user already provided some other scheme (ftp:, mailto:, etc.), keep it as-is.
+  // Backend validation usually rejects non-http(s), but this keeps UI robust.
+  if (/^[a-z][a-z0-9+.-]*:/i.test(v)) return v
+
   return `https://${v}`
 }
 
