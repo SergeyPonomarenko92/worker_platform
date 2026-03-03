@@ -30,6 +30,20 @@ Route::get('/robots.txt', function () {
     );
 });
 
+// Note: we serve sitemap via a route for the same reasons as robots.txt (tests + setups
+// where the app handles all requests).
+Route::get('/sitemap.xml', function () {
+    $path = public_path('sitemap.xml');
+
+    abort_unless(file_exists($path), 404);
+
+    return response(
+        file_get_contents($path),
+        200,
+        ['Content-Type' => 'application/xml; charset=UTF-8']
+    );
+});
+
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/providers/{slug}', [ProviderController::class, 'show'])->name('providers.show');
 
