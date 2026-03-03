@@ -41,7 +41,7 @@ const submit = () => {
                     <form @submit.prevent="submit" novalidate class="space-y-6">
                         <div>
                             <InputLabel for="name" value="Назва" />
-                            <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" />
+                            <TextInput id="name" v-model="form.name" type="text" autocomplete="organization" class="mt-1 block w-full" />
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
 
@@ -54,20 +54,20 @@ const submit = () => {
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
                                 <InputLabel for="country_code" value="Код країни" />
-                                <TextInput id="country_code" v-model="form.country_code" type="text" class="mt-1 block w-full" />
+                                <TextInput id="country_code" v-model="form.country_code" type="text" inputmode="text" autocomplete="country" autocapitalize="characters" class="mt-1 block w-full" />
                                 <p class="mt-1 text-xs text-gray-500">Напр.: <span class="font-medium">UA</span> (значення буде нормалізовано до ISO-коду).</p>
                                 <InputError class="mt-2" :message="form.errors.country_code" />
                             </div>
                             <div>
                                 <InputLabel for="city" value="Місто" />
-                                <TextInput id="city" v-model="form.city" type="text" class="mt-1 block w-full" />
+                                <TextInput id="city" v-model="form.city" type="text" autocomplete="address-level2" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.city" />
                             </div>
                         </div>
 
                         <div>
                             <InputLabel for="address" value="Адреса" />
-                            <TextInput id="address" v-model="form.address" type="text" class="mt-1 block w-full" />
+                            <TextInput id="address" v-model="form.address" type="text" autocomplete="street-address" class="mt-1 block w-full" />
                             <InputError class="mt-2" :message="form.errors.address" />
                         </div>
 
