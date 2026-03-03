@@ -26,9 +26,13 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $explain = (bool) $this->option('explain') || (bool) $this->option('analyze');
     $analyze = (bool) $this->option('analyze');
 
-    $this->line('---');
-    $this->line('Perf audit helper');
-    $this->line("DB driver: {$driver}");
+    $printHeader = function () use ($driver) {
+        $this->line('---');
+        $this->line('Perf audit helper');
+        $this->line("DB driver: {$driver}");
+    };
+
+    $printHeader();
 
     if ($explain && $driver !== 'pgsql') {
         $this->warn('EXPLAIN is only supported in this helper for Postgres (pgsql). Re-run without --explain to just print SQL.');
@@ -139,9 +143,6 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     ];
 
     if ($list) {
-        $this->line('---');
-        $this->line('Perf audit helper');
-        $this->line("DB driver: {$driver}");
         $this->line('Available queries:');
 
         foreach (array_keys($allQueries) as $name) {
