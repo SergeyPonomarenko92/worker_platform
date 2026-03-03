@@ -24,6 +24,12 @@ class ContactFieldNormalizer
             return $v;
         }
 
+        // If user already provided some other scheme (ftp:, mailto:, javascript:, etc.)
+        // do not try to "fix" it by prefixing https:// — validation should reject it.
+        if (preg_match('#^[a-z][a-z0-9+.-]*:#i', $v) === 1) {
+            return $v;
+        }
+
         return 'https://'.$v;
     }
 

@@ -191,4 +191,42 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
             'name' => 'Test Provider',
         ]);
     }
+
+    public function test_business_profile_website_rejects_non_http_scheme_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => 'ftp://example.com',
+            ])
+            ->assertSessionHasErrors(['website']);
+
+        $this->assertDatabaseMissing('business_profiles', [
+            'user_id' => $user->id,
+            'name' => 'Test Provider',
+        ]);
+    }
+
+    public function test_business_profile_website_rejects_non_http_scheme_on_update(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+            'website' => 'https://already.test',
+        ]);
+
+        $this->actingAs($user)
+            ->patch(route('dashboard.business-profiles.update', $profile), [
+                'name' => $profile->name,
+                'website' => 'mailto:test@example.com',
+            ])
+            ->assertSessionHasErrors(['website']);
+
+        $profile->refresh();
+
+        $this->assertSame('https://already.test', $profile->website);
+    }
 }
