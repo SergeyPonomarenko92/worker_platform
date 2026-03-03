@@ -39,6 +39,18 @@ class HttpUrlValidatorTest extends TestCase
     }
 
     #[Test]
+    public function it_uses_custom_field_name_in_validation_errors(): void
+    {
+        try {
+            HttpUrlValidator::validateOrFail('not-a-url', 'contact_url');
+            $this->fail('Expected ValidationException was not thrown.');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('contact_url', $e->errors());
+            $this->assertSame('Некоректний URL вебсайту.', $e->errors()['contact_url'][0] ?? null);
+        }
+    }
+
+    #[Test]
     public function it_rejects_non_http_schemes(): void
     {
         try {
