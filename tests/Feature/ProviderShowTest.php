@@ -83,6 +83,36 @@ class ProviderShowTest extends TestCase
         $this->assertLessThanOrEqual(15, $queries);
     }
 
+    public function test_provider_page_all_offers_does_not_trigger_n_plus_one_queries(): void
+    {
+        Carbon::setTestNow(now());
+
+        $category = Category::factory()->create(['name' => 'Електрика']);
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider',
+            'is_active' => true,
+        ]);
+
+        // Enough related models to amplify potential N+1 regressions in the "all offers" mode.
+        Offer::factory()->count(150)->for($provider)->create([
+            'category_id' => $category->id,
+            'is_active' => true,
+        ]);
+
+        $queries = 0;
+        DB::listen(function () use (&$queries) {
+            $queries++;
+        });
+
+        $this
+            ->get('/providers/'.$provider->slug.'?all_offers=1')
+            ->assertOk();
+
+        // Keep the controller bounded even when we preload up to 200 offers.
+        // This guard should catch regressions like per-offer category (or category chain) queries.
+        $this->assertLessThanOrEqual(15, $queries);
+    }
+
     public function test_provider_page_loads_limited_portfolio_and_reviews_by_default_and_can_load_all_via_query_params(): void
     {
         Carbon::setTestNow(now());
