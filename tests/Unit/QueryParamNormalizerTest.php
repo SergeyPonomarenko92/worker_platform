@@ -74,5 +74,12 @@ class QueryParamNormalizerTest extends TestCase
 
         // Be robust to extra punctuation/quotes around a pasted slug.
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('("demo-provider"),'));
+
+        // Support percent-encoded values in the URL path.
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('/providers/demo%2Dprovider/'));
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('https://example.test/providers/demo%2Dprovider'));
+
+        // Support percent-encoded values pasted into query string.
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('https://example.test/catalog?provider=demo%2Dprovider'));
     }
 }

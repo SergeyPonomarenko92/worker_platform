@@ -135,6 +135,11 @@ class QueryParamNormalizer
         // "demo-provider?ref=catalog".
         $providerSlug = parse_url($providerSlug, PHP_URL_PATH) ?: $providerSlug;
 
+        // Some platforms copy links with percent-encoded characters in the path.
+        // For example: "/providers/demo%2Dprovider".
+        // Decode them to match stored slugs.
+        $providerSlug = rawurldecode($providerSlug);
+
         // Provider filter can be either a slug ("demo-provider") or a pasted provider URL.
         // Be robust to different casing in the path ("/Providers/...") when users copy/paste.
         // Also handle values without a leading slash ("providers/demo-provider") which can appear
@@ -145,6 +150,8 @@ class QueryParamNormalizer
 
             $providerSlug = trim(explode('/', ltrim($after, '/'), 2)[0] ?? '');
         }
+
+        $providerSlug = rawurldecode($providerSlug);
 
         // Allow pasted values like "demo-provider/" or "/providers/demo-provider/".
 
