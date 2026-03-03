@@ -6,4 +6,7 @@ Disallow: /register
 Disallow: /forgot-password
 Allow: /
 
-# Note: sitemap will be added when we have a stable public domain.
+# Note: in some environments this file may be served directly by the web server.
+# We keep the sitemap directive here for visibility; the Laravel route will
+# normalize it to an absolute URL (required by the sitemap spec).
+Sitemap: /sitemap.xml

@@ -28,10 +28,13 @@ Route::get('/robots.txt', function () {
         : "User-agent: *\nDisallow:\n";
 
     // If we can serve /sitemap.xml, it's helpful to advertise it here.
-    // Keep the static file as the main source of directives.
-    if (! str_contains($contents, 'Sitemap:')) {
-        $contents = rtrim($contents)."\n\n".'Sitemap: '.url('/sitemap.xml')."\n";
-    }
+    // Sitemap <loc> values must be absolute; keep the static file as the main
+    // source of directives, but normalize the sitemap directive to a single
+    // absolute line.
+    $lines = preg_split("/\r\n|\r|\n/", (string) $contents);
+    $lines = array_values(array_filter($lines, static fn (string $line): bool => ! str_starts_with(trim($line), 'Sitemap:')));
+
+    $contents = rtrim(implode("\n", $lines))."\n\n".'Sitemap: '.url('/sitemap.xml')."\n";
 
     return response($contents, 200, ['Content-Type' => 'text/plain; charset=UTF-8'])
         // Safe caching: robots.txt changes rarely, but allow quick iteration.
