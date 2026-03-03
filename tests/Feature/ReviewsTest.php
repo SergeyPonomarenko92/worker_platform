@@ -92,4 +92,47 @@ class ReviewsTest extends TestCase
             ])
             ->assertForbidden();
     }
+
+    public function test_review_rating_must_be_integer_between_1_and_5(): void
+    {
+        $provider = User::factory()->create();
+        $client = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        $deal = Deal::factory()->create([
+            'client_user_id' => $client->id,
+            'business_profile_id' => $profile->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        $this->actingAs($client)
+            ->from(route('reviews.create', $deal))
+            ->post(route('reviews.store', $deal), [
+                'rating' => 0,
+            ])
+            ->assertRedirect(route('reviews.create', $deal))
+            ->assertSessionHasErrors(['rating']);
+
+        $this->actingAs($client)
+            ->from(route('reviews.create', $deal))
+            ->post(route('reviews.store', $deal), [
+                'rating' => 6,
+            ])
+            ->assertRedirect(route('reviews.create', $deal))
+            ->assertSessionHasErrors(['rating']);
+
+        $this->actingAs($client)
+            ->from(route('reviews.create', $deal))
+            ->post(route('reviews.store', $deal), [
+                'rating' => 'not-a-number',
+            ])
+            ->assertRedirect(route('reviews.create', $deal))
+            ->assertSessionHasErrors(['rating']);
+
+        $this->assertDatabaseMissing('reviews', [
+            'deal_id' => $deal->id,
+        ]);
+    }
 }
