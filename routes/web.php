@@ -49,9 +49,23 @@ Route::get('/robots.txt', function () {
 Route::get('/sitemap.xml', function () {
     $urls = [];
 
+    // Use the latest known update time of catalog-relevant content (offers/providers)
+    // as a lightweight signal for crawlers.
+    $catalogLastmod = \App\Models\Offer::query()
+        ->active()
+        ->latest('updated_at')
+        ->value('updated_at');
+
+    if (! $catalogLastmod) {
+        $catalogLastmod = \App\Models\BusinessProfile::query()
+            ->where('is_active', true)
+            ->latest('updated_at')
+            ->value('updated_at');
+    }
+
     $urls[] = [
         'loc' => url('/catalog'),
-        'lastmod' => null,
+        'lastmod' => optional($catalogLastmod)->toDateString(),
     ];
 
     $providers = \App\Models\BusinessProfile::query()
