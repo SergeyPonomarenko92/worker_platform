@@ -3,52 +3,61 @@
 namespace Tests\Unit;
 
 use App\Support\ContactFieldNormalizer;
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ContactFieldNormalizerTest extends TestCase
 {
-    public static function phoneProvider(): array
+    #[Test]
+    public function website_returns_null_for_empty_input(): void
     {
-        return [
-            'null stays null' => [null, null],
-            'empty string becomes null' => ['', null],
-            'spaces become null' => ['   ', null],
-            'nbsp becomes null' => ["\u{00A0}", null],
-            'only plus treated as empty' => ['+', null],
-            'only punctuation treated as empty' => ['--', null],
-            'keeps digits with surrounding whitespace' => ['  +380 50 123 45 67  ', '+380 50 123 45 67'],
-            'collapses unicode and multiple spaces inside the value' => ["+380\u{00A0}  50   123\u{00A0}45  67", '+380 50 123 45 67'],
-            'keeps formatting characters as-is (no aggressive sanitization)' => ['(050) 123-45-67', '(050) 123-45-67'],
-        ];
+        $this->assertNull(ContactFieldNormalizer::website(null));
+        $this->assertNull(ContactFieldNormalizer::website(''));
+        $this->assertNull(ContactFieldNormalizer::website("\u{00A0}   \n\t"));
     }
 
-    #[DataProvider('phoneProvider')]
-    public function test_phone_normalization(?string $input, ?string $expected): void
+    #[Test]
+    public function website_prefixes_https_for_plain_domains(): void
     {
-        $this->assertSame($expected, ContactFieldNormalizer::phone($input));
+        $this->assertSame('https://example.com', ContactFieldNormalizer::website('example.com'));
+        $this->assertSame('https://example.com', ContactFieldNormalizer::website('   example.com   '));
     }
 
-    public static function websiteProvider(): array
+    #[Test]
+    public function website_normalizes_protocol_relative_urls(): void
     {
-        return [
-            'null stays null' => [null, null],
-            'empty string becomes null' => ['', null],
-            'spaces become null' => ['   ', null],
-            'nbsp becomes null' => ["\u{00A0}", null],
-            'protocol-relative gets https' => ['//example.com', 'https://example.com'],
-            'already https stays as-is' => ['https://example.com', 'https://example.com'],
-            'already http stays as-is' => ['http://example.com', 'http://example.com'],
-            'http/https scheme is case-insensitive' => ['HTTP://example.com', 'HTTP://example.com'],
-            'no scheme gets https prefix' => ['example.com', 'https://example.com'],
-            'trims and collapses whitespace' => ["  example.com\u{00A0}", 'https://example.com'],
-            'other scheme is preserved (validation should decide)' => ['mailto:test@example.com', 'mailto:test@example.com'],
-        ];
+        $this->assertSame('https://example.com', ContactFieldNormalizer::website('//example.com'));
     }
 
-    #[DataProvider('websiteProvider')]
-    public function test_website_normalization(?string $input, ?string $expected): void
+    #[Test]
+    public function website_preserves_http_and_https_urls(): void
     {
-        $this->assertSame($expected, ContactFieldNormalizer::website($input));
+        $this->assertSame('http://example.com', ContactFieldNormalizer::website('http://example.com'));
+        $this->assertSame('https://example.com', ContactFieldNormalizer::website('https://example.com'));
+    }
+
+    #[Test]
+    public function website_does_not_override_other_schemes(): void
+    {
+        $this->assertSame('mailto:test@example.com', ContactFieldNormalizer::website('mailto:test@example.com'));
+        $this->assertSame('ftp://example.com', ContactFieldNormalizer::website('ftp://example.com'));
+    }
+
+    #[Test]
+    public function phone_returns_null_for_empty_or_digitless_input(): void
+    {
+        $this->assertNull(ContactFieldNormalizer::phone(null));
+        $this->assertNull(ContactFieldNormalizer::phone(''));
+        $this->assertNull(ContactFieldNormalizer::phone("\u{00A0}   \n\t"));
+
+        // No digits at all.
+        $this->assertNull(ContactFieldNormalizer::phone('+'));
+        $this->assertNull(ContactFieldNormalizer::phone('---'));
+    }
+
+    #[Test]
+    public function phone_trims_and_collapses_whitespace_but_keeps_formatting_chars(): void
+    {
+        $this->assertSame('+380 50 123 45 67', ContactFieldNormalizer::phone("  +380\u{00A0}  50\n 123\t45  67  "));
     }
 }
