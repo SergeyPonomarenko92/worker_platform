@@ -3,30 +3,29 @@
 namespace Tests\Unit;
 
 use App\Support\SqlLikeEscaper;
-use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class SqlLikeEscaperTest extends TestCase
 {
-    #[Test]
-    public function it_escapes_percent_and_underscore_for_like_queries(): void
+    #[DataProvider('escapeCases')]
+    public function test_escape(string $input, string $expected, string $escapeChar = '!'): void
     {
-        $this->assertSame('100!% done', SqlLikeEscaper::escape('100% done'));
-        $this->assertSame('file!_name', SqlLikeEscaper::escape('file_name'));
-        $this->assertSame('a!%b!_c', SqlLikeEscaper::escape('a%b_c'));
+        $this->assertSame($expected, SqlLikeEscaper::escape($input, $escapeChar));
     }
 
-    #[Test]
-    public function it_escapes_the_escape_character_itself_first(): void
+    public static function escapeCases(): array
     {
-        // When the input contains the escape char, it should be doubled.
-        $this->assertSame('wow!!100!%', SqlLikeEscaper::escape('wow!100%'));
-    }
+        return [
+            'no wildcards' => ['abc', 'abc'],
+            'escapes percent' => ['100% legit', '100!% legit'],
+            'escapes underscore' => ['a_b', 'a!_b'],
+            'escapes both' => ['%_%', '!%!_!%'],
 
-    #[Test]
-    public function it_supports_custom_escape_character(): void
-    {
-        $this->assertSame('100\\% and a\\_b', SqlLikeEscaper::escape('100% and a_b', '\\'));
-        $this->assertSame('x\\\\y', SqlLikeEscaper::escape('x\\y', '\\'));
+            'escapes escape-char itself first (double it)' => ['a!b', 'a!!b'],
+            'escape-char mixed with wildcards' => ['!%_', '!!!%!_'],
+
+            'custom escape char' => ['a#b%_#', 'a##b#%#_##', '#'],
+        ];
     }
 }
