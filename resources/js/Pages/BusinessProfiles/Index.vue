@@ -51,7 +51,7 @@ const props = defineProps({
                                         {{ p.is_active ? 'Активний' : 'Неактивний' }}
                                     </span>
                                 </div>
-                                <div class="text-sm text-gray-600">/{{ p.slug }}</div>
+                                <div class="text-sm text-gray-600">/providers/{{ p.slug }}</div>
                             </div>
                             <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm">
                                 <Link
