@@ -18,11 +18,13 @@ const ratingText = computed(() => formatAvgRatingUk(props.provider?.reviews_avg_
 const normalizedWebsiteHref = computed(() => normalizeWebsite(props.provider?.website))
 
 const websiteDisplayText = computed(() => {
-  const raw = String(props.provider?.website || '').trim()
-  if (!raw) return ''
+  // Always derive display text from the normalized href to avoid showing raw user input like
+  // "//example.com" or values with inconsistent whitespace.
+  const href = String(normalizedWebsiteHref.value || '').trim()
+  if (!href) return ''
 
   // Keep it readable in UI (strip protocol + trailing slashes), while href stays fully normalized.
-  return raw.replace(/^https?:\/\//i, '').replace(/\/+$/, '')
+  return href.replace(/^https?:\/\//i, '').replace(/\/+$/, '')
 })
 
 const telHref = computed(() => {
