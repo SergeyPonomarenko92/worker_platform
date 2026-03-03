@@ -45,6 +45,9 @@ class HttpUrlValidatorTest extends TestCase
     {
         return [
             'not a url' => ['not-a-url', 'Некоректний URL вебсайту.'],
+            'scheme only (http://)' => ['http://', 'Некоректний URL вебсайту.'],
+            'scheme only (https://)' => ['https://', 'Некоректний URL вебсайту.'],
+            'invalid host (missing host, too many slashes)' => ['http:///example.com', 'Некоректний URL вебсайту.'],
             'javascript scheme' => ['javascript:alert(1)', 'Некоректний URL вебсайту.'],
             'mailto scheme' => ['mailto:test@example.com', 'URL вебсайту має починатися з http:// або https://'],
             'ftp scheme' => ['ftp://example.com', 'URL вебсайту має починатися з http:// або https://'],
