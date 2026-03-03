@@ -43,6 +43,31 @@ class PerfAuditCommandTest extends TestCase
             ->assertSuccessful();
     }
 
+    public function test_perf_audit_only_filter_accepts_group_prefix_with_trailing_colon(): void
+    {
+        $this->artisan('perf:audit --only=catalog:')
+            ->expectsOutputToContain('catalog:newest')
+            ->expectsOutputToContain('catalog:city_prefix')
+            ->expectsOutputToContain('catalog:price_range')
+            ->doesntExpectOutputToContain('provider:offers')
+            ->doesntExpectOutputToContain('provider:portfolio_posts')
+            ->doesntExpectOutputToContain('provider:stories')
+            ->doesntExpectOutputToContain('provider:reviews')
+            ->doesntExpectOutputToContain('provider:eligible_deal')
+            ->assertSuccessful();
+
+        $this->artisan('perf:audit --only=provider:')
+            ->expectsOutputToContain('provider:offers')
+            ->expectsOutputToContain('provider:portfolio_posts')
+            ->expectsOutputToContain('provider:stories')
+            ->expectsOutputToContain('provider:reviews')
+            ->expectsOutputToContain('provider:eligible_deal')
+            ->doesntExpectOutputToContain('catalog:newest')
+            ->doesntExpectOutputToContain('catalog:city_prefix')
+            ->doesntExpectOutputToContain('catalog:price_range')
+            ->assertSuccessful();
+    }
+
     public function test_perf_audit_only_filter_can_limit_output_to_specific_query(): void
     {
         $this->artisan('perf:audit --only=provider:offers')
