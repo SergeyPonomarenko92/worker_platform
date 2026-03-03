@@ -35,6 +35,9 @@ class ContactFieldNormalizerTest extends TestCase
             'keeps http://' => ['http://example.com', 'http://example.com'],
             'keeps HTTPS:// (case-insensitive scheme check)' => ['HTTPS://example.com', 'HTTPS://example.com'],
             'normalizes protocol-relative url' => ['//example.com', 'https://example.com'],
+            'normalizes protocol-relative url (keeps path)' => ['//example.com/path', 'https://example.com/path'],
+            'normalizes protocol-relative url (keeps query+fragment)' => ['//example.com/path?x=1#top', 'https://example.com/path?x=1#top'],
+            'normalizes protocol-relative url (trims whitespace)' => ["  //example.com/path\n ", 'https://example.com/path'],
 
             'keeps non-http scheme as-is (for later validation)' => ['ftp://example.com', 'ftp://example.com'],
             'keeps non-http scheme as-is (mailto)' => ['mailto:test@example.com', 'mailto:test@example.com'],
