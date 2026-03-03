@@ -85,6 +85,15 @@ const catalogProviderHref = computed(() => {
   return `/catalog?${params.toString()}`
 })
 
+const scrollBehavior = () => {
+  if (typeof window === 'undefined') return 'auto'
+
+  // Respect OS accessibility preference.
+  // https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+  const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+  return prefersReducedMotion ? 'auto' : 'smooth'
+}
+
 const portfolioLimit = 6
 const showAllPortfolio = ref(!!props.loadAllPortfolio)
 const portfolioSectionRef = ref(null)
@@ -109,7 +118,7 @@ const togglePortfolio = () => {
 
   // When collapsing back to the limited view, keep user context.
   if (!nextValue) {
-    portfolioSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    portfolioSectionRef.value?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
   }
 }
 
@@ -130,7 +139,7 @@ const toggleReviews = () => {
   showAllReviews.value = nextValue
 
   if (!nextValue) {
-    reviewsSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    reviewsSectionRef.value?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
   }
 }
 
@@ -151,12 +160,12 @@ const toggleOffers = () => {
   showAllOffers.value = nextValue
 
   if (!nextValue) {
-    offersSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    offersSectionRef.value?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
   }
 }
 
 const scrollToSection = (sectionRef) => {
-  sectionRef?.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  sectionRef?.value?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
 }
 
 onMounted(() => {
@@ -176,7 +185,7 @@ onMounted(() => {
 
   // Wait until DOM is painted (Inertia navigation may mount before layout settles).
   requestAnimationFrame(() => {
-    sectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    sectionRef.value?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' })
   })
 })
 </script>
