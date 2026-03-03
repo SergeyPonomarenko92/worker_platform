@@ -20,6 +20,7 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
                 'name' => 'Test Provider',
                 'phone' => '  +380 50 123 45 67  ',
             ])
+            ->assertSessionHasNoErrors()
             ->assertRedirect();
 
         $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
@@ -36,6 +37,7 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
                 'name' => 'Test Provider',
                 'phone' => "\u{00A0}+380 50 123 45 67\u{202F}",
             ])
+            ->assertSessionHasNoErrors()
             ->assertRedirect();
 
         $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
@@ -52,6 +54,7 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
                 'name' => 'Test Provider',
                 'phone' => '   ',
             ])
+            ->assertSessionHasNoErrors()
             ->assertRedirect();
 
         $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
@@ -68,6 +71,7 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
                 'name' => 'Test Provider',
                 'phone' => '+',
             ])
+            ->assertSessionHasNoErrors()
             ->assertRedirect();
 
         $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
@@ -89,6 +93,7 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
                 'name' => $profile->name,
                 'phone' => "\n  (050) 123-45-67 \t ",
             ])
+            ->assertSessionHasNoErrors()
             ->assertRedirect();
 
         $profile->refresh();
@@ -110,6 +115,7 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
                 'name' => $profile->name,
                 'phone' => '   ',
             ])
+            ->assertSessionHasNoErrors()
             ->assertRedirect();
 
         $profile->refresh();
