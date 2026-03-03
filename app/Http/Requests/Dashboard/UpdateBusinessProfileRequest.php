@@ -3,9 +3,9 @@
 namespace App\Http\Requests\Dashboard;
 
 use App\Models\BusinessProfile;
+use App\Support\BusinessProfileRequestNormalizer;
 use App\Support\ContactFieldNormalizer;
 use App\Support\HttpUrlValidator;
-use App\Support\QueryParamNormalizer;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBusinessProfileRequest extends FormRequest
@@ -37,10 +37,10 @@ class UpdateBusinessProfileRequest extends FormRequest
     {
         $data = $this->validated();
 
-        $data['about'] = self::nullableText($data['about'] ?? null);
-        $data['country_code'] = self::countryCode($data['country_code'] ?? null);
-        $data['city'] = self::nullableText($data['city'] ?? null);
-        $data['address'] = self::nullableText($data['address'] ?? null);
+        $data['about'] = BusinessProfileRequestNormalizer::nullableText($data['about'] ?? null);
+        $data['country_code'] = BusinessProfileRequestNormalizer::countryCode($data['country_code'] ?? null);
+        $data['city'] = BusinessProfileRequestNormalizer::nullableText($data['city'] ?? null);
+        $data['address'] = BusinessProfileRequestNormalizer::nullableText($data['address'] ?? null);
 
         $data['website'] = ContactFieldNormalizer::website($data['website'] ?? null);
         HttpUrlValidator::validateOrFail($data['website'], 'website');
@@ -55,34 +55,5 @@ class UpdateBusinessProfileRequest extends FormRequest
         return $data;
     }
 
-    private static function nullableText(?string $raw): ?string
-    {
-        $v = QueryParamNormalizer::text($raw);
-
-        if ($v === '') {
-            return null;
-        }
-
-        return $v;
-    }
-
-    private static function countryCode(?string $raw): string
-    {
-        $v = QueryParamNormalizer::text($raw);
-
-        if ($v === '') {
-            return 'UA';
-        }
-
-        // Robustness: accept inputs like "u a", "UA!", "USA" etc.
-        // Keep only ASCII letters and take the first two characters.
-        $v = preg_replace('/[^A-Za-z]/', '', $v) ?? '';
-        $v = strtoupper($v);
-
-        if (strlen($v) < 2) {
-            return 'UA';
-        }
-
-        return substr($v, 0, 2);
-    }
 }
+
