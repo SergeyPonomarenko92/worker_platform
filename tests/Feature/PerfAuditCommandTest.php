@@ -26,6 +26,7 @@ class PerfAuditCommandTest extends TestCase
             ->doesntExpectOutputToContain('provider:offers')
             ->doesntExpectOutputToContain('provider:portfolio_posts')
             ->doesntExpectOutputToContain('provider:stories')
+            ->doesntExpectOutputToContain('provider:reviews')
             ->doesntExpectOutputToContain('provider:eligible_deal')
             ->assertSuccessful();
     }
@@ -37,6 +38,7 @@ class PerfAuditCommandTest extends TestCase
             ->doesntExpectOutputToContain('catalog:newest')
             ->doesntExpectOutputToContain('provider:portfolio_posts')
             ->doesntExpectOutputToContain('provider:stories')
+            ->doesntExpectOutputToContain('provider:reviews')
             ->doesntExpectOutputToContain('provider:eligible_deal')
             ->assertSuccessful();
     }
@@ -48,6 +50,7 @@ class PerfAuditCommandTest extends TestCase
             ->expectsOutputToContain('provider:offers')
             ->doesntExpectOutputToContain('catalog:city_prefix')
             ->doesntExpectOutputToContain('provider:stories')
+            ->doesntExpectOutputToContain('provider:reviews')
             ->doesntExpectOutputToContain('provider:eligible_deal')
             ->assertSuccessful();
     }
