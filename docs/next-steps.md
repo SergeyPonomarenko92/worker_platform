@@ -95,6 +95,8 @@
    - [x] Provider public page: CTA/UX для контенту (відгуки/пропозиції: “показати всі”, підвантаження all_offers)
    - [x] Provider public page: CTA/UX для портфоліо (“Показати всі роботи”/load all через all_portfolio=1)
 2) Техборг:
-   - [ ] ревізія індексів під реальні запити (EXPLAIN) + аудит N+1
+   - [x] ревізія індексів під реальні запити (EXPLAIN) + аудит N+1
+     - Перевірено через `php artisan perf:audit --explain/--analyze` для `/catalog` та `/providers/{slug}` (див. `docs/perf-audit.md`).
+     - На локальній малій вибірці Postgres може обирати `Seq Scan` попри наявні індекси — це очікувано; важливо, що індекси під ключові фільтри/CTA присутні.
    - [x] уніфікація UI-компонентів (Card/EmptyStateCard) + a11y для empty-state (announce)
    - [x] perf: індекс під prefix-пошук міста (Postgres `text_pattern_ops`)
