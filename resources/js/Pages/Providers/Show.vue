@@ -255,7 +255,7 @@ onMounted(() => {
 
       <!-- Header-like block (Instagram-ish direction for MVP) -->
       <Card class="mt-6">
-        <div class="text-sm text-gray-700" v-if="provider.about">{{ provider.about }}</div>
+        <div class="text-sm text-gray-700 whitespace-pre-line" v-if="provider.about">{{ provider.about }}</div>
         <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-600">
           <div v-if="provider.phone">
             <a
