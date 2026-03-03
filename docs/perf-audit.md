@@ -27,6 +27,7 @@
 > php artisan perf:audit --explain
 > php artisan perf:audit --analyze
 > php artisan perf:audit --provider=demo-provider
+> php artisan perf:audit --limit=50
 > # Catalog-only variants:
 > php artisan perf:audit --city=ки
 > php artisan perf:audit --price_from=100 --include_no_price=1

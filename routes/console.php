@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)}', function () {
+Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
     $connection = DB::connection();
     $driver = (string) $connection->getDriverName();
 
@@ -20,6 +20,9 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $cityPrefix = (string) $this->option('city');
     $priceFrom = (int) $this->option('price_from');
     $includeNoPrice = (bool) ((int) $this->option('include_no_price'));
+
+    $limitOverride = $this->option('limit');
+    $limitOverride = $limitOverride === null ? null : (int) $limitOverride;
 
     $only = (string) ($this->option('only') ?? '');
 
@@ -141,6 +144,16 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
             ->latest('deals.completed_at')
             ->limit(1),
     ];
+
+    if ($limitOverride !== null && $limitOverride > 0) {
+        foreach ($allQueries as $name => $query) {
+            if ($name === 'provider:eligible_deal') {
+                continue;
+            }
+
+            $allQueries[$name] = $query->limit($limitOverride);
+        }
+    }
 
     if ($list) {
         $this->line('Available queries:');

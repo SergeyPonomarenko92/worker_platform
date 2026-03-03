@@ -80,4 +80,24 @@ class PerfAuditCommandTest extends TestCase
         $this->assertStringContainsString('Bindings:', $output);
         $this->assertStringContainsString('42', $output);
     }
+
+    public function test_perf_audit_limit_option_overrides_limit_for_list_queries_but_not_eligible_deal(): void
+    {
+        $exitCode = Artisan::call('perf:audit', [
+            '--only' => 'catalog:newest,provider:eligible_deal',
+            '--limit' => 5,
+        ]);
+
+        $this->assertSame(0, $exitCode);
+
+        $output = Artisan::output();
+
+        // catalog:newest should use the override.
+        $this->assertStringContainsString('catalog:newest', $output);
+        $this->assertStringContainsString('limit 5', strtolower($output));
+
+        // eligible_deal should stay at limit 1.
+        $this->assertStringContainsString('provider:eligible_deal', $output);
+        $this->assertStringContainsString('limit 1', strtolower($output));
+    }
 }
