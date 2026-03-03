@@ -282,4 +282,25 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
 
         $this->assertSame('https://example.com', $profile->website);
     }
+
+    public function test_business_profile_website_is_rejected_if_normalized_value_exceeds_db_length_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        // Raw input is allowed by validation (max 255), but after normalization we may add "https://".
+        $raw = str_repeat('a', 251).'.com';
+        $this->assertSame(255, strlen($raw));
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => $raw,
+            ])
+            ->assertSessionHasErrors(['website']);
+
+        $this->assertDatabaseMissing('business_profiles', [
+            'user_id' => $user->id,
+            'name' => 'Test Provider',
+        ]);
+    }
 }

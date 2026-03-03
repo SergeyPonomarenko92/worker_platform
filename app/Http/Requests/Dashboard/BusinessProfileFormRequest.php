@@ -6,6 +6,7 @@ use App\Support\BusinessProfileRequestNormalizer;
 use App\Support\ContactFieldNormalizer;
 use App\Support\HttpUrlValidator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\ValidationException;
 
 abstract class BusinessProfileFormRequest extends FormRequest
 {
@@ -34,6 +35,15 @@ abstract class BusinessProfileFormRequest extends FormRequest
         $data['address'] = BusinessProfileRequestNormalizer::nullableText($data['address'] ?? null);
 
         $data['website'] = ContactFieldNormalizer::website($data['website'] ?? null);
+
+        // Important: we validate raw input max length (255), but normalization may add `https://`
+        // which can exceed DB column length. Guard against persisting overlong values.
+        if ($data['website'] !== null && strlen($data['website']) > 255) {
+            throw ValidationException::withMessages([
+                'website' => 'URL вебсайту занадто довгий.',
+            ]);
+        }
+
         HttpUrlValidator::validateOrFail($data['website'], 'website');
 
         $data['phone'] = ContactFieldNormalizer::phone($data['phone'] ?? null);
