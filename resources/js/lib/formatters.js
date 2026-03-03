@@ -27,9 +27,9 @@ export const formatNumber = (value) => {
   // Keep non-numeric input as-is.
   const raw = typeof value === 'string' ? value.trim() : value
 
-  // Remove common thousands separators (spaces, NBSP, apostrophes).
+  // Remove common thousands separators (spaces, NBSP, thin spaces, apostrophes).
   // Also support comma as a decimal separator (common in uk-UA input).
-  let normalized = typeof raw === 'string' ? raw.replace(/[\s\u00A0']/g, '') : raw
+  let normalized = typeof raw === 'string' ? raw.replace(/[\s\u00A0\u202F\u2009']/g, '') : raw
 
   if (typeof normalized === 'string' && normalized.includes(',') && !normalized.includes('.')) {
     normalized = normalized.replace(',', '.')
