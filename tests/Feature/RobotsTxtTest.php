@@ -16,6 +16,7 @@ class RobotsTxtTest extends TestCase
             ->assertSee("User-agent: *")
             ->assertSee('Disallow: /dashboard/')
             ->assertSee('Disallow: /login')
-            ->assertSee('Allow: /');
+            ->assertSee('Allow: /')
+            ->assertSee('Sitemap: '.url('/sitemap.xml'));
     }
 }

@@ -23,11 +23,17 @@ Route::get('/', function () {
 Route::get('/robots.txt', function () {
     $path = public_path('robots.txt');
 
-    return response(
-        file_exists($path) ? file_get_contents($path) : "User-agent: *\nDisallow:\n",
-        200,
-        ['Content-Type' => 'text/plain; charset=UTF-8']
-    );
+    $contents = file_exists($path)
+        ? file_get_contents($path)
+        : "User-agent: *\nDisallow:\n";
+
+    // If we can serve /sitemap.xml, it's helpful to advertise it here.
+    // Keep the static file as the main source of directives.
+    if (! str_contains($contents, 'Sitemap:')) {
+        $contents = rtrim($contents)."\n\n".'Sitemap: '.url('/sitemap.xml')."\n";
+    }
+
+    return response($contents, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
 });
 
 // Note: we serve sitemap via a route for the same reasons as robots.txt (tests + setups
