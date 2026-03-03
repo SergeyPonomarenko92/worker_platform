@@ -13,11 +13,13 @@ class PerfAuditCommandTest extends TestCase
             ->expectsOutputToContain('Perf audit helper')
             ->expectsOutputToContain('Available queries:')
             ->expectsOutputToContain('catalog:newest')
+            ->expectsOutputToContain('catalog:category_tree')
             ->expectsOutputToContain('catalog:category_filter')
             ->expectsOutputToContain('catalog:q_search')
             ->expectsOutputToContain('catalog:price_asc')
             ->expectsOutputToContain('catalog:price_desc')
             ->expectsOutputToContain('provider:offers')
+            ->expectsOutputToContain('provider:eligible_deal')
             ->expectsOutputToContain('Tip: for more context see docs/perf-audit.md')
             ->assertSuccessful();
     }
