@@ -54,6 +54,9 @@ class DealController extends Controller
 
         // Normalize optional numeric/select fields from HTML forms ("" -> null)
         $request->merge([
+            // Be robust to copy/paste and different casing.
+            // (exists:users,email) is usually case-sensitive depending on collation.
+            'client_email' => mb_strtolower(trim((string) $request->input('client_email')), 'UTF-8'),
             'offer_id' => $request->input('offer_id') ?: null,
             'agreed_price' => $request->input('agreed_price') === '' ? null : $request->input('agreed_price'),
         ]);

@@ -78,6 +78,32 @@ class DealsTest extends TestCase
         $this->assertNotNull($deal2->completed_at);
     }
 
+    public function test_owner_can_create_deal_when_client_email_has_spaces_or_uppercase(): void
+    {
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        $this->actingAs($provider)
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => "  CLIENT@Example.com \n",
+                'offer_id' => null,
+                'status' => 'draft',
+                'currency' => 'uah',
+                'agreed_price' => '',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('deals', [
+            'business_profile_id' => $profile->id,
+            'client_user_id' => $client->id,
+            'status' => 'draft',
+            'agreed_price' => null,
+            'currency' => 'UAH',
+        ]);
+    }
+
     public function test_owner_cannot_create_deal_with_offer_from_another_business_profile(): void
     {
         $provider = User::factory()->create();
