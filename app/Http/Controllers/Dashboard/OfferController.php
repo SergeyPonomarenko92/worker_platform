@@ -54,8 +54,11 @@ class OfferController extends Controller
             'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
             'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
 
-            // Allow users to paste currency with extra spaces (e.g. " uah ")
-            'currency' => is_string($request->input('currency')) ? trim($request->input('currency')) : $request->input('currency'),
+            // Allow users to paste currency with extra spaces (e.g. " uah ", "u a h", NBSPs)
+            // Keep only letters/digits by removing whitespace, then validate length=3.
+            'currency' => is_string($request->input('currency'))
+                ? str_replace(' ', '', QueryParamNormalizer::text($request->input('currency')))
+                : $request->input('currency'),
         ]);
 
         $data = $request->validate([
@@ -117,8 +120,11 @@ class OfferController extends Controller
             'price_from' => $request->input('price_from') === '' ? null : $request->input('price_from'),
             'price_to' => $request->input('price_to') === '' ? null : $request->input('price_to'),
 
-            // Allow users to paste currency with extra spaces (e.g. " uah ")
-            'currency' => is_string($request->input('currency')) ? trim($request->input('currency')) : $request->input('currency'),
+            // Allow users to paste currency with extra spaces (e.g. " uah ", "u a h", NBSPs)
+            // Keep only letters/digits by removing whitespace, then validate length=3.
+            'currency' => is_string($request->input('currency'))
+                ? str_replace(' ', '', QueryParamNormalizer::text($request->input('currency')))
+                : $request->input('currency'),
         ]);
 
         $data = $request->validate([

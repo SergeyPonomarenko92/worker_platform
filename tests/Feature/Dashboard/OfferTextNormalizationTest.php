@@ -43,6 +43,35 @@ class OfferTextNormalizationTest extends TestCase
         $this->assertSame('Some description', $offer->description);
     }
 
+    public function test_offer_currency_allows_extra_whitespace_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $category = Category::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.offers.store', [$profile]), [
+                'category_id' => $category->id,
+                'type' => 'service',
+                'title' => 'Test Offer',
+                'description' => 'desc',
+                'price_from' => '',
+                'price_to' => '',
+                'currency' => "\u{00A0} u\t a\n h \u{202F}",
+                'is_active' => 1,
+            ])
+            ->assertRedirect(route('dashboard.offers.index', [$profile]))
+            ->assertSessionHas('success');
+
+        $offer = Offer::query()->where('business_profile_id', $profile->id)->latest('id')->firstOrFail();
+
+        $this->assertSame('UAH', $offer->currency);
+    }
+
     public function test_offer_description_empty_string_becomes_null_on_store(): void
     {
         $user = User::factory()->create();
@@ -123,5 +152,34 @@ class OfferTextNormalizationTest extends TestCase
 
         $offer->refresh();
         $this->assertNull($offer->description);
+    }
+
+    public function test_offer_currency_allows_extra_whitespace_on_update(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $offer = Offer::factory()->for($profile)->create([
+            'currency' => 'UAH',
+        ]);
+
+        $this->actingAs($user)
+            ->patch(route('dashboard.offers.update', [$profile, $offer]), [
+                'category_id' => $offer->category_id,
+                'type' => $offer->type,
+                'title' => $offer->title,
+                'description' => $offer->description,
+                'price_from' => $offer->price_from,
+                'price_to' => $offer->price_to,
+                'currency' => "  u\t a\n h  ",
+                'is_active' => $offer->is_active ? 1 : 0,
+            ])
+            ->assertRedirect();
+
+        $offer->refresh();
+        $this->assertSame('UAH', $offer->currency);
     }
 }
