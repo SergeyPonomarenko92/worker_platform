@@ -24,4 +24,20 @@ class PerfAuditCommandTest extends TestCase
         $this->assertStringContainsString('catalog:newest', $output);
         $this->assertStringContainsString('Bindings:', $output);
     }
+
+    public function test_perf_audit_command_can_list_available_queries(): void
+    {
+        $exitCode = Artisan::call('perf:audit', [
+            '--list' => true,
+        ]);
+
+        $this->assertSame(0, $exitCode);
+
+        $output = Artisan::output();
+
+        $this->assertStringContainsString('Perf audit helper', $output);
+        $this->assertStringContainsString('Available queries:', $output);
+        $this->assertStringContainsString('catalog:newest', $output);
+        $this->assertStringContainsString('provider:offers', $output);
+    }
 }
