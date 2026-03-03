@@ -67,30 +67,40 @@ const props = defineProps({
                                 <Link
                                     :href="route('dashboard.offers.index', p.id)"
                                     class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                    :title="`Перейти до пропозицій профілю: ${p.name}`"
+                                    :aria-label="`Перейти до пропозицій профілю: ${p.name}`"
                                 >
                                     Пропозиції
                                 </Link>
                                 <Link
                                     :href="route('dashboard.portfolio-posts.index', p.id)"
                                     class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                    :title="`Перейти до портфоліо профілю: ${p.name}`"
+                                    :aria-label="`Перейти до портфоліо профілю: ${p.name}`"
                                 >
                                     Портфоліо
                                 </Link>
                                 <Link
                                     :href="route('dashboard.stories.index', p.id)"
                                     class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                    :title="`Перейти до історій профілю: ${p.name}`"
+                                    :aria-label="`Перейти до історій профілю: ${p.name}`"
                                 >
                                     Історії
                                 </Link>
                                 <Link
                                     :href="route('dashboard.deals.index', p.id)"
                                     class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                    :title="`Перейти до угод профілю: ${p.name}`"
+                                    :aria-label="`Перейти до угод профілю: ${p.name}`"
                                 >
                                     Угоди
                                 </Link>
                                 <Link
                                     :href="route('dashboard.business-profiles.edit', p.id)"
                                     class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                    :title="`Редагувати профіль: ${p.name}`"
+                                    :aria-label="`Редагувати профіль: ${p.name}`"
                                 >
                                     Редагувати
                                 </Link>
