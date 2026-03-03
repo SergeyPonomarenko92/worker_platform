@@ -25,10 +25,11 @@ class SitemapXmlTest extends TestCase
 
     public function test_it_serves_sitemap_xml_with_absolute_urls(): void
     {
+        $latestProviderUpdatedAt = now();
         $provider = BusinessProfile::factory()->create([
             'slug' => 'demo-provider-for-sitemap',
             'is_active' => true,
-            'updated_at' => now()->subDays(2),
+            'updated_at' => $latestProviderUpdatedAt,
         ]);
 
         $latestOfferUpdatedAt = now()->subDay();
@@ -45,7 +46,8 @@ class SitemapXmlTest extends TestCase
             ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertSee('<urlset', false)
             ->assertSee(url('/catalog'), false)
-            ->assertSee('<lastmod>'.$latestOfferUpdatedAt->toDateString().'</lastmod>', false)
+            // Catalog lastmod should reflect the latest update among offers OR providers.
+            ->assertSee('<lastmod>'.$latestProviderUpdatedAt->toDateString().'</lastmod>', false)
             ->assertSee(url('/providers/'.$provider->slug), false)
             ->assertSee('<lastmod>'.$provider->updated_at->toDateString().'</lastmod>', false);
     }
