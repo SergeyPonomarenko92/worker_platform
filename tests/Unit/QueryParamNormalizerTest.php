@@ -104,6 +104,13 @@ class QueryParamNormalizerTest extends TestCase
 
         // Support percent-encoded values pasted into query string.
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('https://example.test/catalog?provider=demo%2Dprovider'));
+
+        // Support relative paths without leading slash.
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('providers/demo-provider'));
+
+        // Support different casing in the providers segment.
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('/Providers/demo-provider/'));
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('https://example.test/Providers/demo-provider/'));
     }
 
     #[Test]
