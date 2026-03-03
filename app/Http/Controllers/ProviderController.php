@@ -9,6 +9,12 @@ use Inertia\Inertia;
 
 class ProviderController extends Controller
 {
+    private const DEFAULT_OFFERS_LIMIT = 6;
+    private const DEFAULT_PORTFOLIO_LIMIT = 12;
+    private const DEFAULT_REVIEWS_LIMIT = 20;
+
+    private const LOAD_ALL_LIMIT = 200;
+
     public function show(Request $request, string $slug)
     {
         // Slugs are stored normalized (lowercase). Be tolerant to users typing/pasting
@@ -72,8 +78,8 @@ class ProviderController extends Controller
                     ])
                     ->active()
                     ->latest()
-                    ->when(! $loadAllOffers, fn ($q) => $q->limit(6))
-                    ->when($loadAllOffers, fn ($q) => $q->limit(200)),
+                    ->when(! $loadAllOffers, fn ($q) => $q->limit(self::DEFAULT_OFFERS_LIMIT))
+                    ->when($loadAllOffers, fn ($q) => $q->limit(self::LOAD_ALL_LIMIT)),
                 'portfolioPosts' => fn ($q) => $q
                     ->select([
                         'id',
@@ -91,8 +97,8 @@ class ProviderController extends Controller
                     // UI shows only the first few items, but we still want enough preloaded
                     // so users can expand a bit without a full reload.
                     // Users can request the full list via ?all_portfolio=1.
-                    ->when(! $loadAllPortfolio, fn ($q) => $q->limit(12))
-                    ->when($loadAllPortfolio, fn ($q) => $q->limit(200)),
+                    ->when(! $loadAllPortfolio, fn ($q) => $q->limit(self::DEFAULT_PORTFOLIO_LIMIT))
+                    ->when($loadAllPortfolio, fn ($q) => $q->limit(self::LOAD_ALL_LIMIT)),
                 'stories' => fn ($q) => $q
                     ->select([
                         'id',
@@ -119,8 +125,8 @@ class ProviderController extends Controller
                     ])
                     ->with(['client:id,name'])
                     ->latest()
-                    ->when(! $loadAllReviews, fn ($q) => $q->limit(20))
-                    ->when($loadAllReviews, fn ($q) => $q->limit(200)),
+                    ->when(! $loadAllReviews, fn ($q) => $q->limit(self::DEFAULT_REVIEWS_LIMIT))
+                    ->when($loadAllReviews, fn ($q) => $q->limit(self::LOAD_ALL_LIMIT)),
             ])
             ->firstOrFail();
 
