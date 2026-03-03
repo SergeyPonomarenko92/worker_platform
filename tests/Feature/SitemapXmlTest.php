@@ -4,10 +4,13 @@ namespace Tests\Feature;
 
 use App\Models\BusinessProfile;
 use App\Models\Offer;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class SitemapXmlTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_it_serves_sitemap_xml_even_when_there_is_no_content_yet(): void
     {
         $response = $this->get('/sitemap.xml');
@@ -64,5 +67,39 @@ class SitemapXmlTest extends TestCase
         $response
             ->assertOk()
             ->assertDontSee('inactive-provider-for-sitemap');
+    }
+
+    public function test_catalog_lastmod_ignores_offers_of_inactive_providers(): void
+    {
+        $inactiveProvider = BusinessProfile::factory()->create([
+            'slug' => 'inactive-provider',
+            'is_active' => false,
+        ]);
+
+        // This offer is invisible in the catalog because its provider is inactive.
+        Offer::factory()->for($inactiveProvider)->create([
+            'is_active' => true,
+            'updated_at' => now(),
+        ]);
+
+        $activeProvider = BusinessProfile::factory()->create([
+            'slug' => 'active-provider',
+            'is_active' => true,
+            'updated_at' => now()->subDays(3),
+        ]);
+
+        $visibleOfferUpdatedAt = now()->subDay();
+        Offer::factory()->for($activeProvider)->create([
+            'is_active' => true,
+            'updated_at' => $visibleOfferUpdatedAt,
+        ]);
+
+        $response = $this->get('/sitemap.xml');
+
+        // Catalog lastmod should be the latest among visible offers or active providers.
+        $response
+            ->assertOk()
+            ->assertSee('<loc>'.url('/catalog').'</loc>', false)
+            ->assertSee('<lastmod>'.$visibleOfferUpdatedAt->toDateString().'</lastmod>', false);
     }
 }

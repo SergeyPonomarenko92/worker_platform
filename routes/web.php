@@ -52,9 +52,17 @@ Route::get('/sitemap.xml', function () {
     // Use the latest known update time of catalog-relevant content (offers/providers)
     // as a lightweight signal for crawlers.
     $latestOfferUpdatedAt = \App\Models\Offer::query()
-        ->active()
-        ->latest('updated_at')
-        ->value('updated_at');
+        // Keep sitemap (catalog lastmod) consistent with what users can actually see.
+        // Offers belonging to inactive providers are hidden from the catalog, so they
+        // should not bump the catalog <lastmod>.
+        //
+        // Note: use a join instead of whereHas to keep behavior consistent across DBs
+        // (sqlite/pgsql) and avoid relying on relationship constraints here.
+        ->join('business_profiles', 'business_profiles.id', '=', 'offers.business_profile_id')
+        ->where('offers.is_active', true)
+        ->where('business_profiles.is_active', true)
+        ->latest('offers.updated_at')
+        ->value('offers.updated_at');
 
     $latestProviderUpdatedAt = \App\Models\BusinessProfile::query()
         ->where('is_active', true)
