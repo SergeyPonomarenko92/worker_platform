@@ -21,6 +21,11 @@ class ContactFieldNormalizerTest extends TestCase
     {
         $this->assertSame('https://example.com', ContactFieldNormalizer::website('example.com'));
         $this->assertSame('https://example.com', ContactFieldNormalizer::website('   example.com   '));
+
+        // Users often paste domains with trailing punctuation from chat/apps.
+        $this->assertSame('https://example.com', ContactFieldNormalizer::website('example.com,'));
+        $this->assertSame('https://example.com', ContactFieldNormalizer::website('(example.com)'));
+        $this->assertSame('https://example.com', ContactFieldNormalizer::website('"example.com"'));
     }
 
     #[Test]

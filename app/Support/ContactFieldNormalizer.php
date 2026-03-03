@@ -30,6 +30,14 @@ class ContactFieldNormalizer
             return $v;
         }
 
+        // UX: users often paste plain domains with trailing punctuation from chat/apps,
+        // e.g. "example.com," or "(example.com)".
+        // Only do this for scheme-less "domain-like" inputs to avoid breaking valid URLs
+        // where the path legitimately ends with punctuation (e.g. Wikipedia).
+        if (! str_contains($v, '/')) {
+            $v = trim($v, "\"'.,;:()[]{}<>");
+        }
+
         return 'https://'.$v;
     }
 
