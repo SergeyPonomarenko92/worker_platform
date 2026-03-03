@@ -299,6 +299,13 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
             $this->line("- {$name}");
         }
 
+        $this->line('');
+        $this->comment('Examples:');
+        $this->line('php artisan perf:audit --only=catalog --explain');
+        $this->line('php artisan perf:audit --only=catalog:price_desc --analyze');
+        $this->line('php artisan perf:audit --only=provider:eligible_deal --provider=demo-provider --client=1 --explain');
+        $this->line('php artisan perf:audit --json --only=catalog:newest');
+
         $this->line('---');
         $this->comment('Tip: for more context see docs/perf-audit.md');
 
