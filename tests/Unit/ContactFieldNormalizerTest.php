@@ -30,6 +30,7 @@ class ContactFieldNormalizerTest extends TestCase
 
             'adds https:// when missing' => ['example.com', 'https://example.com'],
             'adds https:// when missing (keeps path)' => ['example.com/path', 'https://example.com/path'],
+            'adds https:// when missing (keeps query+fragment)' => ['example.com/path?x=1#top', 'https://example.com/path?x=1#top'],
             'keeps https://' => ['https://example.com', 'https://example.com'],
             'keeps http://' => ['http://example.com', 'http://example.com'],
             'keeps HTTPS:// (case-insensitive scheme check)' => ['HTTPS://example.com', 'HTTPS://example.com'],
