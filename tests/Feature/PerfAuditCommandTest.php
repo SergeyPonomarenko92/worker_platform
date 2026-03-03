@@ -197,4 +197,26 @@ class PerfAuditCommandTest extends TestCase
         $this->assertArrayHasKey('sql', $payload['queries'][0] ?? []);
         $this->assertArrayHasKey('bindings', $payload['queries'][0] ?? []);
     }
+
+    public function test_perf_audit_city_prefix_escapes_like_wildcards_in_bindings(): void
+    {
+        $exitCode = Artisan::call('perf:audit', [
+            '--only' => 'catalog:city_prefix',
+            '--city' => ' Ки%_ ',
+            '--json' => true,
+        ]);
+
+        $this->assertSame(0, $exitCode);
+
+        $payload = json_decode(Artisan::output(), true);
+
+        $this->assertIsArray($payload);
+        $this->assertSame('catalog:city_prefix', $payload['queries'][0]['name'] ?? null);
+
+        $bindings = $payload['queries'][0]['bindings'] ?? [];
+        $this->assertIsArray($bindings);
+
+        // We expect: normalized (trim), lowercased, escaped for LIKE, then with trailing "%" for prefix matching.
+        $this->assertContains('ки!%!_%', $bindings);
+    }
 }
