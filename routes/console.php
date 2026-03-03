@@ -9,11 +9,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--category_id=1 : Category id for the catalog:category_tree query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--q=майстер : Free-text search for the catalog:q_search query (escaped for ILIKE)} {--price_from=100 : Min price bound for the catalog:price_range query} {--price_to= : Max price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
+Artisan::command('perf:audit {--list : List available sample queries and exit} {--json : Output JSON (useful for tooling/CI)} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--category_id=1 : Category id for the catalog:category_tree query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--q=майстер : Free-text search for the catalog:q_search query (escaped for ILIKE)} {--price_from=100 : Min price bound for the catalog:price_range query} {--price_to= : Max price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
     $connection = DB::connection();
     $driver = (string) $connection->getDriverName();
 
     $list = (bool) $this->option('list');
+    $json = (bool) $this->option('json');
 
     $providerSlug = \App\Support\QueryParamNormalizer::providerSlug((string) $this->option('provider'));
     $clientUserId = (int) $this->option('client');
@@ -37,30 +38,59 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $explain = (bool) $this->option('explain') || (bool) $this->option('analyze');
     $analyze = (bool) $this->option('analyze');
 
-    $printHeader = function () use ($driver) {
+    $meta = [
+        'tool' => 'perf:audit',
+        'db_driver' => $driver,
+        'params' => [
+            'provider_slug' => $providerSlug,
+            'client_user_id' => $clientUserId,
+            'category_id' => $categoryId,
+            'city_prefix' => $cityPrefix,
+            'q' => $q,
+            'price_from' => $priceFrom,
+            'price_to' => $priceTo,
+            'include_no_price' => $includeNoPrice ? 1 : 0,
+            'limit_override' => $limitOverride,
+        ],
+        'flags' => [
+            'list' => $list,
+            'json' => $json,
+            'explain_requested' => $explain,
+            'analyze_requested' => $analyze,
+        ],
+        'warnings' => [],
+    ];
+
+    if (! $json) {
         $this->line('---');
         $this->line('Perf audit helper');
         $this->line("DB driver: {$driver}");
-    };
 
-    $printHeader();
-
-    $this->line('Effective params:');
-    $this->line("- provider_slug: {$providerSlug}");
-    $this->line("- client_user_id: {$clientUserId}");
-    $this->line("- category_id: {$categoryId}");
-    $this->line("- city_prefix: {$cityPrefix}");
-    $this->line("- q: {$q}");
-    $this->line('- price_from: '.($priceFrom === null ? 'null' : (string) $priceFrom));
-    $this->line('- price_to: '.($priceTo === null ? 'null' : (string) $priceTo));
-    $this->line('- include_no_price: '.($includeNoPrice ? '1' : '0'));
-    $this->line('- limit_override: '.($limitOverride === null ? 'null' : (string) $limitOverride));
+        $this->line('Effective params:');
+        $this->line("- provider_slug: {$providerSlug}");
+        $this->line("- client_user_id: {$clientUserId}");
+        $this->line("- category_id: {$categoryId}");
+        $this->line("- city_prefix: {$cityPrefix}");
+        $this->line("- q: {$q}");
+        $this->line('- price_from: '.($priceFrom === null ? 'null' : (string) $priceFrom));
+        $this->line('- price_to: '.($priceTo === null ? 'null' : (string) $priceTo));
+        $this->line('- include_no_price: '.($includeNoPrice ? '1' : '0'));
+        $this->line('- limit_override: '.($limitOverride === null ? 'null' : (string) $limitOverride));
+    }
 
     if ($explain && $driver !== 'pgsql') {
-        $this->warn('EXPLAIN is only supported in this helper for Postgres (pgsql). Re-run without --explain to just print SQL.');
+        $meta['warnings'][] = 'EXPLAIN is only supported in this helper for Postgres (pgsql). Re-run without --explain to just print SQL.';
+
+        if (! $json) {
+            $this->warn($meta['warnings'][array_key_last($meta['warnings'])]);
+        }
+
         $explain = false;
         $analyze = false;
     }
+
+    $meta['flags']['explain_enabled'] = $explain;
+    $meta['flags']['analyze_enabled'] = $analyze;
 
     $prefix = $analyze ? 'EXPLAIN (ANALYZE, BUFFERS) ' : 'EXPLAIN ';
 
@@ -211,6 +241,16 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     }
 
     if ($list) {
+        if ($json) {
+            $payload = $meta + [
+                'queries' => array_keys($allQueries),
+            ];
+
+            $this->line(json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+            return 0;
+        }
+
         $this->line('Available queries:');
 
         foreach (array_keys($allQueries) as $name) {
@@ -260,6 +300,18 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     }
 
     if (count($queries) === 0) {
+        if ($json) {
+            $payload = $meta + [
+                'error' => 'No queries matched the provided --only filter.',
+                'queries' => [],
+                'available_queries' => array_keys($allQueries),
+            ];
+
+            $this->line(json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+            return 1;
+        }
+
         $this->warn('No queries matched the provided --only filter.');
         $this->line('Available queries:');
 
@@ -268,6 +320,42 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
         }
 
         return 1;
+    }
+
+    if ($json) {
+        $results = [];
+
+        foreach ($queries as $name => $query) {
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
+
+            $result = [
+                'name' => $name,
+                'sql' => $sql,
+                'bindings' => $bindings,
+            ];
+
+            if ($explain) {
+                $rows = $connection->select($prefix.$sql, $bindings);
+                $result['explain'] = array_map(
+                    static function ($row) {
+                        // Postgres returns a single column named "QUERY PLAN".
+                        return (string) (array_values((array) $row)[0] ?? '');
+                    },
+                    $rows,
+                );
+            }
+
+            $results[] = $result;
+        }
+
+        $payload = $meta + [
+            'queries' => $results,
+        ];
+
+        $this->line(json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+        return 0;
     }
 
     foreach ($queries as $name => $query) {

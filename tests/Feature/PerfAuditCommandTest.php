@@ -174,4 +174,22 @@ class PerfAuditCommandTest extends TestCase
         $this->assertStringContainsString('100', $output);
         $this->assertStringContainsString('200', $output);
     }
+
+    public function test_perf_audit_can_output_json_for_tooling(): void
+    {
+        $exitCode = Artisan::call('perf:audit', [
+            '--only' => 'catalog:newest',
+            '--json' => true,
+        ]);
+
+        $this->assertSame(0, $exitCode);
+
+        $payload = json_decode(Artisan::output(), true);
+
+        $this->assertIsArray($payload);
+        $this->assertSame('perf:audit', $payload['tool'] ?? null);
+        $this->assertSame('catalog:newest', $payload['queries'][0]['name'] ?? null);
+        $this->assertArrayHasKey('sql', $payload['queries'][0] ?? []);
+        $this->assertArrayHasKey('bindings', $payload['queries'][0] ?? []);
+    }
 }
