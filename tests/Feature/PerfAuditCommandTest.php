@@ -155,4 +155,23 @@ class PerfAuditCommandTest extends TestCase
         // Binding should contain normalized slug.
         $this->assertStringContainsString('demo-provider', strtolower($output));
     }
+
+    public function test_perf_audit_price_to_option_affects_catalog_price_range_bindings(): void
+    {
+        $exitCode = Artisan::call('perf:audit', [
+            '--only' => 'catalog:price_range',
+            '--price_from' => 100,
+            '--price_to' => 200,
+            '--include_no_price' => 0,
+        ]);
+
+        $this->assertSame(0, $exitCode);
+
+        $output = Artisan::output();
+
+        $this->assertStringContainsString('catalog:price_range', $output);
+        $this->assertStringContainsString('Bindings:', $output);
+        $this->assertStringContainsString('100', $output);
+        $this->assertStringContainsString('200', $output);
+    }
 }

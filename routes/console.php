@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--category_id=1 : Category id for the catalog:category_tree query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--q=майстер : Free-text search for the catalog:q_search query (escaped for ILIKE)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
+Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--category_id=1 : Category id for the catalog:category_tree query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--q=майстер : Free-text search for the catalog:q_search query (escaped for ILIKE)} {--price_from=100 : Min price bound for the catalog:price_range query} {--price_to= : Max price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
     $connection = DB::connection();
     $driver = (string) $connection->getDriverName();
 
@@ -20,7 +20,13 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $categoryId = (int) $this->option('category_id');
     $cityPrefix = \App\Support\QueryParamNormalizer::text((string) $this->option('city'));
     $q = \App\Support\QueryParamNormalizer::text((string) $this->option('q'));
-    $priceFrom = (int) $this->option('price_from');
+
+    $priceFrom = $this->option('price_from');
+    $priceFrom = $priceFrom === null ? null : (int) $priceFrom;
+
+    $priceTo = $this->option('price_to');
+    $priceTo = $priceTo === null || $priceTo === '' ? null : (int) $priceTo;
+
     $includeNoPrice = (bool) ((int) $this->option('include_no_price'));
 
     $limitOverride = $this->option('limit');
@@ -45,7 +51,8 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $this->line("- category_id: {$categoryId}");
     $this->line("- city_prefix: {$cityPrefix}");
     $this->line("- q: {$q}");
-    $this->line("- price_from: {$priceFrom}");
+    $this->line('- price_from: '.($priceFrom === null ? 'null' : (string) $priceFrom));
+    $this->line('- price_to: '.($priceTo === null ? 'null' : (string) $priceTo));
     $this->line('- include_no_price: '.($includeNoPrice ? '1' : '0'));
     $this->line('- limit_override: '.($limitOverride === null ? 'null' : (string) $limitOverride));
 
@@ -120,11 +127,12 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
             ->select('offers.id')
             ->active()
             ->whereHas('businessProfile', fn ($bp) => $bp->active())
-            ->where(function ($q) use ($priceFrom, $includeNoPrice) {
-                $q->where(function ($q) use ($priceFrom) {
+            ->where(function ($q) use ($priceFrom, $priceTo, $includeNoPrice) {
+                $q->where(function ($q) use ($priceFrom, $priceTo) {
                     $q
                         ->whereNotNull('offers.price_from')
-                        ->where('offers.price_from', '>=', $priceFrom);
+                        ->when(is_numeric($priceFrom), fn ($q) => $q->where('offers.price_from', '>=', $priceFrom))
+                        ->when(is_numeric($priceTo), fn ($q) => $q->where('offers.price_from', '<=', $priceTo));
                 });
 
                 if ($includeNoPrice) {

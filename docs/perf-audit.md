@@ -34,7 +34,7 @@
 > # Catalog-only variants:
 > php artisan perf:audit --city=ки
 > php artisan perf:audit --q="майстер! руки"  # mirrors /catalog?q=...
-> php artisan perf:audit --price_from=100 --include_no_price=1
+> php artisan perf:audit --price_from=100 --price_to=500 --include_no_price=1
 > php artisan perf:audit --provider=demo-provider --only=catalog:provider_slug
 > ```
 >
