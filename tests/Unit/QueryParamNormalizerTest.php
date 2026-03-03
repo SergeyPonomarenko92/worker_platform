@@ -39,6 +39,14 @@ class QueryParamNormalizerTest extends TestCase
     }
 
     #[Test]
+    public function it_strips_soft_hyphen_inside_words(): void
+    {
+        $input = "pro\u{00AD}vider"; // soft hyphen from copy/paste
+
+        $this->assertSame('provider', QueryParamNormalizer::text($input));
+    }
+
+    #[Test]
     public function it_normalizes_bidi_control_marks_as_spaces(): void
     {
         $input = "hello\u{200E}world\u{202E}again\u{2066}done"; // LRM + RLO + LRI

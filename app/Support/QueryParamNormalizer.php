@@ -83,6 +83,10 @@ class QueryParamNormalizer
             "\u{FEFF}",
         ], ' ', $value);
 
+        // Soft hyphen (U+00AD) sometimes appears inside words when users copy text from PDFs/websites.
+        // It should not affect search queries, so strip it entirely.
+        $value = str_replace("\u{00AD}", '', $value);
+
         $value = trim($value);
 
         if ($value === '') {
