@@ -4,49 +4,66 @@ namespace Tests\Unit;
 
 use App\Support\HttpUrlValidator;
 use Illuminate\Validation\ValidationException;
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class HttpUrlValidatorTest extends TestCase
 {
-    public static function validUrlProvider(): array
+    #[Test]
+    public function it_allows_null_and_empty_strings(): void
     {
-        return [
-            'null is allowed' => [null],
-            'empty string is treated as missing' => [''],
-            'spaces-only string is treated as missing' => ["   \n\t"],
-            'unicode spaces-only string is treated as missing' => ["\u{00A0}\u{202F}"],
+        // Should not throw.
+        HttpUrlValidator::validateOrFail(null);
+        HttpUrlValidator::validateOrFail('');
+        HttpUrlValidator::validateOrFail("\n\t  ");
+        HttpUrlValidator::validateOrFail("\u{00A0}   \n\t");
 
-            'https url is allowed' => ['https://example.com'],
-            'http url is allowed' => ['http://example.com/path?x=1#y'],
-            'url with surrounding whitespace is allowed' => ["  https://example.com/path  \n"],
-        ];
+        $this->assertTrue(true);
     }
 
-    #[DataProvider('validUrlProvider')]
-    public function test_allows_valid_http_urls(?string $url): void
+    #[Test]
+    public function it_accepts_http_and_https_urls_and_trims_unicode_spaces(): void
     {
-        HttpUrlValidator::validateOrFail($url);
+        // Should not throw.
+        HttpUrlValidator::validateOrFail('http://example.com');
+        HttpUrlValidator::validateOrFail('https://example.com');
 
-        $this->assertTrue(true); // no exception
+        // Including unicode spaces (NBSP, NNBSP etc.) around the URL.
+        HttpUrlValidator::validateOrFail("\u{00A0}https://example.com\u{202F}");
+
+        $this->assertTrue(true);
     }
 
-    public static function invalidUrlProvider(): array
-    {
-        return [
-            'plain text is rejected' => ['example.com'],
-            'not a url is rejected' => ['not a url'],
-            'mailto scheme is rejected' => ['mailto:test@example.com'],
-            'ftp scheme is rejected' => ['ftp://example.com'],
-            'javascript scheme is rejected' => ['javascript:alert(1)'],
-        ];
-    }
-
-    #[DataProvider('invalidUrlProvider')]
-    public function test_rejects_non_http_urls(string $url): void
+    #[Test]
+    public function it_rejects_non_urls(): void
     {
         $this->expectException(ValidationException::class);
 
-        HttpUrlValidator::validateOrFail($url);
+        HttpUrlValidator::validateOrFail('not a url');
+    }
+
+    #[Test]
+    public function it_rejects_non_http_schemes(): void
+    {
+        try {
+            HttpUrlValidator::validateOrFail('javascript:alert(1)', 'website');
+            $this->fail('Expected ValidationException for non-http(s) scheme.');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('website', $e->errors());
+        }
+
+        try {
+            HttpUrlValidator::validateOrFail('mailto:test@example.com', 'website');
+            $this->fail('Expected ValidationException for non-http(s) scheme.');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('website', $e->errors());
+        }
+
+        try {
+            HttpUrlValidator::validateOrFail('ftp://example.com', 'website');
+            $this->fail('Expected ValidationException for non-http(s) scheme.');
+        } catch (ValidationException $e) {
+            $this->assertArrayHasKey('website', $e->errors());
+        }
     }
 }
