@@ -133,4 +133,29 @@ class DealsTest extends TestCase
             'offer_id' => $offerFromOtherProfile->id,
         ]);
     }
+
+    public function test_owner_can_create_deal_when_offer_id_is_empty_string(): void
+    {
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        $this->actingAs($provider)
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => $client->email,
+                'offer_id' => '',
+                'status' => 'draft',
+                'currency' => 'UAH',
+                'agreed_price' => 100,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('deals', [
+            'business_profile_id' => $profile->id,
+            'client_user_id' => $client->id,
+            'offer_id' => null,
+            'status' => 'draft',
+        ]);
+    }
 }
