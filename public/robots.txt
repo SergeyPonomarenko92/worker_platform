@@ -1,2 +1,9 @@
 User-agent: *
-Disallow:
+Disallow: /dashboard/
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Allow: /
+
+# Note: sitemap will be added when we have a stable public domain.

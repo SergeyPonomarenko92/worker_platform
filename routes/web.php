@@ -17,6 +17,19 @@ Route::get('/', function () {
     return redirect()->route('catalog.index');
 });
 
+// Note: in production, `public/robots.txt` may be served directly by the web server.
+// We still register a route so that it works in Laravel feature tests and in setups
+// where the app handles all requests.
+Route::get('/robots.txt', function () {
+    $path = public_path('robots.txt');
+
+    return response(
+        file_exists($path) ? file_get_contents($path) : "User-agent: *\nDisallow:\n",
+        200,
+        ['Content-Type' => 'text/plain; charset=UTF-8']
+    );
+});
+
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/providers/{slug}', [ProviderController::class, 'show'])->name('providers.show');
 
