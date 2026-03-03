@@ -91,4 +91,12 @@ class QueryParamNormalizerTest extends TestCase
         // Support percent-encoded values pasted into query string.
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('https://example.test/catalog?provider=demo%2Dprovider'));
     }
+
+    #[Test]
+    public function it_returns_empty_provider_slug_for_null_or_whitespace_only(): void
+    {
+        $this->assertSame('', QueryParamNormalizer::providerSlug(null));
+        $this->assertSame('', QueryParamNormalizer::providerSlug(''));
+        $this->assertSame('', QueryParamNormalizer::providerSlug("\u{00A0}   \n\t"));
+    }
 }
