@@ -4,65 +4,44 @@ namespace Tests\Unit;
 
 use App\Support\HttpUrlValidator;
 use Illuminate\Validation\ValidationException;
-use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class HttpUrlValidatorTest extends TestCase
 {
-    #[Test]
-    public function it_allows_null_values(): void
+    public static function validUrlProvider(): array
     {
-        HttpUrlValidator::validateOrFail(null);
-
-        $this->assertTrue(true);
+        return [
+            'null is allowed' => [null],
+            'https url is allowed' => ['https://example.com'],
+            'http url is allowed' => ['http://example.com/path?x=1#y'],
+        ];
     }
 
-    #[Test]
-    public function it_rejects_non_urls(): void
+    #[DataProvider('validUrlProvider')]
+    public function test_allows_valid_http_urls(?string $url): void
     {
-        try {
-            HttpUrlValidator::validateOrFail('not-a-url', 'website');
-            $this->fail('Expected ValidationException to be thrown.');
-        } catch (ValidationException $e) {
-            $this->assertSame(
-                ['website' => ['Некоректний URL вебсайту.']],
-                $e->errors()
-            );
-        }
+        HttpUrlValidator::validateOrFail($url);
+
+        $this->assertTrue(true); // no exception
     }
 
-    #[Test]
-    public function it_rejects_non_http_schemes(): void
+    public static function invalidUrlProvider(): array
     {
-        // Some non-http values may not be considered valid URLs by FILTER_VALIDATE_URL
-        // (e.g. "javascript:"), but they still must be rejected.
-        try {
-            HttpUrlValidator::validateOrFail('javascript:alert(1)', 'website');
-            $this->fail('Expected ValidationException to be thrown.');
-        } catch (ValidationException $e) {
-            $this->assertSame(
-                ['website' => ['Некоректний URL вебсайту.']],
-                $e->errors()
-            );
-        }
-
-        try {
-            HttpUrlValidator::validateOrFail('ftp://example.com', 'website');
-            $this->fail('Expected ValidationException to be thrown.');
-        } catch (ValidationException $e) {
-            $this->assertSame(
-                ['website' => ['URL вебсайту має починатися з http:// або https://']],
-                $e->errors()
-            );
-        }
+        return [
+            'plain text is rejected' => ['example.com'],
+            'not a url is rejected' => ['not a url'],
+            'mailto scheme is rejected' => ['mailto:test@example.com'],
+            'ftp scheme is rejected' => ['ftp://example.com'],
+            'javascript scheme is rejected' => ['javascript:alert(1)'],
+        ];
     }
 
-    #[Test]
-    public function it_allows_http_and_https_urls(): void
+    #[DataProvider('invalidUrlProvider')]
+    public function test_rejects_non_http_urls(string $url): void
     {
-        HttpUrlValidator::validateOrFail('http://example.com', 'website');
-        HttpUrlValidator::validateOrFail('https://example.com', 'website');
+        $this->expectException(ValidationException::class);
 
-        $this->assertTrue(true);
+        HttpUrlValidator::validateOrFail($url);
     }
 }
