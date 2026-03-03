@@ -58,6 +58,10 @@ class QueryParamNormalizerTest extends TestCase
             'absolute providers url with query and hash' => ['https://example.test/providers/demo-provider?ref=catalog#offers', 'demo-provider'],
             'absolute providers url with trailing slash + hash' => ['https://example.test/providers/demo-provider/#offers', 'demo-provider'],
 
+            'catalog url with provider query param' => ['https://example.test/catalog?provider=demo-provider', 'demo-provider'],
+            'catalog url with provider query param (provider is providers url)' => ['https://example.test/catalog?provider=/providers/demo-provider', 'demo-provider'],
+            'relative catalog url with provider query param' => ['/catalog?provider=demo-provider', 'demo-provider'],
+
             'keeps internal whitespace out' => ["  /providers/DEMO-provider/  ", 'demo-provider'],
 
             'slug wrapped in parentheses' => ['(demo-provider)', 'demo-provider'],

@@ -94,6 +94,23 @@ class QueryParamNormalizer
             return '';
         }
 
+        // If a user pastes a catalog URL like:
+        // - "/catalog?provider=demo-provider"
+        // - "https://example.test/catalog?provider=demo-provider"
+        // prefer extracting the actual provider value from the query string.
+        // Without this, parse_url(..., PHP_URL_PATH) would turn it into "/catalog".
+        $parsedQuery = parse_url($providerInput, PHP_URL_QUERY);
+        if (is_string($parsedQuery) && $parsedQuery !== '') {
+            parse_str($parsedQuery, $query);
+
+            if (is_array($query) && isset($query['provider']) && is_string($query['provider'])) {
+                $fromQuery = self::text($query['provider']);
+                if ($fromQuery !== '') {
+                    $providerInput = $fromQuery;
+                }
+            }
+        }
+
         $providerSlug = $providerInput;
 
         // Strip query/hash fragments even when users paste a plain slug like
