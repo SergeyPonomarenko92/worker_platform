@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return redirect()->route('catalog.index');
+    return redirect()->route('catalog.index', request()->query());
 });
 
 // Note: in production, `public/robots.txt` may be served directly by the web server.
