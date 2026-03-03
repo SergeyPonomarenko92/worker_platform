@@ -30,6 +30,7 @@ class QueryParamNormalizerTest extends TestCase
             'collapses whitespace' => ["  a\t b\n c  ", 'a b c'],
             'collapses nbsp and narrow nbsp' => ["a\u{00A0}\u{202F}b", 'a b'],
             'collapses thin spaces' => ["a\u{2007}\u{2009}\u{200A}b", 'a b'],
+            'collapses other unicode spaces' => ["a\u{2000}\u{2001}\u{2002}\u{2003}\u{2004}\u{2005}\u{2006}\u{2008}\u{205F}\u{3000}b", 'a b'],
             'collapses zero width separators' => ["a\u{200B}\u{200C}\u{200D}\u{2060}\u{FEFF}b", 'a b'],
         ];
     }

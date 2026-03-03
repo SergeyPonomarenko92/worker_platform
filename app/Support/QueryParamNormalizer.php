@@ -18,16 +18,36 @@ class QueryParamNormalizer
         // Normalize common "non-breaking" and thin spaces that often appear when users copy/paste.
         // Do it BEFORE trim(), because PHP's trim() does not remove NBSP.
         // - NBSP (U+00A0)
+        // - EN quad (U+2000)
+        // - EM quad (U+2001)
+        // - EN space (U+2002)
+        // - EM space (U+2003)
+        // - Three-per-em space (U+2004)
+        // - Four-per-em space (U+2005)
+        // - Six-per-em space (U+2006)
         // - Figure space (U+2007)
+        // - Punctuation space (U+2008)
         // - Thin space (U+2009)
         // - Hair space (U+200A)
         // - Narrow no-break space (U+202F)
+        // - Medium mathematical space (U+205F)
+        // - Ideographic space (U+3000)
         $value = str_replace([
             "\u{00A0}",
+            "\u{2000}",
+            "\u{2001}",
+            "\u{2002}",
+            "\u{2003}",
+            "\u{2004}",
+            "\u{2005}",
+            "\u{2006}",
             "\u{2007}",
+            "\u{2008}",
             "\u{2009}",
             "\u{200A}",
             "\u{202F}",
+            "\u{205F}",
+            "\u{3000}",
         ], ' ', $value);
 
         // Normalize invisible separators that are not matched by trim() and can break search.
