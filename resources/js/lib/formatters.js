@@ -26,7 +26,14 @@ export const formatNumber = (value) => {
   // UX: users often type numbers with spaces ("10 000") or NBSP; normalize before parsing.
   // Keep non-numeric input as-is.
   const raw = typeof value === 'string' ? value.trim() : value
-  const normalized = typeof raw === 'string' ? raw.replace(/[\s\u00A0']/g, '') : raw
+
+  // Remove common thousands separators (spaces, NBSP, apostrophes).
+  // Also support comma as a decimal separator (common in uk-UA input).
+  let normalized = typeof raw === 'string' ? raw.replace(/[\s\u00A0']/g, '') : raw
+
+  if (typeof normalized === 'string' && normalized.includes(',') && !normalized.includes('.')) {
+    normalized = normalized.replace(',', '.')
+  }
 
   const num = Number(normalized)
   if (Number.isNaN(num)) return String(raw)
