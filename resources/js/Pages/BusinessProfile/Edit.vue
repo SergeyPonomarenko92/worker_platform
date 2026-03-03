@@ -84,13 +84,13 @@ const submit = () => {
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
                                 <InputLabel for="phone" value="Телефон" />
-                                <TextInput id="phone" v-model="form.phone" type="text" class="mt-1 block w-full" />
+                                <TextInput id="phone" v-model="form.phone" type="tel" inputmode="tel" autocomplete="tel" class="mt-1 block w-full" />
                                 <p class="mt-1 text-xs text-gray-500">Можна з пробілами: <span class="font-medium">+380 50 123 45 67</span>.</p>
                                 <InputError class="mt-2" :message="form.errors.phone" />
                             </div>
                             <div>
                                 <InputLabel for="website" value="Сайт" />
-                                <TextInput id="website" v-model="form.website" type="text" class="mt-1 block w-full" />
+                                <TextInput id="website" v-model="form.website" type="url" inputmode="url" autocomplete="url" class="mt-1 block w-full" />
                                 <p class="mt-1 text-xs text-gray-500">Можна без протоколу: <span class="font-medium">example.com</span> (додамо https:// автоматично).</p>
                                 <InputError class="mt-2" :message="form.errors.website" />
                             </div>
