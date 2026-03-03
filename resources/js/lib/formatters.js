@@ -65,6 +65,9 @@ export const normalizeWebsite = (raw) => {
   const v = String(raw || '').trim()
   if (!v) return ''
 
+  // Some values may be protocol-relative ("//example.com") — normalize to https.
+  if (v.startsWith('//')) return `https:${v}`
+
   // Be robust to different casing (e.g. "HTTP://...") coming from backend normalization.
   if (/^https?:\/\//i.test(v)) return v
 
