@@ -27,6 +27,38 @@ class BusinessProfileCountryCodeNormalizationTest extends TestCase
         $this->assertSame('UA', $profile->country_code);
     }
 
+    public function test_business_profile_country_code_strips_non_letters_and_whitespace_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'country_code' => " u a! ",
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertSame('UA', $profile->country_code);
+    }
+
+    public function test_business_profile_country_code_takes_first_two_letters_when_more_provided(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'country_code' => ' usa ',
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertSame('US', $profile->country_code);
+    }
+
     public function test_empty_business_profile_country_code_falls_back_to_ua_on_store(): void
     {
         $user = User::factory()->create();

@@ -44,7 +44,16 @@ class BusinessProfileController extends Controller
             return 'UA';
         }
 
-        return strtoupper($v);
+        // Robustness: accept inputs like "u a", "UA!", "USA" etc.
+        // Keep only ASCII letters and take the first two characters.
+        $v = preg_replace('/[^A-Za-z]/', '', $v) ?? '';
+        $v = strtoupper($v);
+
+        if (strlen($v) < 2) {
+            return 'UA';
+        }
+
+        return substr($v, 0, 2);
     }
 
     private function uniqueSlug(string $name, ?int $ignoreId = null): string
@@ -96,7 +105,8 @@ class BusinessProfileController extends Controller
         return [
             'name' => ['required', 'string', 'max:255'],
             'about' => ['nullable', 'string', 'max:5000'],
-            'country_code' => ['nullable', 'string', 'max:2'],
+            // Allow a bit more input length, because we normalize to ISO-3166 alpha-2 anyway (e.g. "u a", "USA").
+            'country_code' => ['nullable', 'string', 'max:20'],
             'city' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
