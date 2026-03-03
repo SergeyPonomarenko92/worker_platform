@@ -8,6 +8,21 @@ use Tests\TestCase;
 
 class SitemapXmlTest extends TestCase
 {
+    public function test_it_serves_sitemap_xml_even_when_there_is_no_content_yet(): void
+    {
+        $response = $this->get('/sitemap.xml');
+
+        $response
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
+            ->assertHeader('Cache-Control', 'max-age=300, public')
+            ->assertSee('<urlset', false)
+            ->assertSee(url('/catalog'), false);
+
+        // With an empty DB, lastmod may be omitted.
+        $response->assertDontSee('<lastmod>', false);
+    }
+
     public function test_it_serves_sitemap_xml_with_absolute_urls(): void
     {
         $provider = BusinessProfile::factory()->create([
