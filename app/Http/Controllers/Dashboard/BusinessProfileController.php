@@ -120,7 +120,7 @@ class BusinessProfileController extends Controller
         $profiles = $request->user()
             ->businessProfiles()
             ->latest()
-            ->get();
+            ->get(['id', 'name', 'slug', 'is_active']);
 
         return Inertia::render('BusinessProfiles/Index', [
             'profiles' => $profiles,
