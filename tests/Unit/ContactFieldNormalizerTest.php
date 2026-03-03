@@ -58,6 +58,9 @@ class ContactFieldNormalizerTest extends TestCase
 
             'keeps phone as-is (after normalization)' => ['+380 50 123 45 67', '+380 50 123 45 67'],
             'trims and collapses whitespace' => ["  +380\t50\n123  ", '+380 50 123'],
+
+            'returns null when no digits are provided' => ['+', null],
+            'returns null when only punctuation is provided' => ['---', null],
         ];
     }
 }

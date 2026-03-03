@@ -43,6 +43,12 @@ class ContactFieldNormalizer
             return null;
         }
 
+        // UX/robustness: if after normalization there are no digits at all,
+        // treat it as empty (e.g. user accidentally types only "+" or "-" etc.).
+        if (preg_match('/\d/', $v) !== 1) {
+            return null;
+        }
+
         return $v;
     }
 }
