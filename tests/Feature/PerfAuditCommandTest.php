@@ -7,6 +7,17 @@ use Tests\TestCase;
 
 class PerfAuditCommandTest extends TestCase
 {
+    public function test_perf_audit_list_option_prints_available_queries_and_exits_successfully(): void
+    {
+        $this->artisan('perf:audit --list')
+            ->expectsOutputToContain('Perf audit helper')
+            ->expectsOutputToContain('Available queries:')
+            ->expectsOutputToContain('catalog:newest')
+            ->expectsOutputToContain('provider:offers')
+            ->expectsOutputToContain('Tip: for more context see docs/perf-audit.md')
+            ->assertSuccessful();
+    }
+
     public function test_perf_audit_explain_is_gracefully_disabled_on_non_pgsql(): void
     {
         // In the test environment we typically use sqlite. The command should not crash
