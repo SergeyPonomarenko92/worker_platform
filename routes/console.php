@@ -112,6 +112,19 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
             ->whereHas('businessProfile', fn ($bp) => $bp->active()->where('slug', $providerSlug))
             ->latest('reviews.created_at')
             ->limit(20),
+
+        // Mirrors ProviderController@show eligibleDealId lookup.
+        // Useful to sanity-check indexes for the "leave a review" CTA.
+        'provider:eligible_deal' => \App\Models\Deal::query()
+            ->select('deals.id')
+            ->whereHas('businessProfile', fn ($bp) => $bp->active()->where('slug', $providerSlug))
+            ->where('deals.client_user_id', 1)
+            ->where('deals.status', 'completed')
+            ->whereNotNull('deals.completed_at')
+            ->where('deals.completed_at', '<=', now())
+            ->whereDoesntHave('review')
+            ->latest('deals.completed_at')
+            ->limit(1),
     ];
 
     $queries = $allQueries;

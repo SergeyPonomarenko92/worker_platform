@@ -183,6 +183,30 @@ LIMIT 6;
 Очікуємо:
 - індекс на `(business_profile_id, published_at)` або еквівалент
 
+### 4.3 Provider show: eligible deal lookup (CTA “залишити відгук”)
+
+> Це запит, який використовується, щоб показати клієнту CTA на відгук (якщо є завершена угода без review).
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT d.id
+FROM deals d
+JOIN business_profiles bp ON bp.id = d.business_profile_id
+WHERE bp.slug = 'demo-provider'
+  AND bp.is_active = true
+  AND d.client_user_id = 123
+  AND d.status = 'completed'
+  AND d.completed_at IS NOT NULL
+  AND d.completed_at <= now()
+  AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.deal_id = d.id)
+ORDER BY d.completed_at DESC
+LIMIT 1;
+```
+
+Очікуємо:
+- індекс під `(business_profile_id, client_user_id, status, completed_at)` або еквівалент
+- швидкий anti-join по `reviews.deal_id`
+
 ---
 
 ## 5) Коли достатньо тестів, а коли треба EXPLAIN
