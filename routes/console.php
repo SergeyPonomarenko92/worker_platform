@@ -9,11 +9,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)}', function () {
+Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)}', function () {
     $connection = DB::connection();
     $driver = (string) $connection->getDriverName();
 
     $providerSlug = (string) $this->option('provider');
+    $clientUserId = (int) $this->option('client');
     $cityPrefix = (string) $this->option('city');
     $priceFrom = (int) $this->option('price_from');
     $includeNoPrice = (bool) ((int) $this->option('include_no_price'));
@@ -118,7 +119,7 @@ Artisan::command('perf:audit {--explain : Run EXPLAIN for the sample queries (Po
         'provider:eligible_deal' => \App\Models\Deal::query()
             ->select('deals.id')
             ->whereHas('businessProfile', fn ($bp) => $bp->active()->where('slug', $providerSlug))
-            ->where('deals.client_user_id', 1)
+            ->where('deals.client_user_id', $clientUserId)
             ->where('deals.status', 'completed')
             ->whereNotNull('deals.completed_at')
             ->where('deals.completed_at', '<=', now())

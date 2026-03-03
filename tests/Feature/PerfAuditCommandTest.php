@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class PerfAuditCommandTest extends TestCase
@@ -62,5 +63,21 @@ class PerfAuditCommandTest extends TestCase
             ->expectsOutputToContain('Available queries:')
             ->expectsOutputToContain('catalog:newest')
             ->assertFailed();
+    }
+
+    public function test_perf_audit_client_option_affects_provider_eligible_deal_bindings(): void
+    {
+        $exitCode = Artisan::call('perf:audit', [
+            '--only' => 'provider:eligible_deal',
+            '--client' => 42,
+        ]);
+
+        $this->assertSame(0, $exitCode);
+
+        $output = Artisan::output();
+
+        $this->assertStringContainsString('provider:eligible_deal', $output);
+        $this->assertStringContainsString('Bindings:', $output);
+        $this->assertStringContainsString('42', $output);
     }
 }
