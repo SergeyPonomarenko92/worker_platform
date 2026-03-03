@@ -2,17 +2,39 @@
 
 namespace Tests\Feature;
 
+use App\Models\BusinessProfile;
 use Tests\TestCase;
 
 class SitemapXmlTest extends TestCase
 {
-    public function test_it_serves_sitemap_xml(): void
+    public function test_it_serves_sitemap_xml_with_absolute_urls(): void
     {
+        $provider = BusinessProfile::factory()->create([
+            'slug' => 'demo-provider-for-sitemap',
+            'is_active' => true,
+        ]);
+
         $response = $this->get('/sitemap.xml');
 
-        $response->assertOk();
-        $response->assertHeader('Content-Type', 'application/xml; charset=UTF-8');
-        $response->assertSee('<?xml', false);
-        $response->assertSee('<urlset', false);
+        $response
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
+            ->assertSee('<urlset', false)
+            ->assertSee(url('/catalog'), false)
+            ->assertSee(url('/providers/'.$provider->slug), false);
+    }
+
+    public function test_it_does_not_include_inactive_providers(): void
+    {
+        BusinessProfile::factory()->create([
+            'slug' => 'inactive-provider-for-sitemap',
+            'is_active' => false,
+        ]);
+
+        $response = $this->get('/sitemap.xml');
+
+        $response
+            ->assertOk()
+            ->assertDontSee('inactive-provider-for-sitemap');
     }
 }

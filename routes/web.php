@@ -32,16 +32,49 @@ Route::get('/robots.txt', function () {
 
 // Note: we serve sitemap via a route for the same reasons as robots.txt (tests + setups
 // where the app handles all requests).
+//
+// IMPORTANT: sitemap <loc> values must be absolute URLs. Static files in public/
+// cannot reliably embed APP_URL, so we generate the sitemap dynamically.
 Route::get('/sitemap.xml', function () {
-    $path = public_path('sitemap.xml');
+    $urls = [];
 
-    abort_unless(file_exists($path), 404);
+    $urls[] = [
+        'loc' => url('/catalog'),
+        'lastmod' => null,
+    ];
 
-    return response(
-        file_get_contents($path),
-        200,
-        ['Content-Type' => 'application/xml; charset=UTF-8']
-    );
+    $providers = \App\Models\BusinessProfile::query()
+        ->where('is_active', true)
+        ->select(['slug', 'updated_at'])
+        ->orderByDesc('updated_at')
+        ->get();
+
+    foreach ($providers as $provider) {
+        $urls[] = [
+            'loc' => url('/providers/'.$provider->slug),
+            'lastmod' => optional($provider->updated_at)->toDateString(),
+        ];
+    }
+
+    $escape = static fn (string $value): string => htmlspecialchars($value, ENT_XML1 | ENT_COMPAT, 'UTF-8');
+
+    $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    $xml .= "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+
+    foreach ($urls as $item) {
+        $xml .= "  <url>\n";
+        $xml .= '    <loc>'.$escape($item['loc'])."</loc>\n";
+
+        if (! empty($item['lastmod'])) {
+            $xml .= '    <lastmod>'.$escape($item['lastmod'])."</lastmod>\n";
+        }
+
+        $xml .= "  </url>\n";
+    }
+
+    $xml .= "</urlset>\n";
+
+    return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
 });
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
