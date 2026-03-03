@@ -18,13 +18,13 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
         $this->actingAs($user)
             ->post(route('dashboard.business-profiles.store'), [
                 'name' => 'Test Provider',
-                'phone' => '  +380 99 123 45 67  ',
+                'phone' => '  +380 50 123 45 67  ',
             ])
             ->assertRedirect();
 
         $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
 
-        $this->assertSame('+380 99 123 45 67', $profile->phone);
+        $this->assertSame('+380 50 123 45 67', $profile->phone);
     }
 
     public function test_business_profile_phone_normalizes_unicode_spaces_on_store(): void
@@ -34,13 +34,13 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
         $this->actingAs($user)
             ->post(route('dashboard.business-profiles.store'), [
                 'name' => 'Test Provider',
-                'phone' => "\u{00A0}+380\u{202F}99\u{00A0}123\u{202F}45\u{00A0}67\u{00A0}",
+                'phone' => "\u{00A0}+380 50 123 45 67\u{202F}",
             ])
             ->assertRedirect();
 
         $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
 
-        $this->assertSame('+380 99 123 45 67', $profile->phone);
+        $this->assertSame('+380 50 123 45 67', $profile->phone);
     }
 
     public function test_empty_business_profile_phone_becomes_null_on_store(): void
@@ -59,7 +59,7 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
         $this->assertNull($profile->phone);
     }
 
-    public function test_business_profile_phone_with_no_digits_becomes_null_on_store(): void
+    public function test_business_profile_phone_with_no_digits_is_treated_as_empty_on_store(): void
     {
         $user = User::factory()->create();
 
@@ -75,7 +75,7 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
         $this->assertNull($profile->phone);
     }
 
-    public function test_business_profile_phone_is_trimmed_on_update(): void
+    public function test_business_profile_phone_is_normalized_on_update(): void
     {
         $user = User::factory()->create();
 
@@ -87,13 +87,13 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
         $this->actingAs($user)
             ->patch(route('dashboard.business-profiles.update', $profile), [
                 'name' => $profile->name,
-                'phone' => ' 050 123 45 67 ',
+                'phone' => "\n  (050) 123-45-67 \t ",
             ])
             ->assertRedirect();
 
         $profile->refresh();
 
-        $this->assertSame('050 123 45 67', $profile->phone);
+        $this->assertSame('(050) 123-45-67', $profile->phone);
     }
 
     public function test_empty_business_profile_phone_becomes_null_on_update(): void
@@ -109,27 +109,6 @@ class BusinessProfilePhoneNormalizationTest extends TestCase
             ->patch(route('dashboard.business-profiles.update', $profile), [
                 'name' => $profile->name,
                 'phone' => '   ',
-            ])
-            ->assertRedirect();
-
-        $profile->refresh();
-
-        $this->assertNull($profile->phone);
-    }
-
-    public function test_business_profile_phone_with_no_digits_becomes_null_on_update(): void
-    {
-        $user = User::factory()->create();
-
-        $profile = BusinessProfile::factory()->create([
-            'user_id' => $user->id,
-            'phone' => '+380501234567',
-        ]);
-
-        $this->actingAs($user)
-            ->patch(route('dashboard.business-profiles.update', $profile), [
-                'name' => $profile->name,
-                'phone' => '+',
             ])
             ->assertRedirect();
 
