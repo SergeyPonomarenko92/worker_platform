@@ -36,4 +36,27 @@ class QueryParamNormalizerTest extends TestCase
         $this->assertSame('', QueryParamNormalizer::text(null));
         $this->assertSame('', QueryParamNormalizer::text("\u{00A0}   \n\t"));
     }
+
+    #[Test]
+    public function it_normalizes_provider_slug_from_plain_or_url_inputs(): void
+    {
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('demo-provider'));
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('demo-provider/'));
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('/providers/demo-provider/'));
+
+        $this->assertSame(
+            'demo-provider',
+            QueryParamNormalizer::providerSlug('https://example.test/providers/DEMO-provider?ref=catalog#offers')
+        );
+
+        // When users paste a catalog URL with provider in the query string,
+        // extract and normalize the actual provider value.
+        $this->assertSame(
+            'demo-provider',
+            QueryParamNormalizer::providerSlug('https://example.test/catalog?provider=demo-provider')
+        );
+
+        // Be robust to extra punctuation/quotes around a pasted slug.
+        $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('("demo-provider"),'));
+    }
 }
