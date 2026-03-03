@@ -190,7 +190,10 @@ onMounted(() => {
         <div>
           <div class="text-sm text-gray-500">Провайдер</div>
           <h1 class="text-2xl font-semibold">{{ provider.name }}</h1>
-          <div v-if="provider.city" class="mt-1 text-sm text-gray-600">{{ provider.city }}, {{ provider.country_code }}</div>
+          <div v-if="provider.city" class="mt-1 text-sm text-gray-600">
+            <span v-if="provider.country_code">{{ provider.city }}, {{ provider.country_code }}</span>
+            <span v-else>{{ provider.city }}</span>
+          </div>
 
           <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600">
             <button
