@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
+Artisan::command('perf:audit {--list : List available sample queries and exit} {--explain : Run EXPLAIN for the sample queries (Postgres only)} {--analyze : Use EXPLAIN (ANALYZE, BUFFERS) (implies --explain)} {--only= : Filter queries by group (catalog|provider) or by name (comma-separated, e.g. catalog:newest,provider:offers)} {--provider=demo-provider : Provider slug for provider-show queries} {--client=1 : Client user id for provider:eligible_deal query} {--category_id=1 : Category id for the catalog:category_tree query} {--city=ки : City prefix for the catalog:city_prefix query (case-insensitive)} {--price_from=100 : Min price bound for the catalog:price_range query} {--include_no_price=1 : Include offers with no price in the catalog:price_range query (0/1)} {--limit= : Override LIMIT for list-style queries (keeps provider:eligible_deal at 1)}', function () {
     $connection = DB::connection();
     $driver = (string) $connection->getDriverName();
 
@@ -17,6 +17,7 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
 
     $providerSlug = (string) $this->option('provider');
     $clientUserId = (int) $this->option('client');
+    $categoryId = (int) $this->option('category_id');
     $cityPrefix = (string) $this->option('city');
     $priceFrom = (int) $this->option('price_from');
     $includeNoPrice = (bool) ((int) $this->option('include_no_price'));
@@ -46,6 +47,25 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
     $prefix = $analyze ? 'EXPLAIN (ANALYZE, BUFFERS) ' : 'EXPLAIN ';
 
     $allQueries = [
+        // Recursive category tree CTE used by /catalog category filter.
+        // Useful for EXPLAIN-ing index usage on categories.parent_id.
+        'catalog:category_tree' => DB::query()
+            ->select('id')
+            ->fromRaw(
+                <<<SQL
+                (
+                    with recursive category_tree as (
+                        select id from categories where id = ?
+                        union all
+                        select c.id from categories c
+                        join category_tree ct on c.parent_id = ct.id
+                    )
+                    select id from category_tree
+                ) as category_tree
+                SQL,
+                [$categoryId]
+            ),
+
         'catalog:newest' => Offer::query()
             ->select('offers.id')
             ->active()

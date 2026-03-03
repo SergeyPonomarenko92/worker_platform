@@ -1,5 +1,8 @@
 # Perf audit playbook (Postgres)
 
+> Quick add-on: `/catalog` uses a recursive CTE for category descendants.
+> You can EXPLAIN it via `php artisan perf:audit --only=catalog:category_tree --category_id=<id>`.
+
 Цей документ — «шпаргалка» для швидкої перевірки, що **публічні сторінки** не деградують по перфомансу і не з’являються **N+1** після змін.
 
 Сторінки, які мають бути стабільними:
