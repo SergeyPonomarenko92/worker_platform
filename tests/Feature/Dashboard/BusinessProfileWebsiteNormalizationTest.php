@@ -112,6 +112,27 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
         $this->assertSame('https://foo.test', $profile->website);
     }
 
+    public function test_business_profile_website_normalizes_protocol_relative_url_on_update(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+            'website' => null,
+        ]);
+
+        $this->actingAs($user)
+            ->patch(route('dashboard.business-profiles.update', $profile), [
+                'name' => $profile->name,
+                'website' => '//example.com',
+            ])
+            ->assertRedirect();
+
+        $profile->refresh();
+
+        $this->assertSame('https://example.com', $profile->website);
+    }
+
     public function test_business_profile_website_adds_https_on_update_when_scheme_is_missing(): void
     {
         $user = User::factory()->create();
