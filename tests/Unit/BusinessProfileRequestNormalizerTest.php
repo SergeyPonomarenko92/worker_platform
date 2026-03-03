@@ -33,6 +33,9 @@ class BusinessProfileRequestNormalizerTest extends TestCase
         // Extra letters should be ignored after the first 2
         $this->assertSame('US', BusinessProfileRequestNormalizer::countryCode('USA'));
 
+        // Any longer input should still collapse to 2 letters.
+        $this->assertSame('FR', BusinessProfileRequestNormalizer::countryCode('FRANCE'));
+
         // Mixed punctuation and casing
         $this->assertSame('PL', BusinessProfileRequestNormalizer::countryCode('p-l'));
         $this->assertSame('DE', BusinessProfileRequestNormalizer::countryCode('De'));

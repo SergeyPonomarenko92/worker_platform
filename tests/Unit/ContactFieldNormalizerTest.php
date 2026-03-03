@@ -39,6 +39,9 @@ class ContactFieldNormalizerTest extends TestCase
     {
         $this->assertSame('http://example.com', ContactFieldNormalizer::website('http://example.com'));
         $this->assertSame('https://example.com', ContactFieldNormalizer::website('https://example.com'));
+
+        // Robustness: do not change casing.
+        $this->assertSame('HTTPS://EXAMPLE.COM', ContactFieldNormalizer::website('HTTPS://EXAMPLE.COM'));
     }
 
     #[Test]
@@ -46,6 +49,16 @@ class ContactFieldNormalizerTest extends TestCase
     {
         $this->assertSame('mailto:test@example.com', ContactFieldNormalizer::website('mailto:test@example.com'));
         $this->assertSame('ftp://example.com', ContactFieldNormalizer::website('ftp://example.com'));
+    }
+
+    #[Test]
+    public function website_does_not_strip_punctuation_when_a_path_is_present(): void
+    {
+        // If a path is present, do not strip trailing punctuation, because it can be meaningful.
+        $this->assertSame('https://example.com/path,', ContactFieldNormalizer::website('https://example.com/path,'));
+
+        // But for scheme-less inputs, we still prefix https.
+        $this->assertSame('https://example.com/path,', ContactFieldNormalizer::website('example.com/path,'));
     }
 
     #[Test]
@@ -58,6 +71,7 @@ class ContactFieldNormalizerTest extends TestCase
         // No digits at all.
         $this->assertNull(ContactFieldNormalizer::phone('+'));
         $this->assertNull(ContactFieldNormalizer::phone('---'));
+        $this->assertNull(ContactFieldNormalizer::phone(' ( ) '));
     }
 
     #[Test]
