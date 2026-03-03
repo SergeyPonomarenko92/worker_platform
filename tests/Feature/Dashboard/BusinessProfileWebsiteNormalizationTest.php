@@ -229,4 +229,36 @@ class BusinessProfileWebsiteNormalizationTest extends TestCase
 
         $this->assertSame('https://already.test', $profile->website);
     }
+
+    public function test_business_profile_website_keeps_path_when_adding_scheme_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => 'example.com/path',
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertSame('https://example.com/path', $profile->website);
+    }
+
+    public function test_business_profile_website_trims_and_collapses_whitespace_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.business-profiles.store'), [
+                'name' => 'Test Provider',
+                'website' => "  example.com\n ",
+            ])
+            ->assertRedirect();
+
+        $profile = BusinessProfile::query()->where('user_id', $user->id)->firstOrFail();
+
+        $this->assertSame('https://example.com', $profile->website);
+    }
 }
