@@ -11,6 +11,8 @@ This repo ships with an artisan helper that prints the exact SQL produced by Elo
 php artisan perf:audit --list
 php artisan perf:audit
 php artisan perf:audit --only=catalog      # all catalog queries
+php artisan perf:audit --only=catalog:price_asc
+php artisan perf:audit --only=catalog:price_desc
 php artisan perf:audit --only=provider     # all provider show queries
 php artisan perf:audit --only=provider:eligible_deal
 php artisan perf:audit --explain

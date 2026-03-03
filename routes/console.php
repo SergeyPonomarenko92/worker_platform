@@ -184,6 +184,22 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
             ->latest('offers.created_at')
             ->limit(20),
 
+        // Mirrors the sort=price_asc option in /catalog (NULL prices last).
+        'catalog:price_asc' => Offer::query()
+            ->select('offers.id')
+            ->active()
+            ->whereHas('businessProfile', fn ($bp) => $bp->active())
+            ->orderByRaw('price_from is null asc, price_from asc')
+            ->limit(20),
+
+        // Mirrors the sort=price_desc option in /catalog (NULL prices last).
+        'catalog:price_desc' => Offer::query()
+            ->select('offers.id')
+            ->active()
+            ->whereHas('businessProfile', fn ($bp) => $bp->active())
+            ->orderByRaw('price_from is null asc, price_from desc')
+            ->limit(20),
+
         // Mirrors provider show offers block.
         'provider:offers' => Offer::query()
             ->select('offers.id')

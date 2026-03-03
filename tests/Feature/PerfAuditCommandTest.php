@@ -14,6 +14,8 @@ class PerfAuditCommandTest extends TestCase
             ->expectsOutputToContain('Available queries:')
             ->expectsOutputToContain('catalog:newest')
             ->expectsOutputToContain('catalog:q_search')
+            ->expectsOutputToContain('catalog:price_asc')
+            ->expectsOutputToContain('catalog:price_desc')
             ->expectsOutputToContain('provider:offers')
             ->expectsOutputToContain('Tip: for more context see docs/perf-audit.md')
             ->assertSuccessful();
