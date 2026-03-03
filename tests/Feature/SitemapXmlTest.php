@@ -12,6 +12,7 @@ class SitemapXmlTest extends TestCase
         $provider = BusinessProfile::factory()->create([
             'slug' => 'demo-provider-for-sitemap',
             'is_active' => true,
+            'updated_at' => now()->subDays(2),
         ]);
 
         $response = $this->get('/sitemap.xml');
@@ -22,7 +23,8 @@ class SitemapXmlTest extends TestCase
             ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertSee('<urlset', false)
             ->assertSee(url('/catalog'), false)
-            ->assertSee(url('/providers/'.$provider->slug), false);
+            ->assertSee(url('/providers/'.$provider->slug), false)
+            ->assertSee('<lastmod>'.$provider->updated_at->toDateString().'</lastmod>', false);
     }
 
     public function test_it_does_not_include_inactive_providers(): void
