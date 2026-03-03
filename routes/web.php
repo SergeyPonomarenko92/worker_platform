@@ -33,7 +33,9 @@ Route::get('/robots.txt', function () {
         $contents = rtrim($contents)."\n\n".'Sitemap: '.url('/sitemap.xml')."\n";
     }
 
-    return response($contents, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+    return response($contents, 200, ['Content-Type' => 'text/plain; charset=UTF-8'])
+        // Safe caching: robots.txt changes rarely, but allow quick iteration.
+        ->header('Cache-Control', 'max-age=300, public');
 });
 
 // Note: we serve sitemap via a route for the same reasons as robots.txt (tests + setups
@@ -80,7 +82,9 @@ Route::get('/sitemap.xml', function () {
 
     $xml .= "</urlset>\n";
 
-    return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
+    return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8'])
+        // Safe caching: sitemap may update on provider changes; keep TTL modest.
+        ->header('Cache-Control', 'max-age=300, public');
 });
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');

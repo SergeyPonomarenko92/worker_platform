@@ -13,6 +13,7 @@ class RobotsTxtTest extends TestCase
         $response
             ->assertOk()
             ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertSee("User-agent: *")
             ->assertSee('Disallow: /dashboard/')
             ->assertSee('Disallow: /login')

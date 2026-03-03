@@ -19,6 +19,7 @@ class SitemapXmlTest extends TestCase
         $response
             ->assertOk()
             ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertSee('<urlset', false)
             ->assertSee(url('/catalog'), false)
             ->assertSee(url('/providers/'.$provider->slug), false);
