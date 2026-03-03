@@ -23,6 +23,14 @@ class QueryParamNormalizerTest extends TestCase
     }
 
     #[Test]
+    public function it_treats_mongolian_vowel_separator_as_a_space(): void
+    {
+        $input = "hello\u{180E}world";
+
+        $this->assertSame('hello world', QueryParamNormalizer::text($input));
+    }
+
+    #[Test]
     public function it_removes_invisible_separators_without_concatenating_words(): void
     {
         $input = "hello\u{200B}world\u{2060}again"; // zero-width space + word joiner

@@ -18,6 +18,7 @@ class QueryParamNormalizer
         // Normalize common "non-breaking" and thin spaces that often appear when users copy/paste.
         // Do it BEFORE trim(), because PHP's trim() does not remove NBSP.
         // - NBSP (U+00A0)
+        // - Mongolian vowel separator (U+180E)
         // - EN quad (U+2000)
         // - EM quad (U+2001)
         // - EN space (U+2002)
@@ -34,6 +35,8 @@ class QueryParamNormalizer
         // - Ideographic space (U+3000)
         $value = str_replace([
             "\u{00A0}",
+            // Mongolian vowel separator (deprecated but still appears in some copy/paste flows).
+            "\u{180E}",
             "\u{2000}",
             "\u{2001}",
             "\u{2002}",
