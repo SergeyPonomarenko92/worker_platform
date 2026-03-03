@@ -112,6 +112,12 @@ class QueryParamNormalizer
         }
 
         // Allow pasted values like "demo-provider/" or "/providers/demo-provider/".
+
+        // Users may paste the slug wrapped in punctuation or quotes,
+        // e.g. "(demo-provider)", "\"demo-provider\"", "demo-provider,".
+        // Keep this trimming conservative: strip only common outer punctuation.
+        $providerSlug = trim($providerSlug, "/ \t\n\r\0\x0B\"'.,;:()[]{}<>");
+
         $providerSlug = trim($providerSlug, '/');
 
         return mb_strtolower($providerSlug, 'UTF-8');

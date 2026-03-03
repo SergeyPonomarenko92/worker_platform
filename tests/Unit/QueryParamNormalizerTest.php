@@ -59,6 +59,11 @@ class QueryParamNormalizerTest extends TestCase
             'absolute providers url with trailing slash + hash' => ['https://example.test/providers/demo-provider/#offers', 'demo-provider'],
 
             'keeps internal whitespace out' => ["  /providers/DEMO-provider/  ", 'demo-provider'],
+
+            'slug wrapped in parentheses' => ['(demo-provider)', 'demo-provider'],
+            'slug wrapped in quotes' => ['"demo-provider"', 'demo-provider'],
+            'slug with trailing punctuation' => ['demo-provider,', 'demo-provider'],
+            'providers url wrapped in punctuation' => ['(https://example.test/providers/demo-provider/)', 'demo-provider'],
         ];
     }
 }
