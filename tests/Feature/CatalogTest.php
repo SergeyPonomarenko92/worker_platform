@@ -229,8 +229,8 @@ class CatalogTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
-                ->where('filters.price_from', '100')
-                ->where('filters.price_to', '500')
+                ->where('filters.price_from', 100)
+                ->where('filters.price_to', 500)
                 ->has('offers.data', 1)
                 ->where('offers.data.0.title', 'Cheap offer')
             );
@@ -599,6 +599,40 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_accepts_formatted_price_bounds_with_unicode_whitespace(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => '500 offer',
+            'is_active' => true,
+            'price_from' => 500,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => '1500 offer',
+            'is_active' => true,
+            'price_from' => 1500,
+        ]);
+
+        $priceFrom = rawurlencode("1\u{00A0}000"); // 1 NBSP 000
+        $priceTo = rawurlencode("2\u{202F}000"); // 2 narrow NBSP 000
+
+        $this
+            ->get('/catalog?price_from='.$priceFrom.'&price_to='.$priceTo)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.price_from', 1000)
+                ->where('filters.price_to', 2000)
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', '1500 offer')
+            );
+    }
+
     public function test_catalog_can_include_offers_without_price_when_filtering_by_price(): void
     {
         $this->seedOffersForPriceFiltering();
@@ -804,7 +838,7 @@ class CatalogTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->where('filters.category_id', (string) $parent->id)
-                ->where('filters.price_from', '150')
+                ->where('filters.price_from', 150)
                 ->where('filters.sort', 'price_desc')
                 ->has('offers.data', 2)
                 ->where('offers.data.0.title', 'Parent 300')

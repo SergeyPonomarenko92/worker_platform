@@ -9,6 +9,24 @@ use Tests\TestCase;
 class QueryParamNormalizerTest extends TestCase
 {
     #[Test]
+    public function it_normalizes_unsigned_int_from_formatted_numbers(): void
+    {
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt('1000'));
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt('1 000'));
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1\u{00A0}000"));
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1\u{202F}000"));
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1'000"));
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1’000"));
+
+        $this->assertNull(QueryParamNormalizer::unsignedInt(null));
+        $this->assertNull(QueryParamNormalizer::unsignedInt(''));
+        $this->assertNull(QueryParamNormalizer::unsignedInt("\u{00A0}  \n\t"));
+        $this->assertNull(QueryParamNormalizer::unsignedInt('abc'));
+        $this->assertNull(QueryParamNormalizer::unsignedInt('10-00'));
+        $this->assertNull(QueryParamNormalizer::unsignedInt('-1'));
+    }
+
+    #[Test]
     public function it_trims_and_collapses_whitespace(): void
     {
         $this->assertSame('hello world', QueryParamNormalizer::text("  hello\n\t  world  "));

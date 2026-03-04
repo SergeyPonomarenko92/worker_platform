@@ -15,7 +15,20 @@ class CatalogController extends Controller
     {
         // Public page: be tolerant to malformed/invalid query params.
         // We'll keep only valid values and ignore the rest (no validation redirects).
-        $validator = Validator::make($request->all(), [
+        $input = $request->all();
+
+        // Be tolerant to formatted numbers in query string (copy/paste from UI):
+        // e.g. "1 000", "1\u00A0000".
+        foreach (['price_from', 'price_to'] as $key) {
+            if (isset($input[$key]) && is_string($input[$key])) {
+                $normalized = \App\Support\QueryParamNormalizer::unsignedInt($input[$key]);
+                if (! is_null($normalized)) {
+                    $input[$key] = $normalized;
+                }
+            }
+        }
+
+        $validator = Validator::make($input, [
             'type' => ['nullable', 'in:service,product'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'city' => ['nullable', 'string', 'max:255'],

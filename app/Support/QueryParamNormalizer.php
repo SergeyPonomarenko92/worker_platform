@@ -168,4 +168,38 @@ class QueryParamNormalizer
 
         return mb_strtolower($providerSlug, 'UTF-8');
     }
+
+    /**
+     * Normalize an integer-like query param that may contain formatting separators.
+     *
+     * Examples (should become 1000):
+     * - "1 000"
+     * - "1\u00A0000" (NBSP)
+     * - "1\u202F000" (narrow no-break space)
+     * - "1'000" (apostrophe)
+     *
+     * Returns null when the value is empty or not an unsigned integer.
+     */
+    public static function unsignedInt(?string $input): ?int
+    {
+        $value = self::text($input);
+
+        if ($value === '') {
+            return null;
+        }
+
+        // Allow common thousands separators.
+        // We normalize unicode whitespace in text() already, so only plain spaces remain.
+        $value = str_replace([' ', "'", "’", 'ʼ'], '', $value);
+
+        if ($value === '') {
+            return null;
+        }
+
+        if (preg_match('/^\d+$/', $value) !== 1) {
+            return null;
+        }
+
+        return (int) $value;
+    }
 }
