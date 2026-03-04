@@ -34,6 +34,20 @@ class ContactFieldNormalizerTest extends TestCase
     }
 
     #[Test]
+    public function website_converts_protocol_relative_urls_even_with_unicode_whitespace_around(): void
+    {
+        $this->assertSame(
+            'https://example.com',
+            ContactFieldNormalizer::website("\u{00A0}  //example.com\u{202F} ")
+        );
+
+        $this->assertSame(
+            'https://example.com/path',
+            ContactFieldNormalizer::website("\n\t//example.com/path\u{00A0}")
+        );
+    }
+
+    #[Test]
     public function website_prefixes_plain_domains_with_https_and_trims_trailing_punctuation(): void
     {
         $this->assertSame('https://example.com', ContactFieldNormalizer::website('example.com'));
