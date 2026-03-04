@@ -152,6 +152,22 @@ const sortLabel = (sort) => {
   }
 }
 
+const paginationAriaLabel = (label) => {
+  const text = String(label ?? '')
+    // links API can contain HTML entities/tags (e.g. "&laquo; Previous")
+    .replace(/<[^>]*>/g, '')
+    .replace(/&laquo;|&raquo;/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  if (!text) return 'Пагінація'
+  if (/^\.{3}$/.test(text)) return 'Пропущені сторінки'
+  if (/previous/i.test(text)) return 'Попередня сторінка'
+  if (/next/i.test(text)) return 'Наступна сторінка'
+
+  return `Перейти на сторінку: ${text}`
+}
+
 const flattenCategories = (nodes, depth = 0, parentLabel = '') => {
   const out = []
   ;(nodes || []).forEach((n) => {
@@ -736,7 +752,7 @@ function goFirstPage() {
                 v-else-if="l.url"
                 :href="l.url"
                 class="px-2 py-1 text-sm rounded text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                :aria-label="'Перейти на сторінку: ' + l.label"
+                :aria-label="paginationAriaLabel(l.label)"
               >
                 <span v-html="l.label" />
               </Link>
