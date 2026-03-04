@@ -148,7 +148,16 @@ class CatalogTest extends TestCase
             );
     }
 
-    public function test_catalog_sort_price_asc_orders_by_price_and_puts_null_prices_last(): void
+    public static function priceSortProvider(): array
+    {
+        return [
+            'price asc' => ['price_asc', ['Cheap offer', 'Mid offer', 'Expensive offer', 'No price offer']],
+            'price desc' => ['price_desc', ['Expensive offer', 'Mid offer', 'Cheap offer', 'No price offer']],
+        ];
+    }
+
+    #[DataProvider('priceSortProvider')]
+    public function test_catalog_sort_price_orders_by_price_and_puts_null_prices_last(string $sort, array $expectedTitles): void
     {
         $cat = Category::factory()->create();
         $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
@@ -174,37 +183,6 @@ class CatalogTest extends TestCase
             'price_from' => 100,
         ]);
 
-        $this
-            ->get('/catalog?sort=price_asc')
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('Catalog/Index')
-                ->has('offers.data', 3)
-                ->where('offers.data.0.title', 'Cheap offer')
-                ->where('offers.data.1.title', 'Mid offer')
-                ->where('offers.data.2.title', 'No price offer')
-            );
-    }
-
-    public function test_catalog_sort_price_desc_orders_by_price_and_puts_null_prices_last(): void
-    {
-        $cat = Category::factory()->create();
-        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'No price offer',
-            'is_active' => true,
-            'price_from' => null,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Mid offer',
-            'is_active' => true,
-            'price_from' => 200,
-        ]);
-
         Offer::factory()->for($bp)->create([
             'category_id' => $cat->id,
             'title' => 'Expensive offer',
@@ -213,14 +191,15 @@ class CatalogTest extends TestCase
         ]);
 
         $this
-            ->get('/catalog?sort=price_desc')
+            ->get('/catalog?sort=' . $sort)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
-                ->has('offers.data', 3)
-                ->where('offers.data.0.title', 'Expensive offer')
-                ->where('offers.data.1.title', 'Mid offer')
-                ->where('offers.data.2.title', 'No price offer')
+                ->has('offers.data', 4)
+                ->where('offers.data.0.title', $expectedTitles[0])
+                ->where('offers.data.1.title', $expectedTitles[1])
+                ->where('offers.data.2.title', $expectedTitles[2])
+                ->where('offers.data.3.title', $expectedTitles[3])
             );
     }
 
