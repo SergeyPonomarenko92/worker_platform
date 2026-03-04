@@ -29,14 +29,45 @@ function normalizeWhitespace(value) {
 }
 
 function normalizeProviderInputToSlug(value) {
-  const raw = String(value ?? '').trim()
+  let raw = normalizeWhitespace(value)
   if (!raw) return ''
 
-  // Allow pasting a full provider URL.
-  const m = raw.match(/\/providers\/([^/?#]+)/i)
-  const slug = m?.[1] ? m[1] : raw
+  // Users sometimes paste a catalog URL instead of a provider URL/slug.
+  // Example: "/catalog?sort=newest&provider=demo-provider#top".
+  const qIndex = raw.indexOf('?')
+  if (qIndex !== -1) {
+    const queryPart = raw.slice(qIndex + 1)
+    const query = queryPart.split('#')[0] || ''
+    const params = new URLSearchParams(query)
 
-  return String(slug).trim().toLowerCase()
+    const fromQuery = normalizeWhitespace(params.get('provider'))
+    if (fromQuery) raw = fromQuery
+  }
+
+  // Allow pasting a full provider URL or path.
+  // Examples:
+  // - "https://example.test/providers/demo-provider?ref=cat"
+  // - "/providers/demo-provider/"
+  // - "providers/demo-provider"
+  const match = raw.match(/(^|\/)providers\/(.+)$/i)
+  if (match?.[2]) {
+    raw = match[2]
+  }
+
+  // Take only the first path segment (strip trailing /...)
+  raw = raw.split(/[/?#]/)[0] || raw
+
+  // Decode percent-encoded values that can appear in pasted URLs.
+  try {
+    raw = decodeURIComponent(raw)
+  } catch (e) {
+    // ignore malformed escape sequences
+  }
+
+  // Be conservative: strip only common outer punctuation and wrappers.
+  raw = raw.trim().replace(/^[\s/"'.,;:()\[\]{}<>@]+|[\s/"'.,;:()\[\]{}<>@]+$/g, '')
+
+  return normalizeWhitespace(raw).toLowerCase()
 }
 
 function submit() {
