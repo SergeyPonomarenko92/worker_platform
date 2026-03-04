@@ -350,7 +350,7 @@ onMounted(() => {
             :href="storyMediaUrl(story.media_path)"
             target="_blank"
             rel="noopener noreferrer nofollow"
-            class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-gray-300 bg-gray-50"
+            class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-gray-300 bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             :title="story.caption || ''"
             :aria-label="story.caption ? `Історія: ${story.caption}` : 'Історія'"
           >
