@@ -117,6 +117,13 @@ class QueryParamNormalizerTest extends TestCase
         // Support different casing in the providers segment.
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('/Providers/demo-provider/'));
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('https://example.test/Providers/demo-provider/'));
+
+        // Percent-encoded provider values in query string should be decoded,
+        // then normalized the same way as plain input.
+        $this->assertSame(
+            'demo-provider',
+            QueryParamNormalizer::providerSlug('https://example.test/catalog?provider=%40Demo-provider')
+        );
     }
 
     #[Test]
