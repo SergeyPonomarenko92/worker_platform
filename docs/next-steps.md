@@ -99,9 +99,9 @@
 ## TODO (next session)
 1) Stage 5 (Polish / robustness — safe micro-steps)
    - [ ] Пройтись по публічних сторінках (catalog/provider) і знайти ще 1 маленьке UX/a11y покращення без зміни логіки (aria-label/title, autocomplete, focus states, дрібні підказки).
-   - [ ] Перевірити sitemap/robots на дрібні SEO-деталі:
-     - чи додавати `/` як окремий `<url>` у sitemap (або залишити тільки `/catalog`)
-     - переконатись, що `robots.txt` посилається на sitemap (якщо ще ні)
+   - [x] Перевірити sitemap/robots на дрібні SEO-деталі (вже зроблено):
+     - `/` включено як окремий `<url>` у sitemap (хоча він редіректить на `/catalog`)
+     - `robots.txt` містить sitemap directive, а Laravel route нормалізує його до абсолютного URL
 2) Tests / tech-debt (без зміни поведінки)
    - [ ] Ще 1 точковий cleanup у тестах (очевидні дублікати/надмірності, особливо в `CatalogTest`) без втрати реального покриття.
    - [ ] Додати 1-2 regression тести на edge-cases для form requests / normalizers (наприклад, unicode-whitespace у числових/URL полях або неочікуваний формат query params).
