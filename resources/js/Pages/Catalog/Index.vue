@@ -384,7 +384,14 @@ function goFirstPage() {
             </template>
           </div>
         </div>
-        <Link href="/" class="text-sm text-gray-600 hover:text-gray-900">На головну</Link>
+        <Link
+          href="/"
+          class="text-sm text-gray-600 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 rounded"
+          title="На головну"
+          aria-label="На головну"
+        >
+          На головну
+        </Link>
       </div>
 
       <form
