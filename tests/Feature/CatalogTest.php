@@ -491,6 +491,41 @@ class CatalogTest extends TestCase
             );
     }
 
+    public static function cityWhitespaceNormalizationProvider(): array
+    {
+        return [
+            'NBSP around' => ["\u{00A0}\u{00A0}КИ\u{00A0}"],
+            'thin + narrow no-break spaces' => ["\u{2009}КИ\u{202F}"],
+        ];
+    }
+
+    #[DataProvider('cityWhitespaceNormalizationProvider')]
+    public function test_catalog_normalizes_city_filter_unicode_whitespace(string $rawCity): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Київ оффер',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $city = rawurlencode($rawCity);
+
+        $this
+            ->get('/catalog?city=' . $city)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.city', 'КИ')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Київ оффер')
+            );
+    }
+
     public function test_catalog_normalizes_whitespace_in_q_filter(): void
     {
         $cat = Category::factory()->create();
