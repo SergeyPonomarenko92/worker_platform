@@ -377,7 +377,7 @@ function goFirstPage() {
             {{ resultsAnnouncement }}
           </div>
 
-          <div class="mt-1 text-sm text-gray-500">
+          <div class="mt-1 text-sm text-gray-500" role="status" aria-live="polite" aria-atomic="true">
             <span class="font-medium text-gray-700">{{ offers.total ?? offers.data?.length ?? 0 }}</span> результатів
             <template v-if="offers.from && offers.to">
               <span class="text-gray-400">·</span> Показано {{ offers.from }}–{{ offers.to }}
