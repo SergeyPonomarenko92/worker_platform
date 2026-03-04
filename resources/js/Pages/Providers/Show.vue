@@ -262,8 +262,22 @@ onMounted(() => {
           </div>
         </div>
         <div class="flex gap-3">
-          <Link href="/catalog" class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded">Каталог</Link>
-          <Link :href="catalogProviderHref" class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded">Пропозиції цього провайдера</Link>
+          <Link
+            href="/catalog"
+            class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+            title="Перейти до каталогу"
+            aria-label="Перейти до каталогу"
+          >
+            Каталог
+          </Link>
+          <Link
+            :href="catalogProviderHref"
+            class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+            :title="`Відкрити каталог з фільтром по провайдеру: ${provider.slug}`"
+            :aria-label="`Відкрити каталог з фільтром по провайдеру: ${provider.slug}`"
+          >
+            Пропозиції цього провайдера
+          </Link>
         </div>
       </div>
 
@@ -559,6 +573,8 @@ onMounted(() => {
               v-if="eligibleDealId"
               :href="route('reviews.create', eligibleDealId)"
               class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+              title="Залишити відгук після завершеної угоди"
+              aria-label="Залишити відгук після завершеної угоди"
             >
               Залишити відгук
             </Link>
