@@ -357,8 +357,9 @@ onMounted(() => {
             <img
               :src="storyMediaUrl(story.media_path)"
               :alt="story.caption ? `Історія: ${story.caption}` : 'Історія'"
-              class="h-full w-full object-cover"
               loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover"
             />
           </a>
         </div>
