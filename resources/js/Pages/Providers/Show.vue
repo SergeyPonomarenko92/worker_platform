@@ -24,7 +24,10 @@ const websiteDisplayText = computed(() => {
   if (!href) return ''
 
   // Keep it readable in UI (strip protocol + trailing slashes), while href stays fully normalized.
-  return href.replace(/^https?:\/\//i, '').replace(/\/+$/, '')
+  const display = href.replace(/^https?:\/\//i, '').replace(/\/+$/, '')
+
+  // Edge-case: if input is just "https://" or similar, keep something visible/copyable.
+  return display || href
 })
 
 const telHref = computed(() => {
