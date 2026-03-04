@@ -704,7 +704,10 @@ function goFirstPage() {
           <Link
             v-if="offers.prev_page_url"
             :href="offers.prev_page_url"
+            rel="prev"
             class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+            aria-label="Попередня сторінка"
+            title="Попередня сторінка"
           >
             Назад
           </Link>
@@ -745,7 +748,10 @@ function goFirstPage() {
           <Link
             v-if="offers.next_page_url"
             :href="offers.next_page_url"
+            rel="next"
             class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+            aria-label="Наступна сторінка"
+            title="Наступна сторінка"
           >
             Далі
           </Link>
