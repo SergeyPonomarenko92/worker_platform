@@ -608,6 +608,8 @@ function goFirstPage() {
                   v-if="offer.business_profile?.slug"
                   :href="`/providers/${offer.business_profile.slug}`"
                   class="font-medium text-blue-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+                  :aria-label="`Відкрити профіль провайдера: ${offer.business_profile?.name}`"
+                  :title="`Відкрити профіль провайдера: ${offer.business_profile?.name}`"
                 >
                   {{ offer.business_profile?.name }}
                 </Link>
