@@ -213,6 +213,7 @@ onMounted(() => {
               type="button"
               class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :aria-label="`Перейти до секції пропозицій. Пропозицій: ${provider.offers_count}`"
+              :title="`Перейти до секції пропозицій. Пропозицій: ${provider.offers_count}`"
               @click="scrollToSection(offersSectionRef)"
             >
               Пропозицій: <span class="font-medium text-gray-800">{{ provider.offers_count }}</span>
@@ -226,6 +227,7 @@ onMounted(() => {
               type="button"
               class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :aria-label="`Перейти до секції відгуків. Відгуків: ${provider.reviews_count}`"
+              :title="`Перейти до секції відгуків. Відгуків: ${provider.reviews_count}`"
               @click="scrollToSection(reviewsSectionRef)"
             >
               Відгуків: <span class="font-medium text-gray-800">{{ provider.reviews_count }}</span>
@@ -242,6 +244,7 @@ onMounted(() => {
                 type="button"
                 class="hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                 :aria-label="`Перейти до секції портфоліо. Робіт: ${portfolioTotalCount}`"
+                :title="`Перейти до секції портфоліо. Робіт: ${portfolioTotalCount}`"
                 @click="scrollToSection(portfolioSectionRef)"
               >
                 Робіт: <span class="font-medium text-gray-800">{{ portfolioTotalCount }}</span>
