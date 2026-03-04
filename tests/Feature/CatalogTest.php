@@ -269,10 +269,8 @@ class CatalogTest extends TestCase
 
         $bp = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
 
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bp, $cat, [
             'title' => 'Demo provider offer',
-            'is_active' => true,
             'price_from' => 100,
         ]);
 
@@ -315,17 +313,13 @@ class CatalogTest extends TestCase
         $bpA = BusinessProfile::factory()->create(['city' => $cities[0], 'is_active' => true]);
         $bpB = BusinessProfile::factory()->create(['city' => $cities[1], 'is_active' => true]);
 
-        Offer::factory()->for($bpA)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bpA, $cat, [
             'title' => $expectedTitle,
-            'is_active' => true,
             'price_from' => 100,
         ]);
 
-        Offer::factory()->for($bpB)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bpB, $cat, [
             'title' => 'Other city offer',
-            'is_active' => true,
             'price_from' => 100,
         ]);
 
@@ -365,19 +359,15 @@ class CatalogTest extends TestCase
 
         $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
 
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bp, $cat, [
             'title' => $titles[0],
             'description' => 'desc',
-            'is_active' => true,
             'price_from' => 100,
         ]);
 
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bp, $cat, [
             'title' => $titles[1],
             'description' => 'desc',
-            'is_active' => true,
             'price_from' => 100,
         ]);
 
