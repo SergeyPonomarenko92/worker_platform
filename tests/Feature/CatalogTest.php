@@ -348,6 +348,56 @@ class CatalogTest extends TestCase
             );
     }
 
+    public static function qIlikeEscapeInputProvider(): array
+    {
+        return [
+            'percent wildcard' => [
+                'qInput' => '100%25', // encoded "%" to keep the query stable
+                'titles' => ['100% гарантія', '1000 гарантія'],
+                'expectedTitle' => '100% гарантія',
+            ],
+            'underscore wildcard' => [
+                'qInput' => 'ab_',
+                'titles' => ['ab_cd', 'abXcd'],
+                'expectedTitle' => 'ab_cd',
+            ],
+        ];
+    }
+
+    #[DataProvider('qIlikeEscapeInputProvider')]
+    public function test_catalog_escapes_q_ilike_special_chars_to_avoid_wildcards(string $qInput, array $titles, string $expectedTitle): void
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => $titles[0],
+            'description' => 'desc',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => $titles[1],
+            'description' => 'desc',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        // If we forget to escape user input, these patterns may become SQL wildcards and match more than intended.
+        $this
+            ->get('/catalog?q=' . $qInput)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', $expectedTitle)
+            );
+    }
+
     public function test_catalog_escapes_q_ilike_escape_char_to_avoid_broken_patterns(): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
