@@ -543,6 +543,32 @@ class CatalogTest extends TestCase
             );
     }
 
+    public function test_catalog_normalizes_thin_spaces_in_q_filter(): void
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Майстер руки',
+            'description' => 'Швидко і якісно',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        $q = rawurlencode("майстер\u{2009}руки"); // thin space between words
+
+        $this
+            ->get('/catalog?q=' . $q)
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Catalog/Index')
+                ->where('filters.q', 'майстер руки')
+                ->has('offers.data', 1)
+                ->where('offers.data.0.title', 'Майстер руки')
+            );
+    }
+
     public function test_catalog_filters_by_price_range_and_excludes_null_price_when_filtering(): void
     {
         $this->seedOffersForPriceFiltering();
