@@ -293,9 +293,13 @@ onMounted(() => {
               :aria-label="`Зателефонувати: ${provider.phone}`"
               :title="`Зателефонувати: ${provider.phone}`"
             >
-              ☎ {{ provider.phone }}
+              <span aria-hidden="true">☎</span>
+              {{ provider.phone }}
             </a>
-            <span v-else>☎ {{ provider.phone }}</span>
+            <span v-else>
+              <span aria-hidden="true">☎</span>
+              {{ provider.phone }}
+            </span>
           </div>
 
           <div v-if="provider.address || provider.city">
@@ -308,9 +312,13 @@ onMounted(() => {
               :aria-label="`Відкрити адресу на мапі: ${[provider.city, provider.address].filter(Boolean).join(', ')}`"
               :title="`Відкрити адресу на мапі: ${[provider.city, provider.address].filter(Boolean).join(', ')}`"
             >
-              📍 {{ [provider.city, provider.address].filter(Boolean).join(', ') }}
+              <span aria-hidden="true">📍</span>
+              {{ [provider.city, provider.address].filter(Boolean).join(', ') }}
             </a>
-            <span v-else>📍 {{ [provider.city, provider.address].filter(Boolean).join(', ') }}</span>
+            <span v-else>
+              <span aria-hidden="true">📍</span>
+              {{ [provider.city, provider.address].filter(Boolean).join(', ') }}
+            </span>
           </div>
 
           <div v-if="normalizedWebsiteHref" class="min-w-0">
