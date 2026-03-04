@@ -533,6 +533,8 @@ onMounted(() => {
               class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :href="providerPageAllOffersUrl"
               preserve-scroll
+              :aria-label="`Показати всі пропозиції (усього: ${offersTotalCount})`"
+              :title="`Показати всі пропозиції (усього: ${offersTotalCount})`"
             >
               Показати всі пропозиції ({{ offersTotalCount }})
             </Link>
@@ -621,6 +623,8 @@ onMounted(() => {
               class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               :href="providerPageAllReviewsUrl"
               preserve-scroll
+              :aria-label="`Показати всі відгуки (усього: ${reviewsTotalCount})`"
+              :title="`Показати всі відгуки (усього: ${reviewsTotalCount})`"
             >
               Показати всі відгуки ({{ reviewsTotalCount }})
             </Link>
