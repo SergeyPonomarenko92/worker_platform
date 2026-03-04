@@ -290,99 +290,57 @@ class CatalogTest extends TestCase
             );
     }
 
-    public function test_catalog_escapes_city_like_special_chars_to_avoid_wildcards(): void
+    public static function cityLikeEscapeInputProvider(): array
     {
-        $cat = Category::factory()->create(['name' => 'Електрик']);
-
-        $bpPercent = BusinessProfile::factory()->create(['city' => '100% Київ', 'is_active' => true]);
-        $bpWildcardMatch = BusinessProfile::factory()->create(['city' => '1000 Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bpPercent)->create([
-            'category_id' => $cat->id,
-            'title' => 'Percent city offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        Offer::factory()->for($bpWildcardMatch)->create([
-            'category_id' => $cat->id,
-            'title' => 'Wildcard city offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        // Without escaping, "100%" would match both "100% Київ" and "1000 Київ".
-        $this
-            ->get('/catalog?city=100%25')
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('Catalog/Index')
-                ->has('offers.data', 1)
-                ->where('offers.data.0.title', 'Percent city offer')
-            );
+        return [
+            'percent wildcard' => [
+                'cityInput' => '100%25', // encoded "%" to keep the query stable
+                'cities' => ['100% Київ', '1000 Київ'],
+                'expectedTitle' => 'Percent city offer',
+            ],
+            'underscore wildcard' => [
+                'cityInput' => 'ab_',
+                'cities' => ['ab_cd', 'abXcd'],
+                'expectedTitle' => 'Underscore city offer',
+            ],
+            'escape char !' => [
+                'cityInput' => 'Київ!',
+                'cities' => ['Київ!центр', 'Київ центр'],
+                'expectedTitle' => 'Bang city offer',
+            ],
+        ];
     }
 
-    public function test_catalog_escapes_city_like_underscore_to_avoid_wildcards(): void
+    #[DataProvider('cityLikeEscapeInputProvider')]
+    public function test_catalog_escapes_city_like_special_chars_to_avoid_wildcards(string $cityInput, array $cities, string $expectedTitle): void
     {
         $cat = Category::factory()->create(['name' => 'Електрик']);
 
-        $bpUnderscore = BusinessProfile::factory()->create(['city' => 'ab_cd', 'is_active' => true]);
-        $bpWildcardMatch = BusinessProfile::factory()->create(['city' => 'abXcd', 'is_active' => true]);
+        $bpA = BusinessProfile::factory()->create(['city' => $cities[0], 'is_active' => true]);
+        $bpB = BusinessProfile::factory()->create(['city' => $cities[1], 'is_active' => true]);
 
-        Offer::factory()->for($bpUnderscore)->create([
+        Offer::factory()->for($bpA)->create([
             'category_id' => $cat->id,
-            'title' => 'Underscore city offer',
+            'title' => $expectedTitle,
             'is_active' => true,
             'price_from' => 100,
         ]);
 
-        Offer::factory()->for($bpWildcardMatch)->create([
-            'category_id' => $cat->id,
-            'title' => 'Wildcard underscore city offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        // Without escaping, "ab_" would match both "ab_cd" and "abXcd".
-        $this
-            ->get('/catalog?city=ab_')
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('Catalog/Index')
-                ->has('offers.data', 1)
-                ->where('offers.data.0.title', 'Underscore city offer')
-            );
-    }
-
-    public function test_catalog_escapes_city_like_escape_char_to_avoid_broken_patterns(): void
-    {
-        $cat = Category::factory()->create(['name' => 'Електрик']);
-
-        $bpBang = BusinessProfile::factory()->create(['city' => 'Київ!центр', 'is_active' => true]);
-        $bpOther = BusinessProfile::factory()->create(['city' => 'Київ центр', 'is_active' => true]);
-
-        Offer::factory()->for($bpBang)->create([
-            'category_id' => $cat->id,
-            'title' => 'Bang city offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        Offer::factory()->for($bpOther)->create([
+        Offer::factory()->for($bpB)->create([
             'category_id' => $cat->id,
             'title' => 'Other city offer',
             'is_active' => true,
             'price_from' => 100,
         ]);
 
-        // "!" is used as ESCAPE char in SQL LIKE, so we must escape it in user input.
+        // If we forget to escape user input, these patterns may become SQL wildcards and match more than intended.
         $this
-            ->get('/catalog?city=Київ!')
+            ->get('/catalog?city=' . $cityInput)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->has('offers.data', 1)
-                ->where('offers.data.0.title', 'Bang city offer')
+                ->where('offers.data.0.title', $expectedTitle)
             );
     }
 
