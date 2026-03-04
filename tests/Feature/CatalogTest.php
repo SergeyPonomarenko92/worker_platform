@@ -8,6 +8,7 @@ use App\Models\Offer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class CatalogTest extends TestCase
@@ -240,42 +241,23 @@ class CatalogTest extends TestCase
             );
     }
 
-    public function test_catalog_filters_by_provider_allows_pasting_full_provider_url(): void
+    public static function providerFilterInputProvider(): array
     {
-        [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
-
-        $this
-            ->get('/catalog?provider=https%3A%2F%2Fexample.test%2Fproviders%2FDEMO-PROVIDER%3Fref%3Dcat')
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('Catalog/Index')
-                ->where('filters.provider', 'demo-provider')
-                ->has('offers.data', 1)
-                ->where('offers.data.0.title', 'Demo provider offer')
-            );
+        return [
+            'full URL' => ['https://example.test/providers/DEMO-PROVIDER?ref=cat'],
+            'full URL with trailing slash + query + fragment' => ['https://example.test/providers/DEMO-PROVIDER/?utm=1#offers'],
+            'relative providers path' => ['/providers/DEMO-PROVIDER/'],
+        ];
     }
-
-    public function test_catalog_filters_by_provider_allows_pasting_full_provider_url_with_trailing_slash_and_fragment(): void
+    #[DataProvider('providerFilterInputProvider')]
+    public function test_catalog_filters_by_provider_allows_pasting_provider_urls_and_paths(string $provider): void
     {
         [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
 
-        $this
-            ->get('/catalog?provider=https%3A%2F%2Fexample.test%2Fproviders%2FDEMO-PROVIDER%2F%3Futm%3D1%23offers')
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('Catalog/Index')
-                ->where('filters.provider', 'demo-provider')
-                ->has('offers.data', 1)
-                ->where('offers.data.0.title', 'Demo provider offer')
-            );
-    }
-
-    public function test_catalog_filters_by_provider_allows_pasting_relative_provider_path(): void
-    {
-        [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
+        $query = http_build_query(['provider' => $provider]);
 
         $this
-            ->get('/catalog?provider=%2Fproviders%2FDEMO-PROVIDER%2F')
+            ->get('/catalog?' . $query)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
