@@ -515,33 +515,16 @@ class CatalogTest extends TestCase
             );
     }
 
-    public function test_catalog_normalizes_nbsp_in_q_filter(): void
+    public static function qWhitespaceNormalizationProvider(): array
     {
-        $cat = Category::factory()->create();
-        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Майстер руки',
-            'description' => 'Швидко і якісно',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        $q = rawurlencode("майстер\xC2\xA0руки"); // NBSP between words
-
-        $this
-            ->get('/catalog?q=' . $q)
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('Catalog/Index')
-                ->where('filters.q', 'майстер руки')
-                ->has('offers.data', 1)
-                ->where('offers.data.0.title', 'Майстер руки')
-            );
+        return [
+            'NBSP' => ["майстер\xC2\xA0руки"],
+            'thin space' => ["майстер\u{2009}руки"],
+        ];
     }
 
-    public function test_catalog_normalizes_thin_spaces_in_q_filter(): void
+    #[DataProvider('qWhitespaceNormalizationProvider')]
+    public function test_catalog_normalizes_q_filter_whitespace(string $rawQ): void
     {
         $cat = Category::factory()->create();
         $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
@@ -554,7 +537,7 @@ class CatalogTest extends TestCase
             'price_from' => 100,
         ]);
 
-        $q = rawurlencode("майстер\u{2009}руки"); // thin space between words
+        $q = rawurlencode($rawQ);
 
         $this
             ->get('/catalog?q=' . $q)
