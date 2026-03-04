@@ -238,6 +238,7 @@ class CatalogTest extends TestCase
     {
         return [
             'slug with whitespace + different case' => ['  DEMO-PROVIDER  '],
+            'mention-like slug with leading @' => ['@DEMO-PROVIDER'],
             'full URL' => ['https://example.test/providers/DEMO-PROVIDER?ref=cat'],
             'full URL with trailing slash + query + fragment' => ['https://example.test/providers/DEMO-PROVIDER/?utm=1#offers'],
             'relative providers path' => ['/providers/DEMO-PROVIDER/'],
