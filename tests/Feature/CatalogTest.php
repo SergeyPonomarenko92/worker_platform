@@ -14,6 +14,15 @@ class CatalogTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function offerTitlesEqual($offers, array $expected): bool
+    {
+        $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
+        $titles = array_map(static fn ($o) => $o['title'] ?? null, $offers);
+        sort($titles);
+
+        return $titles === $expected;
+    }
+
     public function test_catalog_page_does_not_trigger_n_plus_one_queries(): void
     {
         Carbon::setTestNow(now());
@@ -619,13 +628,7 @@ class CatalogTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->has('offers.data', 2)
-                ->where('offers.data', function ($offers) {
-                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
-                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
-                    sort($titles);
-
-                    return $titles === ['Cheap offer', 'No price offer'];
-                })
+                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, ['Cheap offer', 'No price offer']))
             );
     }
 
@@ -661,13 +664,7 @@ class CatalogTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->has('offers.data', 2)
-                ->where('offers.data', function ($offers) {
-                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
-                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
-                    sort($titles);
-
-                    return $titles === ['Expensive offer', 'No price offer'];
-                })
+                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, ['Expensive offer', 'No price offer']))
             );
     }
 
@@ -703,13 +700,7 @@ class CatalogTest extends TestCase
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->has('offers.data', 2)
-                ->where('offers.data', function ($offers) {
-                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
-                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
-                    sort($titles);
-
-                    return $titles === ['Cheap offer', 'No price offer'];
-                })
+                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, ['Cheap offer', 'No price offer']))
             );
     }
 
@@ -739,13 +730,7 @@ class CatalogTest extends TestCase
                 ->component('Catalog/Index')
                 ->where('filters.include_no_price', false)
                 ->has('offers.data', 2)
-                ->where('offers.data', function ($offers) {
-                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
-                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
-                    sort($titles);
-
-                    return $titles === ['No price offer', 'Priced offer'];
-                })
+                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, ['No price offer', 'Priced offer']))
             );
     }
 
@@ -778,13 +763,7 @@ class CatalogTest extends TestCase
                 ->component('Catalog/Index')
                 ->where('filters.category_id', (string) $parent->id)
                 ->has('offers.data', 2)
-                ->where('offers.data', function ($offers) {
-                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
-                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
-                    sort($titles);
-
-                    return $titles === ['Child offer', 'Parent offer'];
-                })
+                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, ['Child offer', 'Parent offer']))
             );
     }
 
@@ -824,13 +803,7 @@ class CatalogTest extends TestCase
                 ->component('Catalog/Index')
                 ->where('filters.category_id', (string) $parent->id)
                 ->has('offers.data', 3)
-                ->where('offers.data', function ($offers) {
-                    $offers = $offers instanceof \Illuminate\Support\Collection ? $offers->all() : (array) $offers;
-                    $titles = array_map(fn ($o) => $o['title'] ?? null, $offers);
-                    sort($titles);
-
-                    return $titles === ['Child offer', 'Grandchild offer', 'Parent offer'];
-                })
+                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, ['Child offer', 'Grandchild offer', 'Parent offer']))
             );
     }
 
