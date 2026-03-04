@@ -683,8 +683,13 @@ function goFirstPage() {
             </div>
 
             <div class="flex flex-col items-end gap-2">
-              <div class="text-sm font-medium text-gray-800 whitespace-nowrap">{{ formatPrice(offer) }}</div>
-
+              <div
+                class="text-sm font-medium text-gray-800 whitespace-nowrap"
+                :aria-label="`Ціна: ${formatPrice(offer)}`"
+                :title="`Ціна: ${formatPrice(offer)}`"
+              >
+                {{ formatPrice(offer) }}
+              </div>
             </div>
           </div>
 
