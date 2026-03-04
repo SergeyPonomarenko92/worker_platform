@@ -48,6 +48,35 @@ class CatalogTest extends TestCase
         return [$cat, $bpA, $bpB];
     }
 
+    private function seedOffersForPriceFiltering(): array
+    {
+        $cat = Category::factory()->create();
+        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'No price offer',
+            'is_active' => true,
+            'price_from' => null,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Cheap offer',
+            'is_active' => true,
+            'price_from' => 200,
+        ]);
+
+        Offer::factory()->for($bp)->create([
+            'category_id' => $cat->id,
+            'title' => 'Expensive offer',
+            'is_active' => true,
+            'price_from' => 2000,
+        ]);
+
+        return [$cat, $bp];
+    }
+
     public function test_catalog_page_does_not_trigger_n_plus_one_queries(): void
     {
         Carbon::setTestNow(now());
@@ -458,29 +487,7 @@ class CatalogTest extends TestCase
 
     public function test_catalog_filters_by_price_range_and_excludes_null_price_when_filtering(): void
     {
-        $cat = Category::factory()->create();
-        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'No price offer',
-            'is_active' => true,
-            'price_from' => null,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Cheap offer',
-            'is_active' => true,
-            'price_from' => 200,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Expensive offer',
-            'is_active' => true,
-            'price_from' => 2000,
-        ]);
+        $this->seedOffersForPriceFiltering();
 
         $this
             ->get('/catalog?price_from=100&price_to=500')
@@ -494,29 +501,7 @@ class CatalogTest extends TestCase
 
     public function test_catalog_can_include_offers_without_price_when_filtering_by_price(): void
     {
-        $cat = Category::factory()->create();
-        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'No price offer',
-            'is_active' => true,
-            'price_from' => null,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Cheap offer',
-            'is_active' => true,
-            'price_from' => 200,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Expensive offer',
-            'is_active' => true,
-            'price_from' => 2000,
-        ]);
+        $this->seedOffersForPriceFiltering();
 
         $this
             ->get('/catalog?price_from=100&price_to=500&include_no_price=1')
@@ -530,29 +515,7 @@ class CatalogTest extends TestCase
 
     public function test_catalog_can_include_offers_without_price_when_filtering_by_only_price_from(): void
     {
-        $cat = Category::factory()->create();
-        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'No price offer',
-            'is_active' => true,
-            'price_from' => null,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Cheap offer',
-            'is_active' => true,
-            'price_from' => 200,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Expensive offer',
-            'is_active' => true,
-            'price_from' => 2000,
-        ]);
+        $this->seedOffersForPriceFiltering();
 
         $this
             ->get('/catalog?price_from=500&include_no_price=1')
@@ -566,29 +529,7 @@ class CatalogTest extends TestCase
 
     public function test_catalog_can_include_offers_without_price_when_filtering_by_only_price_to(): void
     {
-        $cat = Category::factory()->create();
-        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'No price offer',
-            'is_active' => true,
-            'price_from' => null,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Cheap offer',
-            'is_active' => true,
-            'price_from' => 200,
-        ]);
-
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
-            'title' => 'Expensive offer',
-            'is_active' => true,
-            'price_from' => 2000,
-        ]);
+        $this->seedOffersForPriceFiltering();
 
         $this
             ->get('/catalog?price_to=500&include_no_price=1')
