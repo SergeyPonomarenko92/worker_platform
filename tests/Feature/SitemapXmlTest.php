@@ -20,6 +20,7 @@ class SitemapXmlTest extends TestCase
             ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
             ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertSee('<urlset', false)
+            ->assertSee(url('/'), false)
             ->assertSee(url('/catalog'), false);
 
         // With an empty DB, lastmod may be omitted.
@@ -48,6 +49,7 @@ class SitemapXmlTest extends TestCase
             ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
             ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertSee('<urlset', false)
+            ->assertSee(url('/'), false)
             ->assertSee(url('/catalog'), false)
             // Catalog lastmod should reflect the latest update among offers OR providers.
             ->assertSee('<lastmod>'.$latestProviderUpdatedAt->toDateString().'</lastmod>', false)

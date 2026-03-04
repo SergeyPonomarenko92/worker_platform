@@ -74,6 +74,13 @@ Route::get('/sitemap.xml', function () {
         ->filter()
         ->max();
 
+    // Include the homepage in the sitemap even though it redirects to /catalog.
+    // This makes it easier for crawlers/tools that still try to discover "/".
+    $urls[] = [
+        'loc' => url('/'),
+        'lastmod' => optional($catalogLastmod)->toDateString(),
+    ];
+
     $urls[] = [
         'loc' => url('/catalog'),
         'lastmod' => optional($catalogLastmod)->toDateString(),
