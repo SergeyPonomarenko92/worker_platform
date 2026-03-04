@@ -12,6 +12,7 @@ class RobotsTxtTest extends TestCase
 
         $response->assertOk();
         $response->assertHeader('Content-Type', 'text/plain; charset=UTF-8');
+        $response->assertHeader('Cache-Control', 'max-age=300, public');
 
         $expected = 'Sitemap: '.url('/sitemap.xml');
 
@@ -23,6 +24,7 @@ class RobotsTxtTest extends TestCase
         $response = $this->get('/robots.txt');
 
         $response->assertOk();
+        $response->assertHeader('Cache-Control', 'max-age=300, public');
 
         $content = (string) $response->getContent();
         $count = substr_count($content, 'Sitemap:');
@@ -42,6 +44,7 @@ class RobotsTxtTest extends TestCase
             $response = $this->get('/robots.txt');
 
             $response->assertOk();
+            $response->assertHeader('Cache-Control', 'max-age=300, public');
 
             $content = (string) $response->getContent();
 
