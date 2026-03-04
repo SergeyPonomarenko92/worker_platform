@@ -538,31 +538,26 @@ class CatalogTest extends TestCase
             );
     }
 
-    public function test_catalog_can_include_offers_without_price_when_filtering_by_only_price_from(): void
+    public static function includeNoPriceWithSingleBoundProvider(): array
     {
-        $this->seedOffersForPriceFiltering();
-
-        $this
-            ->get('/catalog?price_from=500&include_no_price=1')
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('Catalog/Index')
-                ->has('offers.data', 2)
-                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, ['Expensive offer', 'No price offer']))
-            );
+        return [
+            'only price_from' => ['/catalog?price_from=500&include_no_price=1', ['Expensive offer', 'No price offer']],
+            'only price_to' => ['/catalog?price_to=500&include_no_price=1', ['Cheap offer', 'No price offer']],
+        ];
     }
 
-    public function test_catalog_can_include_offers_without_price_when_filtering_by_only_price_to(): void
+    #[DataProvider('includeNoPriceWithSingleBoundProvider')]
+    public function test_catalog_can_include_offers_without_price_when_filtering_with_a_single_price_bound(string $url, array $expectedTitles): void
     {
         $this->seedOffersForPriceFiltering();
 
         $this
-            ->get('/catalog?price_to=500&include_no_price=1')
+            ->get($url)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
                 ->has('offers.data', 2)
-                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, ['Cheap offer', 'No price offer']))
+                ->where('offers.data', fn ($offers) => $this->offerTitlesEqual($offers, $expectedTitles))
             );
     }
 
