@@ -35,17 +35,13 @@ class CatalogTest extends TestCase
         $bpA = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
         $bpB = BusinessProfile::factory()->create(['slug' => 'other-provider', 'city' => 'Київ', 'is_active' => true]);
 
-        Offer::factory()->for($bpA)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bpA, $cat, [
             'title' => 'Demo provider offer',
-            'is_active' => true,
             'price_from' => 100,
         ]);
 
-        Offer::factory()->for($bpB)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bpB, $cat, [
             'title' => 'Other provider offer',
-            'is_active' => true,
             'price_from' => 100,
         ]);
 
@@ -57,32 +53,34 @@ class CatalogTest extends TestCase
         $cat = Category::factory()->create();
         $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
 
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bp, $cat, [
             'title' => 'No price offer',
-            'is_active' => true,
             'price_from' => null,
         ]);
 
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bp, $cat, [
             'title' => 'Cheap offer',
-            'is_active' => true,
             'price_from' => 200,
         ]);
 
-        Offer::factory()->for($bp)->create([
-            'category_id' => $cat->id,
+        $this->createActiveOffer($bp, $cat, [
             'title' => 'Expensive offer',
-            'is_active' => true,
             'price_from' => 2000,
         ]);
 
         return [$cat, $bp];
     }
 
-    public function test_catalog_page_does_not_trigger_n_plus_one_queries(): void
+    private function createActiveOffer(BusinessProfile $businessProfile, Category $category, array $overrides = []): Offer
     {
+        return Offer::factory()->for($businessProfile)->create(array_merge([
+            'category_id' => $category->id,
+            'is_active' => true,
+        ], $overrides));
+    }
+
+    public function test_catalog_page_does_not_trigger_n_plus_one_queries(): void
+    { 
         Carbon::setTestNow(now());
 
         $category = Category::factory()->create(['name' => 'Електрика']);
