@@ -55,6 +55,14 @@ class QueryParamNormalizerTest extends TestCase
     }
 
     #[Test]
+    public function it_treats_zero_width_and_bom_marks_as_spaces(): void
+    {
+        $input = "he\u{200C}llo\u{FEFF}world"; // ZWNJ + BOM
+
+        $this->assertSame('he llo world', QueryParamNormalizer::text($input));
+    }
+
+    #[Test]
     public function it_returns_empty_string_for_null_or_whitespace_only(): void
     {
         $this->assertSame('', QueryParamNormalizer::text(null));
