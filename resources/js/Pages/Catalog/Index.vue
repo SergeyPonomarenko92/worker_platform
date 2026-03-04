@@ -2,7 +2,7 @@
 import { Head, Link, router } from '@inertiajs/vue3'
 import { computed, reactive, watch } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
-import { offerTypeLabel, formatNumber, formatPrice } from '@/lib/formatters'
+import { offerTypeLabel, formatNumber, formatPrice, formatCategoryPath } from '@/lib/formatters'
 
 const props = defineProps({
   offers: Object,
@@ -597,7 +597,9 @@ function goFirstPage() {
             <div>
               <div class="text-sm text-gray-500">
                 {{ offerTypeLabel(offer.type) }}
-                <span v-if="offer.category">· {{ offer.category.name }}</span>
+                <span v-if="offer.category" :title="formatCategoryPath(offer.category) || offer.category.name">
+                  · {{ formatCategoryPath(offer.category) || offer.category.name }}
+                </span>
               </div>
               <div class="mt-0.5 text-lg font-semibold leading-snug">{{ offer.title }}</div>
 
