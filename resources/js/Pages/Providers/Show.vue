@@ -356,6 +356,8 @@ onMounted(() => {
             class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
             :href="providerPageAllPortfolioUrl"
             preserve-scroll
+            :aria-label="`Дивитися всі роботи (усього: ${portfolioTotalCount})`"
+            :title="`Дивитися всі роботи (усього: ${portfolioTotalCount})`"
           >
             Дивитися всі ({{ portfolioTotalCount }})
           </Link>
@@ -458,6 +460,8 @@ onMounted(() => {
             :href="providerPageAllOffersUrl"
             class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
             preserve-scroll
+            :aria-label="`Дивитися всі пропозиції (усього: ${offersTotalCount})`"
+            :title="`Дивитися всі пропозиції (усього: ${offersTotalCount})`"
           >
             Дивитися всі ({{ offersTotalCount }})
           </Link>
@@ -534,6 +538,8 @@ onMounted(() => {
               class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :href="providerPageAllReviewsUrl"
               preserve-scroll
+              :aria-label="`Дивитися всі відгуки (усього: ${reviewsTotalCount})`"
+              :title="`Дивитися всі відгуки (усього: ${reviewsTotalCount})`"
             >
               Дивитися всі ({{ reviewsTotalCount }})
             </Link>
