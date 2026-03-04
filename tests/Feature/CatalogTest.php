@@ -241,6 +241,14 @@ class CatalogTest extends TestCase
             'full URL' => ['https://example.test/providers/DEMO-PROVIDER?ref=cat'],
             'full URL with trailing slash + query + fragment' => ['https://example.test/providers/DEMO-PROVIDER/?utm=1#offers'],
             'relative providers path' => ['/providers/DEMO-PROVIDER/'],
+
+            // Users sometimes paste a catalog URL instead of a provider URL/slug.
+            'catalog URL with provider in query' => ['https://example.test/catalog?sort=newest&provider=DEMO-PROVIDER#top'],
+
+            // Provider value itself can be a pasted provider URL (percent-encoded).
+            'catalog URL with provider value being URL-encoded provider URL' => [
+                'https://example.test/catalog?provider=https%3A%2F%2Fexample.test%2Fproviders%2FDEMO-PROVIDER%2F',
+            ],
         ];
     }
 
