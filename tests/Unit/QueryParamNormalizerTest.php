@@ -68,6 +68,12 @@ class QueryParamNormalizerTest extends TestCase
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('demo-provider/'));
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('/providers/demo-provider/'));
 
+        // Be robust to invisible/unicode whitespace around pasted values.
+        $this->assertSame(
+            'demo-provider',
+            QueryParamNormalizer::providerSlug("\u{00A0} https://example.test/providers/demo-provider/ \u{200B}")
+        );
+
         $this->assertSame(
             'demo-provider',
             QueryParamNormalizer::providerSlug('https://example.test/providers/DEMO-provider?ref=catalog#offers')
