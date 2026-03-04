@@ -23,6 +23,30 @@ class CatalogTest extends TestCase
         return $titles === $expected;
     }
 
+    private function seedTwoProvidersWithOffers(): array
+    {
+        $cat = Category::factory()->create(['name' => 'Електрик']);
+
+        $bpA = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
+        $bpB = BusinessProfile::factory()->create(['slug' => 'other-provider', 'city' => 'Київ', 'is_active' => true]);
+
+        Offer::factory()->for($bpA)->create([
+            'category_id' => $cat->id,
+            'title' => 'Demo provider offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        Offer::factory()->for($bpB)->create([
+            'category_id' => $cat->id,
+            'title' => 'Other provider offer',
+            'is_active' => true,
+            'price_from' => 100,
+        ]);
+
+        return [$cat, $bpA, $bpB];
+    }
+
     public function test_catalog_page_does_not_trigger_n_plus_one_queries(): void
     {
         Carbon::setTestNow(now());
@@ -203,24 +227,7 @@ class CatalogTest extends TestCase
 
     public function test_catalog_filters_by_provider_slug_case_insensitive_and_normalizes_whitespace(): void
     {
-        $cat = Category::factory()->create(['name' => 'Електрик']);
-
-        $bpA = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
-        $bpB = BusinessProfile::factory()->create(['slug' => 'other-provider', 'city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bpA)->create([
-            'category_id' => $cat->id,
-            'title' => 'Demo provider offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        Offer::factory()->for($bpB)->create([
-            'category_id' => $cat->id,
-            'title' => 'Other provider offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
+        [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
 
         $this
             ->get('/catalog?provider=%20%20DEMO-PROVIDER%20%20')
@@ -235,24 +242,7 @@ class CatalogTest extends TestCase
 
     public function test_catalog_filters_by_provider_allows_pasting_full_provider_url(): void
     {
-        $cat = Category::factory()->create(['name' => 'Електрик']);
-
-        $bpA = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
-        $bpB = BusinessProfile::factory()->create(['slug' => 'other-provider', 'city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bpA)->create([
-            'category_id' => $cat->id,
-            'title' => 'Demo provider offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        Offer::factory()->for($bpB)->create([
-            'category_id' => $cat->id,
-            'title' => 'Other provider offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
+        [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
 
         $this
             ->get('/catalog?provider=https%3A%2F%2Fexample.test%2Fproviders%2FDEMO-PROVIDER%3Fref%3Dcat')
@@ -267,24 +257,7 @@ class CatalogTest extends TestCase
 
     public function test_catalog_filters_by_provider_allows_pasting_full_provider_url_with_trailing_slash_and_fragment(): void
     {
-        $cat = Category::factory()->create(['name' => 'Електрик']);
-
-        $bpA = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
-        $bpB = BusinessProfile::factory()->create(['slug' => 'other-provider', 'city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bpA)->create([
-            'category_id' => $cat->id,
-            'title' => 'Demo provider offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        Offer::factory()->for($bpB)->create([
-            'category_id' => $cat->id,
-            'title' => 'Other provider offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
+        [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
 
         $this
             ->get('/catalog?provider=https%3A%2F%2Fexample.test%2Fproviders%2FDEMO-PROVIDER%2F%3Futm%3D1%23offers')
@@ -299,24 +272,7 @@ class CatalogTest extends TestCase
 
     public function test_catalog_filters_by_provider_allows_pasting_relative_provider_path(): void
     {
-        $cat = Category::factory()->create(['name' => 'Електрик']);
-
-        $bpA = BusinessProfile::factory()->create(['slug' => 'demo-provider', 'city' => 'Київ', 'is_active' => true]);
-        $bpB = BusinessProfile::factory()->create(['slug' => 'other-provider', 'city' => 'Київ', 'is_active' => true]);
-
-        Offer::factory()->for($bpA)->create([
-            'category_id' => $cat->id,
-            'title' => 'Demo provider offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
-
-        Offer::factory()->for($bpB)->create([
-            'category_id' => $cat->id,
-            'title' => 'Other provider offer',
-            'is_active' => true,
-            'price_from' => 100,
-        ]);
+        [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
 
         $this
             ->get('/catalog?provider=%2Fproviders%2FDEMO-PROVIDER%2F')
