@@ -234,31 +234,18 @@ class CatalogTest extends TestCase
             );
     }
 
-    public function test_catalog_filters_by_provider_slug_case_insensitive_and_normalizes_whitespace(): void
-    {
-        [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
-
-        $this
-            ->get('/catalog?provider=%20%20DEMO-PROVIDER%20%20')
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('Catalog/Index')
-                ->where('filters.provider', 'demo-provider')
-                ->has('offers.data', 1)
-                ->where('offers.data.0.title', 'Demo provider offer')
-            );
-    }
-
     public static function providerFilterInputProvider(): array
     {
         return [
+            'slug with whitespace + different case' => ['  DEMO-PROVIDER  '],
             'full URL' => ['https://example.test/providers/DEMO-PROVIDER?ref=cat'],
             'full URL with trailing slash + query + fragment' => ['https://example.test/providers/DEMO-PROVIDER/?utm=1#offers'],
             'relative providers path' => ['/providers/DEMO-PROVIDER/'],
         ];
     }
+
     #[DataProvider('providerFilterInputProvider')]
-    public function test_catalog_filters_by_provider_allows_pasting_provider_urls_and_paths(string $provider): void
+    public function test_catalog_filters_by_provider_allows_pasting_provider_slugs_urls_and_paths(string $provider): void
     {
         [$cat, $bpA, $bpB] = $this->seedTwoProvidersWithOffers();
 
