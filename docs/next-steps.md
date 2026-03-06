@@ -57,6 +57,18 @@
   - A11y/UX: дрібні покращення в кабінеті (aria-label/title для action links, autocomplete hints у формі BusinessProfile).
   - Tech-debt/tests: cleanup дубльованих тестів, додаткове покриття `QueryParamNormalizer::providerSlug()`, невеликий refactor констант preload у `ProviderController`.
 
+- 2026-03-06: A11y/semantics + test cleanup + regression tests:
+  - A11y/UX (публічні сторінки):
+    - Catalog/Index.vue і Providers/Show.vue: обернуто контент у `<main>` landmark (раніше відсутній на публічних сторінках — screen readers не могли знайти основний контент).
+    - Offer cards у каталозі та на сторінці провайдера: замінено `<div>` → `<article>` для кращої семантики.
+    - Portfolio posts і reviews: дати обернуті в `<time datetime="...">` для SEO та screen readers.
+  - Test cleanup (CatalogTest):
+    - Об'єднано дублікатні тести нормалізації whitespace у city/q фільтрах у спільні data providers (regular + unicode whitespace в одному тесті).
+  - Regression тести (edge-cases normalizers):
+    - `QueryParamNormalizerTest`: `unsignedInt` з BOM, zero-width space, LTR mark, soft hyphen.
+    - `BusinessProfileRequestNormalizerTest`: `countryCode` з невидимими unicode-символами навколо літер.
+    - `ContactFieldNormalizerTest`: phone з unicode whitespace без цифр; website з BOM/LTR mark.
+
 ## Current status
 - Branch: `main`
 - Postgres configured and working locally.
@@ -97,11 +109,17 @@
   - `published_at <= now()`
 
 ## TODO (next session)
-1) Stage 5 (Polish / robustness — safe micro-steps)
-   - [ ] Пройтись по публічних сторінках (catalog/provider) і знайти ще 1 маленьке UX/a11y покращення без зміни логіки (aria-label/title, autocomplete, focus states, дрібні підказки).
-   - [x] Перевірити sitemap/robots на дрібні SEO-деталі (вже зроблено):
-     - `/` включено як окремий `<url>` у sitemap (хоча він редіректить на `/catalog`)
-     - `robots.txt` містить sitemap directive, а Laravel route нормалізує його до абсолютного URL
-2) Tests / tech-debt (без зміни поведінки)
-   - [ ] Ще 1 точковий cleanup у тестах (очевидні дублікати/надмірності, особливо в `CatalogTest`) без втрати реального покриття.
-   - [ ] Додати 1-2 regression тести на edge-cases для form requests / normalizers (наприклад, unicode-whitespace у числових/URL полях або неочікуваний формат query params).
+1) Функціональні покращення (наступний етап — після MVP polish):
+   - [ ] Пошук/фільтрація: автокомпліт міст (підказки з існуючих міст у базі).
+   - [ ] Пошук/фільтрація: автокомпліт категорій (fuzzy match по назві).
+   - [ ] Повідомлення: email-нотифікація клієнту при створенні угоди провайдером.
+   - [ ] Зображення: upload фото для PortfolioPost та Story (storage + thumbnails).
+   - [ ] Модерація: базова модерація контенту (flag/report).
+2) UI/UX (наступний етап):
+   - [ ] Responsive: перевірити адаптивність на мобільних (catalog cards, provider page).
+   - [ ] Dark mode: підготувати dark variant (Tailwind `dark:` classes).
+   - [ ] Breadcrumbs: додати breadcrumb навігацію у кабінет (dashboard → business-profiles → offers).
+3) Tech-debt:
+   - [ ] Feature tests: додати E2E тести для повного user flow (register → create profile → create offer → deal → review).
+   - [ ] API: підготувати api.php routes для майбутнього мобільного клієнта.
+   - [ ] CI: налаштувати GitHub Actions для автоматичного запуску тестів.

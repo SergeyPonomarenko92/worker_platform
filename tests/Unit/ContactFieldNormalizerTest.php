@@ -94,4 +94,30 @@ class ContactFieldNormalizerTest extends TestCase
         $this->assertSame('+380 50 123 45 67', ContactFieldNormalizer::phone(" +380 50
 	123   45 67 "));
     }
+
+    #[Test]
+    public function phone_returns_null_for_unicode_whitespace_with_no_digits(): void
+    {
+        // Only BOM + zero-width space + plus sign → no digits → null.
+        $this->assertNull(ContactFieldNormalizer::phone("\u{FEFF}+\u{200B}"));
+
+        // NBSP-padded dash → no digits → null.
+        $this->assertNull(ContactFieldNormalizer::phone("\u{00A0}-\u{00A0}"));
+    }
+
+    #[Test]
+    public function website_normalizes_domain_wrapped_in_invisible_unicode(): void
+    {
+        // BOM + domain + zero-width space — should be treated as plain "example.com".
+        $this->assertSame(
+            'https://example.com',
+            ContactFieldNormalizer::website("\u{FEFF}example.com\u{200B}")
+        );
+
+        // Left-to-right mark before URL (common in pasted RTL-context content).
+        $this->assertSame(
+            'https://example.com',
+            ContactFieldNormalizer::website("\u{200E}https://example.com")
+        );
+    }
 }

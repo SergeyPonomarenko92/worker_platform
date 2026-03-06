@@ -196,7 +196,7 @@ onMounted(() => {
 <template>
   <Head :title="provider.name" />
 
-  <div class="py-8">
+  <main class="py-8">
     <div class="mx-auto max-w-6xl px-4">
       <div class="flex items-start justify-between gap-4">
         <div>
@@ -408,18 +408,17 @@ onMounted(() => {
 
         <template v-if="portfolioPostsToShow.length">
           <div id="provider-portfolio-list" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-3">
-            <Card
-              v-for="post in portfolioPostsToShow"
-              :key="post.id"
-            >
-              <div class="flex items-start justify-between gap-3">
-                <div class="font-medium">{{ post.title }}</div>
-                <div v-if="post.published_at" class="text-xs text-gray-400 whitespace-nowrap">
-                  {{ new Date(post.published_at).toLocaleDateString('uk-UA') }}
+            <article v-for="post in portfolioPostsToShow" :key="post.id">
+              <Card>
+                <div class="flex items-start justify-between gap-3">
+                  <div class="font-medium">{{ post.title }}</div>
+                  <time v-if="post.published_at" :datetime="post.published_at" class="text-xs text-gray-400 whitespace-nowrap">
+                    {{ new Date(post.published_at).toLocaleDateString('uk-UA') }}
+                  </time>
                 </div>
-              </div>
-              <div v-if="post.body" class="mt-2 text-sm text-gray-600 line-clamp-3">{{ post.body }}</div>
-            </Card>
+                <div v-if="post.body" class="mt-2 text-sm text-gray-600 line-clamp-3">{{ post.body }}</div>
+              </Card>
+            </article>
           </div>
 
           <div v-if="hasMorePortfolio" class="mt-4 flex justify-center">
@@ -512,23 +511,22 @@ onMounted(() => {
 
         <template v-if="offersToShow.length">
           <div id="provider-offers-list" class="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card
-              v-for="offer in offersToShow"
-              :key="offer.id"
-            >
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <div class="text-sm text-gray-500">
-                    {{ offerTypeLabel(offer.type) }}
-                    <span v-if="offer.category">· {{ formatCategoryPath(offer.category) || offer.category.name }}</span>
+            <article v-for="offer in offersToShow" :key="offer.id">
+              <Card>
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <div class="text-sm text-gray-500">
+                      {{ offerTypeLabel(offer.type) }}
+                      <span v-if="offer.category">· {{ formatCategoryPath(offer.category) || offer.category.name }}</span>
+                    </div>
+                    <div class="text-lg font-semibold">{{ offer.title }}</div>
                   </div>
-                  <div class="text-lg font-semibold">{{ offer.title }}</div>
+                  <div class="text-sm text-gray-600 whitespace-nowrap">{{ formatPrice(offer) }}</div>
                 </div>
-                <div class="text-sm text-gray-600 whitespace-nowrap">{{ formatPrice(offer) }}</div>
-              </div>
 
-              <div v-if="offer.description" class="mt-2 text-sm text-gray-700 line-clamp-3">{{ offer.description }}</div>
-            </Card>
+                <div v-if="offer.description" class="mt-2 text-sm text-gray-700 line-clamp-3">{{ offer.description }}</div>
+              </Card>
+            </article>
           </div>
 
           <div
@@ -603,22 +601,21 @@ onMounted(() => {
 
         <template v-if="reviewsToShow.length">
           <div id="provider-reviews-list" class="mt-3 space-y-3">
-            <Card
-              v-for="review in reviewsToShow"
-              :key="review.id"
-            >
-              <div class="flex items-center justify-between gap-3">
-                <div class="text-sm text-gray-500">
-                  <span v-if="review.client" class="font-medium text-gray-700">{{ review.client.name }}</span>
-                  <span v-else>Клієнт</span>
-                  — Оцінка: {{ review.rating }}/5
+            <article v-for="review in reviewsToShow" :key="review.id">
+              <Card>
+                <div class="flex items-center justify-between gap-3">
+                  <div class="text-sm text-gray-500">
+                    <span v-if="review.client" class="font-medium text-gray-700">{{ review.client.name }}</span>
+                    <span v-else>Клієнт</span>
+                    — Оцінка: {{ review.rating }}/5
+                  </div>
+                  <time v-if="review.created_at" :datetime="review.created_at" class="text-xs text-gray-400">
+                    {{ new Date(review.created_at).toLocaleDateString('uk-UA') }}
+                  </time>
                 </div>
-                <div v-if="review.created_at" class="text-xs text-gray-400">
-                  {{ new Date(review.created_at).toLocaleDateString('uk-UA') }}
-                </div>
-              </div>
-              <div v-if="review.body" class="mt-2 text-sm text-gray-700">{{ review.body }}</div>
-            </Card>
+                <div v-if="review.body" class="mt-2 text-sm text-gray-700">{{ review.body }}</div>
+              </Card>
+            </article>
           </div>
 
           <div
@@ -656,5 +653,5 @@ onMounted(() => {
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>

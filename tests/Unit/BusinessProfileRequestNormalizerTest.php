@@ -44,4 +44,20 @@ class BusinessProfileRequestNormalizerTest extends TestCase
         $this->assertSame('UA', BusinessProfileRequestNormalizer::countryCode('U'));
         $this->assertSame('UA', BusinessProfileRequestNormalizer::countryCode('1!'));
     }
+
+    #[Test]
+    public function it_normalizes_country_code_with_invisible_unicode_chars(): void
+    {
+        // BOM + zero-width space wrapping normal input.
+        $this->assertSame('UA', BusinessProfileRequestNormalizer::countryCode("\u{FEFF}UA\u{200B}"));
+
+        // Left-to-right mark between letters (can appear in RTL-context copy/paste).
+        $this->assertSame('PL', BusinessProfileRequestNormalizer::countryCode("P\u{200E}L"));
+
+        // Soft hyphen inside letters — stripped by text(), then letters join.
+        $this->assertSame('DE', BusinessProfileRequestNormalizer::countryCode("D\u{00AD}E"));
+
+        // Only invisible chars → fallback to UA.
+        $this->assertSame('UA', BusinessProfileRequestNormalizer::countryCode("\u{200B}\u{FEFF}\u{200E}"));
+    }
 }

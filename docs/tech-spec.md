@@ -34,6 +34,7 @@
   - форми показують помилки валідації через Inertia (без нативної HTML-валидації)
   - input robustness: нормалізація контактних полів (website/phone) + allowlist для `Offer.currency`
   - SEO/robustness: узгоджений `sitemap.xml` (`lastmod` для `/catalog` відповідає видимим даним)
+  - a11y: `<main>` landmark на публічних сторінках, `<article>` для карток, `<time>` для дат
 
 ---
 

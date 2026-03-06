@@ -153,6 +153,25 @@ class QueryParamNormalizerTest extends TestCase
     }
 
     #[Test]
+    public function it_normalizes_unsigned_int_with_invisible_unicode_around_digits(): void
+    {
+        // BOM + digits + zero-width space: should be treated as plain "1000".
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt("\u{FEFF}1000\u{200B}"));
+
+        // Zero-width non-joiner inside formatted number.
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1\u{200C}000"));
+
+        // Left-to-right mark (common in pasted content from RTL-aware editors).
+        $this->assertSame(500, QueryParamNormalizer::unsignedInt("\u{200E}500"));
+
+        // Soft hyphen inside digits — stripped entirely by text(), remaining digits join.
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt("10\u{00AD}00"));
+
+        // Only invisible chars → null.
+        $this->assertNull(QueryParamNormalizer::unsignedInt("\u{FEFF}\u{200B}\u{200E}"));
+    }
+
+    #[Test]
     public function it_returns_empty_provider_slug_for_null_or_whitespace_only(): void
     {
         $this->assertSame('', QueryParamNormalizer::providerSlug(null));
