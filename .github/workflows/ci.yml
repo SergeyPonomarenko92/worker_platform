@@ -13,30 +13,34 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_DB: testing
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: worker_platform
+          POSTGRES_USER: worker
+          POSTGRES_PASSWORD: worker
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres -d testing"
+          --health-cmd "pg_isready -U worker -d worker_platform"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
 
     env:
       APP_ENV: testing
-      APP_DEBUG: false
-      CACHE_DRIVER: array
-      QUEUE_CONNECTION: sync
-      SESSION_DRIVER: array
-
+      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
       DB_CONNECTION: pgsql
       DB_HOST: 127.0.0.1
       DB_PORT: 5432
-      DB_DATABASE: testing
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_DATABASE: worker_platform
+      DB_USERNAME: worker
+      DB_PASSWORD: worker
+      DB_SEARCH_PATH: testing
+      CACHE_STORE: array
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
+      MAIL_MAILER: array
+      PULSE_ENABLED: 'false'
+      TELESCOPE_ENABLED: 'false'
+      NIGHTWATCH_ENABLED: 'false'
 
     steps:
       - uses: actions/checkout@v4
@@ -44,8 +48,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: mbstring, dom, fileinfo, pdo_pgsql
+          php-version: '8.3'
           coverage: none
 
       - name: Setup Node
@@ -54,23 +57,20 @@ jobs:
           node-version: '22'
           cache: npm
 
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Prepare Laravel app
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-          php artisan config:clear
-
-      - name: Install frontend dependencies
+      - name: Install JS dependencies
         run: npm ci
 
-      - name: Build frontend
+      - name: Build assets
         run: npm run build
 
-      - name: Run migrations
-        run: php artisan migrate --force
+      - name: Prepare database schema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=worker psql -h 127.0.0.1 -U worker -d worker_platform -c "CREATE SCHEMA IF NOT EXISTS testing AUTHORIZATION worker;"
 
       - name: Run tests
         run: php artisan test
