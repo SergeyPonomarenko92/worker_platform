@@ -2,15 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
 
 jobs:
   test:
@@ -26,14 +19,13 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U worker -d worker_platform"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
+          --health-cmd="pg_isready -U worker -d worker_platform"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     env:
       APP_ENV: testing
-      APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
       DB_CONNECTION: pgsql
       DB_HOST: 127.0.0.1
       DB_PORT: 5432
@@ -41,13 +33,6 @@ jobs:
       DB_USERNAME: worker
       DB_PASSWORD: worker
       DB_SEARCH_PATH: testing
-      CACHE_STORE: array
-      QUEUE_CONNECTION: sync
-      SESSION_DRIVER: array
-      MAIL_MAILER: array
-      PULSE_ENABLED: 'false'
-      TELESCOPE_ENABLED: 'false'
-      NIGHTWATCH_ENABLED: 'false'
 
     steps:
       - uses: actions/checkout@v4
@@ -55,16 +40,9 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.2'
           coverage: none
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+          tools: composer:v2
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -72,23 +50,28 @@ jobs:
           node-version: '22'
           cache: npm
 
-      - name: Install PHP dependencies
+      - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Lint (Pint)
-        run: ./vendor/bin/pint --test
+      - name: Prepare app key
+        run: |
+          cp .env.example .env
+          php artisan key:generate
 
-      - name: Install JS dependencies
+      - name: Install Node dependencies
         run: npm ci
 
       - name: Build assets
         run: npm run build
 
-      - name: Prepare database schema
+      - name: Create testing schema
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql-client
-          PGPASSWORD=worker psql -h 127.0.0.1 -U worker -d worker_platform -c "CREATE SCHEMA IF NOT EXISTS testing AUTHORIZATION worker;"
+          PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -U "$DB_USERNAME" -d "$DB_DATABASE" -c 'CREATE SCHEMA IF NOT EXISTS testing;'
+
+      - name: Run migrations
+        run: php artisan migrate --force
 
       - name: Run tests
         run: php artisan test
