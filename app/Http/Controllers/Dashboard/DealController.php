@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Mail\DealCreatedForClientMail;
 use App\Models\BusinessProfile;
 use App\Models\Deal;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -90,6 +92,9 @@ class DealController extends Controller
             'currency' => strtoupper($data['currency']),
             'completed_at' => $data['status'] === 'completed' ? now() : null,
         ]);
+
+        // MVP: notify client via email that a provider created a deal.
+        Mail::to($data['client_email'])->send(new DealCreatedForClientMail($deal));
 
         return redirect()
             ->route('dashboard.deals.show', [$businessProfile, $deal])

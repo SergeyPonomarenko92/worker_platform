@@ -158,4 +158,28 @@ class DealsTest extends TestCase
             'status' => 'draft',
         ]);
     }
+
+    public function test_deal_creation_sends_email_to_client(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id, 'name' => 'Demo Provider']);
+
+        $this->actingAs($provider)
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => $client->email,
+                'offer_id' => null,
+                'status' => 'draft',
+                'currency' => 'UAH',
+                'agreed_price' => 100,
+            ])
+            ->assertRedirect();
+
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DealCreatedForClientMail::class, function ($mailable) use ($client) {
+            return $mailable->hasTo($client->email);
+        });
+    }
 }
