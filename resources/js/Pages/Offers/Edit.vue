@@ -66,7 +66,7 @@ const destroy = () => {
                     <form @submit.prevent="submit" novalidate class="space-y-6">
                         <div>
                             <InputLabel for="type" value="Тип" />
-                            <select id="type" v-model="form.type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <select id="type" v-model="form.type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="service">Послуга</option>
                                 <option value="product">Товар</option>
                             </select>
@@ -81,7 +81,7 @@ const destroy = () => {
 
                         <div>
                             <InputLabel for="category_id" value="Категорія" />
-                            <select id="category_id" v-model="form.category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <select id="category_id" v-model="form.category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option :value="null">—</option>
                                 <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
                             </select>
@@ -93,7 +93,7 @@ const destroy = () => {
                             <textarea
                                 id="description"
                                 v-model="form.description"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 rows="5"
                             ></textarea>
                             <InputError class="mt-2" :message="form.errors.description" />
@@ -102,19 +102,32 @@ const destroy = () => {
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div>
                                 <InputLabel for="price_from" value="Ціна від" />
-                                <TextInput id="price_from" v-model.number="form.price_from" type="number" step="1" min="0" class="mt-1 block w-full" />
+                                <TextInput id="price_from" v-model.number="form.price_from" type="number" inputmode="numeric" autocomplete="off" step="1" min="0" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.price_from" />
                             </div>
                             <div>
                                 <InputLabel for="price_to" value="Ціна до" />
-                                <TextInput id="price_to" v-model.number="form.price_to" type="number" step="1" min="0" class="mt-1 block w-full" />
+                                <TextInput id="price_to" v-model.number="form.price_to" type="number" inputmode="numeric" autocomplete="off" step="1" min="0" class="mt-1 block w-full" />
                                 <InputError class="mt-2" :message="form.errors.price_to" />
                             </div>
                             <div>
                                 <InputLabel for="currency" value="Валюта" />
-                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" @blur="normalizeCurrency" />
+                                <TextInput
+                                    id="currency"
+                                    v-model="form.currency"
+                                    type="text"
+                                    inputmode="text"
+                                    autocapitalize="characters"
+                                    spellcheck="false"
+                                    autocomplete="off"
+                                    aria-describedby="currency-hint"
+                                    class="mt-1 block w-full"
+                                    minlength="3"
+                                    maxlength="3"
+                                    @blur="normalizeCurrency"
+                                />
                                 <InputError class="mt-2" :message="form.errors.currency" />
-                            <div class="mt-1 text-xs text-gray-500">Напр.: UAH</div>
+                                <div id="currency-hint" class="mt-1 text-xs text-gray-500">Напр.: UAH</div>
                             </div>
                         </div>
 
