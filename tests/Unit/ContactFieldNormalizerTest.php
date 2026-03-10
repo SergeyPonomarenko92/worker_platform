@@ -91,8 +91,8 @@ class ContactFieldNormalizerTest extends TestCase
     #[Test]
     public function phone_keeps_normalized_value_when_it_contains_digits(): void
     {
-        $this->assertSame('+380 50 123 45 67', ContactFieldNormalizer::phone(" +380 50
-	123   45 67 "));
+        $this->assertSame('+380 50 123 45 67', ContactFieldNormalizer::phone(' +380 50
+	123   45 67 '));
     }
 
     #[Test]

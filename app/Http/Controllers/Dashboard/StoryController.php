@@ -20,7 +20,7 @@ class StoryController extends Controller
 
         $storiesQuery = $businessProfile->stories()->latest('created_at');
 
-        if (!$showExpired) {
+        if (! $showExpired) {
             $storiesQuery->where('expires_at', '>', now());
         }
 

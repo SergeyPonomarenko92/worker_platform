@@ -25,6 +25,4 @@ class UpdateBusinessProfileRequest extends BusinessProfileFormRequest
 
         return $data;
     }
-
 }
-

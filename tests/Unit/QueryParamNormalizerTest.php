@@ -16,7 +16,7 @@ class QueryParamNormalizerTest extends TestCase
         $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1\u{00A0}000"));
         $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1\u{202F}000"));
         $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1'000"));
-        $this->assertSame(1000, QueryParamNormalizer::unsignedInt("1’000"));
+        $this->assertSame(1000, QueryParamNormalizer::unsignedInt('1’000'));
 
         $this->assertNull(QueryParamNormalizer::unsignedInt(null));
         $this->assertNull(QueryParamNormalizer::unsignedInt(''));

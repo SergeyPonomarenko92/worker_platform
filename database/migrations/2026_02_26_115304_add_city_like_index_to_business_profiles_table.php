@@ -11,7 +11,7 @@ return new class extends Migration
         // where lower(city) like 'ки%'
         // Default btree index may not be used efficiently for LIKE without pattern ops.
         DB::statement(
-            "create index if not exists business_profiles_city_lower_like_idx on business_profiles ((lower(city)) text_pattern_ops)"
+            'create index if not exists business_profiles_city_lower_like_idx on business_profiles ((lower(city)) text_pattern_ops)'
         );
     }
 

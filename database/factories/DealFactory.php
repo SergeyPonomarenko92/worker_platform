@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\BusinessProfile;
 use App\Models\Deal;
-use App\Models\Offer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

@@ -100,7 +100,7 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
         'catalog:category_tree' => DB::query()
             ->select('id')
             ->fromRaw(
-                <<<SQL
+                <<<'SQL'
                 (
                     with recursive category_tree as (
                         select id from categories where id = ?
@@ -123,7 +123,7 @@ Artisan::command('perf:audit {--list : List available sample queries and exit} {
             ->whereIn('offers.category_id', DB::query()
                 ->select('id')
                 ->fromRaw(
-                    <<<SQL
+                    <<<'SQL'
                     (
                         with recursive category_tree as (
                             select id from categories where id = ?

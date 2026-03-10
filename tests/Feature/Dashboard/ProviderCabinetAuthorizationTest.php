@@ -3,8 +3,8 @@
 namespace Tests\Feature\Dashboard;
 
 use App\Models\BusinessProfile;
-use App\Models\Offer;
 use App\Models\Deal;
+use App\Models\Offer;
 use App\Models\PortfolioPost;
 use App\Models\Story;
 use App\Models\User;

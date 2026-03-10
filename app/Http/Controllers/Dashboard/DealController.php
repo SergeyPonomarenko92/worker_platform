@@ -72,9 +72,9 @@ class DealController extends Controller
         $clientId = User::query()->where('email', $data['client_email'])->value('id');
 
         // Ensure chosen offer belongs to business profile.
-        if (!empty($data['offer_id'])) {
+        if (! empty($data['offer_id'])) {
             $offerOk = $businessProfile->offers()->whereKey($data['offer_id'])->exists();
-            if (!$offerOk) {
+            if (! $offerOk) {
                 return back()->withErrors([
                     'offer_id' => 'Офер має належати вибраному профілю бізнесу.',
                 ]);

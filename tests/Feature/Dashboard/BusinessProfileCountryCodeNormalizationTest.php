@@ -34,7 +34,7 @@ class BusinessProfileCountryCodeNormalizationTest extends TestCase
         $this->actingAs($user)
             ->post(route('dashboard.business-profiles.store'), [
                 'name' => 'Test Provider',
-                'country_code' => " u a! ",
+                'country_code' => ' u a! ',
             ])
             ->assertRedirect();
 

@@ -15,10 +15,8 @@ class StoreBusinessProfileRequest extends BusinessProfileFormRequest
         $data = $this->normalizedValidatedData();
 
         // Store default behavior: active by default.
-        $data['is_active'] = (bool)($data['is_active'] ?? true);
+        $data['is_active'] = (bool) ($data['is_active'] ?? true);
 
         return $data;
     }
-
 }
-

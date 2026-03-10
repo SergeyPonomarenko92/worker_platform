@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreOfferRequest;
 use App\Http\Requests\Dashboard\UpdateOfferRequest;
-use App\Models\Category;
 use App\Models\BusinessProfile;
+use App\Models\Category;
 use App\Models\Offer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,7 +46,7 @@ class OfferController extends Controller
         $data = $request->normalized();
 
         $data['business_profile_id'] = $businessProfile->id;
-        $data['is_active'] = (bool)($data['is_active'] ?? true);
+        $data['is_active'] = (bool) ($data['is_active'] ?? true);
 
         Offer::create($data);
 

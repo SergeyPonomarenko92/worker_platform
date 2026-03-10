@@ -16,7 +16,7 @@ return new class extends Migration
 
         if ($driver === 'pgsql') {
             $exists = (bool) (DB::selectOne(
-                "select 1 as exists from pg_indexes where schemaname = current_schema() and indexname = ? limit 1",
+                'select 1 as exists from pg_indexes where schemaname = current_schema() and indexname = ? limit 1',
                 ['reviews_bp_created_at_index'],
             )?->exists ?? false);
 
@@ -40,7 +40,7 @@ return new class extends Migration
 
         if ($driver === 'pgsql') {
             $exists = (bool) (DB::selectOne(
-                "select 1 as exists from pg_indexes where schemaname = current_schema() and indexname = ? limit 1",
+                'select 1 as exists from pg_indexes where schemaname = current_schema() and indexname = ? limit 1',
                 ['reviews_bp_created_at_index'],
             )?->exists ?? false);
 

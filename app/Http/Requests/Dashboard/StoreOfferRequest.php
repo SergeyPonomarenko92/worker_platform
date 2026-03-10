@@ -2,6 +2,4 @@
 
 namespace App\Http\Requests\Dashboard;
 
-class StoreOfferRequest extends OfferFormRequest
-{
-}
+class StoreOfferRequest extends OfferFormRequest {}

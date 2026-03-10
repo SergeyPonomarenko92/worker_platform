@@ -51,7 +51,7 @@ class CatalogController extends Controller
             // Include child categories when a parent is selected.
             // Postgres recursive CTE keeps it simple and fast.
             $rows = DB::select(
-                <<<SQL
+                <<<'SQL'
                 with recursive category_tree as (
                     select id from categories where id = ?
                     union all
@@ -116,7 +116,7 @@ class CatalogController extends Controller
             ->whereHas('businessProfile', fn ($bp) => $bp->active())
             ->when($type, fn ($query) => $query->where('type', $type))
             ->when(is_array($categoryIds) && count($categoryIds), fn ($query) => $query->whereIn('category_id', $categoryIds))
-            ->when($categoryId && (!is_array($categoryIds) || !count($categoryIds)), fn ($query) => $query->where('category_id', $categoryId))
+            ->when($categoryId && (! is_array($categoryIds) || ! count($categoryIds)), fn ($query) => $query->where('category_id', $categoryId))
             ->when($providerSlugLower, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->where('slug', $providerSlugLower)))
             ->when($city, fn ($query) => $query->whereHas('businessProfile', fn ($bp) => $bp->whereRaw("lower(city) like ? escape '!'", ["{$cityLike}%"])))
             ->when($q, fn ($query) => $query->where(function ($sub) use ($qLike) {

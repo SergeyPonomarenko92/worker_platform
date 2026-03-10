@@ -80,7 +80,7 @@ class CatalogTest extends TestCase
     }
 
     public function test_catalog_page_does_not_trigger_n_plus_one_queries(): void
-    { 
+    {
         Carbon::setTestNow(now());
 
         $category = Category::factory()->create(['name' => 'Електрика']);
@@ -185,7 +185,7 @@ class CatalogTest extends TestCase
         ]);
 
         $this
-            ->get('/catalog?sort=' . $sort)
+            ->get('/catalog?sort='.$sort)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
@@ -253,7 +253,7 @@ class CatalogTest extends TestCase
         $query = http_build_query(['provider' => $provider]);
 
         $this
-            ->get('/catalog?' . $query)
+            ->get('/catalog?'.$query)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
@@ -325,7 +325,7 @@ class CatalogTest extends TestCase
 
         // If we forget to escape user input, these patterns may become SQL wildcards and match more than intended.
         $this
-            ->get('/catalog?city=' . $cityInput)
+            ->get('/catalog?city='.$cityInput)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
@@ -373,7 +373,7 @@ class CatalogTest extends TestCase
 
         // If we forget to escape user input, these patterns may become SQL wildcards and match more than intended.
         $this
-            ->get('/catalog?q=' . $qInput)
+            ->get('/catalog?q='.$qInput)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
@@ -450,7 +450,7 @@ class CatalogTest extends TestCase
     public static function cityWhitespaceNormalizationProvider(): array
     {
         return [
-            'regular spaces around' => ["  КИ  "],
+            'regular spaces around' => ['  КИ  '],
             'NBSP around' => ["\u{00A0}\u{00A0}КИ\u{00A0}"],
             'thin + narrow no-break spaces' => ["\u{2009}КИ\u{202F}"],
         ];
@@ -473,7 +473,7 @@ class CatalogTest extends TestCase
         $city = rawurlencode($rawCity);
 
         $this
-            ->get('/catalog?city=' . $city)
+            ->get('/catalog?city='.$city)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
@@ -486,7 +486,7 @@ class CatalogTest extends TestCase
     public static function qWhitespaceNormalizationProvider(): array
     {
         return [
-            'multiple regular spaces' => ["майстер   руки"],
+            'multiple regular spaces' => ['майстер   руки'],
             'NBSP' => ["майстер\xC2\xA0руки"],
             'thin space' => ["майстер\u{2009}руки"],
         ];
@@ -509,7 +509,7 @@ class CatalogTest extends TestCase
         $q = rawurlencode($rawQ);
 
         $this
-            ->get('/catalog?q=' . $q)
+            ->get('/catalog?q='.$q)
             ->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Catalog/Index')
@@ -999,6 +999,4 @@ class CatalogTest extends TestCase
                 ->where('offers.current_page', 1)
             );
     }
-
 }
-

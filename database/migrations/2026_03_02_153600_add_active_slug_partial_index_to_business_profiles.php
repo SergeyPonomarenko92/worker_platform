@@ -15,7 +15,7 @@ return new class extends Migration
             return;
         }
 
-        DB::statement("create index if not exists business_profiles_active_slug_idx on business_profiles (slug) where is_active = true");
+        DB::statement('create index if not exists business_profiles_active_slug_idx on business_profiles (slug) where is_active = true');
     }
 
     public function down(): void

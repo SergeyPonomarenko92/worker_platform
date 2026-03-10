@@ -10,7 +10,9 @@ use Inertia\Inertia;
 class ProviderController extends Controller
 {
     private const DEFAULT_OFFERS_LIMIT = 6;
+
     private const DEFAULT_PORTFOLIO_LIMIT = 12;
+
     private const DEFAULT_REVIEWS_LIMIT = 20;
 
     private const LOAD_ALL_LIMIT = 200;

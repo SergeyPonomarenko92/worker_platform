@@ -190,7 +190,7 @@ class QueryParamNormalizer
 
         // Allow common thousands separators.
         // We normalize unicode whitespace in text() already, so only plain spaces remain.
-        $value = str_replace([' ', "'", "’", 'ʼ'], '', $value);
+        $value = str_replace([' ', "'", '’', 'ʼ'], '', $value);
 
         if ($value === '') {
             return null;
