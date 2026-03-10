@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
+import Breadcrumbs from '@/Components/Breadcrumbs.vue'
 import { Head, Link } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -15,7 +16,13 @@ const props = defineProps({
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">Профілі бізнесу</h2>
+                <div>
+                    <Breadcrumbs :items="[
+                        { label: 'Кабінет', href: route('dashboard') },
+                        { label: 'Профілі бізнесу', current: true },
+                    ]" />
+                    <h2 class="text-xl font-semibold leading-tight text-gray-800">Профілі бізнесу</h2>
+                </div>
                 <Link :href="route('dashboard.business-profiles.create')">
                     <PrimaryButton>Створити профіль</PrimaryButton>
                 </Link>
