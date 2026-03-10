@@ -179,7 +179,20 @@ class DealsTest extends TestCase
             ->assertRedirect();
 
         \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DealCreatedForClientMail::class, function ($mailable) use ($client) {
-            return $mailable->hasTo($client->email);
+            $this->assertTrue($mailable->hasTo($client->email));
+
+            // Ensure subject is stable and includes provider name.
+            $this->assertSame('Нова угода від Demo Provider', $mailable->envelope()->subject);
+
+            // Ensure basic content is rendered and includes key info.
+            $html = $mailable->render();
+
+            $this->assertStringContainsString('Нова угода створена', $html);
+            $this->assertStringContainsString('Demo Provider', $html);
+            $this->assertStringContainsString('draft', $html);
+            $this->assertStringContainsString('100 UAH', $html);
+
+            return true;
         });
     }
 }
