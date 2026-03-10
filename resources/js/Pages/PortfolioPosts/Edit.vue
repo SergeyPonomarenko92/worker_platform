@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -45,9 +46,18 @@ const destroy = () => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    Редагувати пост — {{ businessProfile.name }}
-                </h2>
+                <div>
+                    <Breadcrumbs :items="[
+                        { label: 'Кабінет', href: route('dashboard') },
+                        { label: 'Профілі бізнесу', href: route('dashboard.business-profiles.index') },
+                        { label: businessProfile.name, href: route('dashboard.business-profiles.edit', businessProfile.id) },
+                        { label: 'Портфоліо', href: route('dashboard.portfolio-posts.index', businessProfile.id) },
+                        { label: props.post.title || 'Редагувати', current: true },
+                    ]" />
+                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                        Редагувати пост — {{ businessProfile.name }}
+                    </h2>
+                </div>
                 <div class="flex gap-3">
                     <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">До портфоліо</Link>
                 </div>
