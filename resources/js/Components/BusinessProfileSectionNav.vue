@@ -1,0 +1,71 @@
+<script setup>
+import { Link } from '@inertiajs/vue3'
+
+const props = defineProps({
+    businessProfile: {
+        type: Object,
+        required: true,
+    },
+    active: {
+        type: String,
+        default: null,
+        // offers|portfolio|stories|deals|profile|profiles
+    },
+})
+
+const linkClass = (key) => {
+    const base = 'text-sm rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2'
+
+    if (props.active && props.active === key) {
+        return base + ' text-gray-900 font-medium'
+    }
+
+    return base + ' text-indigo-600 hover:underline'
+}
+</script>
+
+<template>
+    <div class="flex gap-3 flex-wrap justify-end">
+        <Link
+            :href="route('dashboard.business-profiles.index')"
+            :class="linkClass('profiles')"
+        >
+            Профілі бізнесу
+        </Link>
+
+        <Link
+            :href="route('dashboard.business-profiles.edit', businessProfile.id)"
+            :class="linkClass('profile')"
+        >
+            Профіль
+        </Link>
+
+        <Link
+            :href="route('dashboard.offers.index', businessProfile.id)"
+            :class="linkClass('offers')"
+        >
+            Пропозиції
+        </Link>
+
+        <Link
+            :href="route('dashboard.portfolio-posts.index', businessProfile.id)"
+            :class="linkClass('portfolio')"
+        >
+            Портфоліо
+        </Link>
+
+        <Link
+            :href="route('dashboard.stories.index', businessProfile.id)"
+            :class="linkClass('stories')"
+        >
+            Історії
+        </Link>
+
+        <Link
+            :href="route('dashboard.deals.index', businessProfile.id)"
+            :class="linkClass('deals')"
+        >
+            Угоди
+        </Link>
+    </div>
+</template>
