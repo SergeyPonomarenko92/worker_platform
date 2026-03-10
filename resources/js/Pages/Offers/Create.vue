@@ -83,7 +83,12 @@ const submit = () => {
 
                         <div>
                             <InputLabel for="description" value="Опис" />
-                            <textarea id="description" v-model="form.description" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="5" />
+                            <textarea
+                                id="description"
+                                v-model="form.description"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                rows="5"
+                            ></textarea>
                             <InputError class="mt-2" :message="form.errors.description" />
                         </div>
 
