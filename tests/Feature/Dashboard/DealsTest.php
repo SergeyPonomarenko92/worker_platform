@@ -178,7 +178,7 @@ class DealsTest extends TestCase
             ])
             ->assertRedirect();
 
-        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\DealCreatedForClientMail::class, function ($mailable) use ($client) {
+        \Illuminate\Support\Facades\Mail::assertQueued(\App\Mail\DealCreatedForClientMail::class, function ($mailable) use ($client) {
             $this->assertTrue($mailable->hasTo($client->email));
 
             // Ensure subject is stable and includes provider name.
