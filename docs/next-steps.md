@@ -122,4 +122,4 @@
 3) Tech-debt:
    - [ ] Feature tests: додати E2E тести для повного user flow (register → create profile → create offer → deal → review).
    - [ ] API: підготувати api.php routes для майбутнього мобільного клієнта.
-   - [ ] CI: налаштувати GitHub Actions для автоматичного запуску тестів.
+   - [x] CI: налаштовано GitHub Actions (`.github/workflows/ci.yml`) — Pint + build assets + міграції у schema `testing` (Postgres service) + `php artisan test`.
