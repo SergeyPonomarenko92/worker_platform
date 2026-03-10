@@ -195,4 +195,26 @@ class DealsTest extends TestCase
             return true;
         });
     }
+
+    public function test_owner_cannot_create_deal_with_unknown_currency(): void
+    {
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        $this->actingAs($provider)
+            ->from(route('dashboard.deals.create', $profile))
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => $client->email,
+                'offer_id' => null,
+                'status' => 'draft',
+                'currency' => 'RUB',
+                'agreed_price' => 100,
+            ])
+            ->assertRedirect(route('dashboard.deals.create', $profile))
+            ->assertSessionHasErrors(['currency']);
+
+        $this->assertDatabaseCount('deals', 0);
+    }
 }

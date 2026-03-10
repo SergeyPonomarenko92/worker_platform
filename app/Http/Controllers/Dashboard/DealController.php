@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -61,13 +62,14 @@ class DealController extends Controller
             'client_email' => mb_strtolower(trim((string) $request->input('client_email')), 'UTF-8'),
             'offer_id' => $request->input('offer_id') ?: null,
             'agreed_price' => $request->input('agreed_price') === '' ? null : $request->input('agreed_price'),
+            'currency' => strtoupper(trim((string) $request->input('currency'))),
         ]);
 
         $data = $request->validate([
             'client_email' => ['required', 'email', 'exists:users,email'],
             'offer_id' => ['nullable', 'integer', 'exists:offers,id'],
             'agreed_price' => ['nullable', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'size:3'],
+            'currency' => ['required', 'string', 'size:3', Rule::in(['UAH', 'USD', 'EUR'])],
             'status' => ['required', 'in:draft,in_progress,completed,cancelled'],
         ]);
 
@@ -89,7 +91,7 @@ class DealController extends Controller
             'offer_id' => $data['offer_id'] ?? null,
             'status' => $data['status'],
             'agreed_price' => $data['agreed_price'] ?? null,
-            'currency' => strtoupper($data['currency']),
+            'currency' => $data['currency'],
             'completed_at' => $data['status'] === 'completed' ? now() : null,
         ]);
 
