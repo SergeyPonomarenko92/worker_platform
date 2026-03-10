@@ -4,6 +4,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -31,11 +32,18 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    Профіль бізнесу
-                </h2>
-                <div class="flex gap-3">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                    <Breadcrumbs :items="[
+                        { label: 'Кабінет', href: route('dashboard') },
+                        { label: 'Профілі бізнесу', href: route('dashboard.business-profiles.index') },
+                        { label: props.profile.name, current: true },
+                    ]" />
+                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                        Профіль бізнесу
+                    </h2>
+                </div>
+                <div class="flex gap-3 flex-wrap justify-end">
                     <Link :href="route('dashboard.offers.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Пропозиції</Link>
                     <Link :href="route('dashboard.portfolio-posts.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Портфоліо</Link>
                     <Link :href="route('dashboard.stories.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Історії</Link>

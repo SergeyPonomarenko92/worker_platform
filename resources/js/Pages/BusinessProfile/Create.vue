@@ -4,6 +4,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -27,10 +28,17 @@ const submit = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    Створити профіль бізнесу
-                </h2>
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                    <Breadcrumbs :items="[
+                        { label: 'Кабінет', href: route('dashboard') },
+                        { label: 'Профілі бізнесу', href: route('dashboard.business-profiles.index') },
+                        { label: 'Створити', current: true },
+                    ]" />
+                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                        Створити профіль бізнесу
+                    </h2>
+                </div>
                 <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">До списку</Link>
             </div>
         </template>
