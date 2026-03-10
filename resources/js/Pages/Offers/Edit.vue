@@ -6,6 +6,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import BusinessProfileSectionNav from '@/Components/BusinessProfileSectionNav.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -56,7 +57,10 @@ const destroy = () => {
                     ]" />
                     <h2 class="text-xl font-semibold leading-tight text-gray-800">Редагувати пропозицію</h2>
                 </div>
-                <Link :href="route('dashboard.offers.index', props.businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Назад</Link>
+                <div class="flex items-center gap-3 flex-wrap justify-end">
+                    <BusinessProfileSectionNav :business-profile="props.businessProfile" active="offers" />
+                    <Link :href="route('dashboard.offers.index', props.businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Назад</Link>
+                </div>
             </div>
         </template>
 
