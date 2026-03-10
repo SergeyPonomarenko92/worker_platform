@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import Card from '@/Components/Card.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
+import Breadcrumbs from '@/Components/Breadcrumbs.vue'
 import { Head, Link } from '@inertiajs/vue3'
 </script>
 
@@ -10,7 +11,12 @@ import { Head, Link } from '@inertiajs/vue3'
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Дашборд</h2>
+            <div>
+                <Breadcrumbs :items="[
+                    { label: 'Кабінет', current: true },
+                ]" />
+                <h2 class="text-xl font-semibold leading-tight text-gray-800">Дашборд</h2>
+            </div>
         </template>
 
         <div class="py-12">

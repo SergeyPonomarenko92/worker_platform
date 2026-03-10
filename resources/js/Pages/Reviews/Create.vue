@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import InputError from '@/Components/InputError.vue'
 import InputLabel from '@/Components/InputLabel.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
+import Breadcrumbs from '@/Components/Breadcrumbs.vue'
 import { Head, useForm, Link } from '@inertiajs/vue3'
 
 const props = defineProps({
@@ -25,10 +26,17 @@ const submit = () => {
 
   <AuthenticatedLayout>
     <template #header>
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
-          Відгук — {{ businessProfile.name }}
-        </h2>
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <Breadcrumbs :items="[
+            { label: 'Каталог', href: route('catalog.index') },
+            { label: businessProfile.name, href: route('providers.show', businessProfile.slug) },
+            { label: 'Відгук', current: true },
+          ]" />
+          <h2 class="text-xl font-semibold leading-tight text-gray-800">
+            Відгук — {{ businessProfile.name }}
+          </h2>
+        </div>
         <div class="flex gap-3">
           <Link :href="route('providers.show', businessProfile.slug)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">
             До сторінки провайдера
