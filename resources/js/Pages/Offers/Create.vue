@@ -80,7 +80,7 @@ const submit = () => {
                             <InputLabel for="category_id" value="Категорія" />
                             <select id="category_id" v-model="form.category_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option :value="null">—</option>
-                                <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+                                <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.label || c.name }}</option>
                             </select>
                             <InputError class="mt-2" :message="form.errors.category_id" />
                         </div>

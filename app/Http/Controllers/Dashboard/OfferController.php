@@ -31,7 +31,30 @@ class OfferController extends Controller
     {
         $this->authorize('update', $businessProfile);
 
-        $categories = Category::query()->orderBy('name')->get(['id', 'name']);
+        $categories = Category::query()
+            ->with([
+                'parent:id,name,parent_id',
+                'parent.parent:id,name,parent_id',
+            ])
+            ->get(['id', 'name', 'parent_id'])
+            ->map(function (Category $category) {
+                $names = [];
+                $node = $category;
+                for ($i = 0; $i < 10 && $node; $i++) {
+                    if ($node->name) {
+                        array_unshift($names, $node->name);
+                    }
+                    $node = $node->parent;
+                }
+
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'label' => implode(' → ', array_filter($names)),
+                ];
+            })
+            ->sortBy('label')
+            ->values();
 
         return Inertia::render('Offers/Create', [
             'businessProfile' => $businessProfile,
@@ -58,7 +81,30 @@ class OfferController extends Controller
         $this->authorize('update', $businessProfile);
         $this->authorize('update', $offer);
 
-        $categories = Category::query()->orderBy('name')->get(['id', 'name']);
+        $categories = Category::query()
+            ->with([
+                'parent:id,name,parent_id',
+                'parent.parent:id,name,parent_id',
+            ])
+            ->get(['id', 'name', 'parent_id'])
+            ->map(function (Category $category) {
+                $names = [];
+                $node = $category;
+                for ($i = 0; $i < 10 && $node; $i++) {
+                    if ($node->name) {
+                        array_unshift($names, $node->name);
+                    }
+                    $node = $node->parent;
+                }
+
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'label' => implode(' → ', array_filter($names)),
+                ];
+            })
+            ->sortBy('label')
+            ->values();
 
         return Inertia::render('Offers/Edit', [
             'businessProfile' => $businessProfile,
