@@ -22,7 +22,7 @@ const form = useForm({
 });
 
 const normalizeCurrency = () => {
-    form.currency = (form.currency || '').toUpperCase().slice(0, 3);
+    form.currency = (form.currency ?? '').toString().toUpperCase().replace(/\s+/gu, '').slice(0, 3);
 };
 
 const submit = () => {
