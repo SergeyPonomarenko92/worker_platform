@@ -112,6 +112,8 @@ const destroy = (storyId) => {
                             <div class="flex items-center gap-3">
                                 <Link
                                     :href="route('dashboard.stories.edit', [businessProfile.id, story.id])"
+                                    :title="`Редагувати історію: ${story.caption || story.media_path}`"
+                                    :aria-label="`Редагувати історію: ${story.caption || story.media_path}`"
                                     class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
                                 >
                                     Редагувати

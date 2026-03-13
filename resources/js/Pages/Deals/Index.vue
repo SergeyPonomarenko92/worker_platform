@@ -79,7 +79,14 @@ const statusLabel = (status) => {
                                     <span v-if="deal.offer"> · Офер: {{ deal.offer.title }}</span>
                                 </div>
                             </div>
-                            <Link :href="route('dashboard.deals.show', [businessProfile.id, deal.id])" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Відкрити</Link>
+                            <Link
+                                :href="route('dashboard.deals.show', [businessProfile.id, deal.id])"
+                                :title="`Відкрити угоду #${deal.id}`"
+                                :aria-label="`Відкрити угоду #${deal.id}`"
+                                class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                            >
+                                Відкрити
+                            </Link>
                         </li>
                     </ul>
                 </div>

@@ -95,6 +95,8 @@ const statusFor = (post) => {
                             </div>
                             <Link
                                 :href="route('dashboard.portfolio-posts.edit', [businessProfile.id, post.id])"
+                                :title="`Редагувати пост портфоліо: ${post.title}`"
+                                :aria-label="`Редагувати пост портфоліо: ${post.title}`"
                                 class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
                             >
                                 Редагувати
