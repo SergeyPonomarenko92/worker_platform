@@ -182,6 +182,23 @@ const flatCategories = computed(() => flattenCategories(props.categories || []))
 
 const categoryLabel = (id) => flatCategories.value.find((c) => String(c.id) === String(id))?.label || 'Категорія'
 
+function pickSuggestedCategory(item) {
+  if (!item?.id) return
+
+  suspendAutoSubmit = true
+  clearDebounceTimers()
+
+  form.category_id = String(item.id)
+  categoryQuery.value = item.path || item.name || ''
+  categorySuggestions.value = []
+
+  submit()
+
+  setTimeout(() => {
+    suspendAutoSubmit = false
+  }, 0)
+}
+
 const providerSlug = computed(() => normalizeProviderInputToSlug(form.provider))
 
 const chipValue = (value) => normalizeWhitespace(value)
@@ -298,6 +315,12 @@ const citySuggestions = ref([])
 let citySuggestTimer = null
 let citySuggestAbortController = null
 
+// Category autocomplete (API suggestions)
+const categoryQuery = ref('')
+const categorySuggestions = ref([])
+let categorySuggestTimer = null
+let categorySuggestAbortController = null
+
 // When we programmatically update multiple fields (reset / chip removal), we want
 // to avoid extra debounced submits (double network requests).
 let suspendAutoSubmit = false
@@ -364,6 +387,48 @@ watch(
 )
 
 watch(
+  () => categoryQuery.value,
+  () => {
+    if (suspendAutoSubmit) return
+
+    if (categorySuggestTimer) clearTimeout(categorySuggestTimer)
+
+    const q = normalizeWhitespace(categoryQuery.value)
+
+    if (!q || q.length < 2) {
+      categorySuggestions.value = []
+      if (categorySuggestAbortController) categorySuggestAbortController.abort()
+      categorySuggestAbortController = null
+      return
+    }
+
+    categorySuggestTimer = setTimeout(async () => {
+      try {
+        if (categorySuggestAbortController) categorySuggestAbortController.abort()
+        categorySuggestAbortController = new AbortController()
+
+        const res = await fetch(`/api/categories?q=${encodeURIComponent(q)}`, {
+          headers: { Accept: 'application/json' },
+          signal: categorySuggestAbortController.signal,
+        })
+
+        if (!res.ok) {
+          categorySuggestions.value = []
+          return
+        }
+
+        const data = await res.json()
+        categorySuggestions.value = Array.isArray(data) ? data : []
+      } catch (e) {
+        if (e?.name !== 'AbortError') {
+          categorySuggestions.value = []
+        }
+      }
+    }, 250)
+  },
+)
+
+watch(
   () => form.provider,
   () => {
     if (suspendAutoSubmit) return
@@ -397,6 +462,7 @@ function onSearch(e) {
   if (providerDebounceTimer) clearTimeout(providerDebounceTimer)
   if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
   if (citySuggestTimer) clearTimeout(citySuggestTimer)
+  if (categorySuggestTimer) clearTimeout(categorySuggestTimer)
   submit()
 }
 
@@ -408,6 +474,12 @@ function resetFilters() {
   if (citySuggestAbortController) citySuggestAbortController.abort()
   citySuggestAbortController = null
   citySuggestions.value = []
+
+  if (categorySuggestTimer) clearTimeout(categorySuggestTimer)
+  if (categorySuggestAbortController) categorySuggestAbortController.abort()
+  categorySuggestAbortController = null
+  categorySuggestions.value = []
+  categoryQuery.value = ''
 
   form.q = ''
   form.type = ''
@@ -551,9 +623,49 @@ function goFirstPage() {
           </select>
         </div>
 
-        <div>
+        <div class="relative">
           <label for="catalog-category" class="text-xs text-gray-500">Категорія</label>
-          <select id="catalog-category" v-model="form.category_id" class="mt-1 w-full rounded-md border-gray-300" @change="submit">
+
+          <input
+            id="catalog-category-search"
+            v-model="categoryQuery"
+            type="search"
+            inputmode="search"
+            enterkeyhint="search"
+            autocomplete="off"
+            class="mt-1 w-full rounded-md border-gray-300"
+            placeholder="Пошук категорії…"
+            @keydown.enter.prevent
+          />
+
+          <ul
+            v-if="categorySuggestions.length"
+            class="absolute z-20 mt-1 w-full max-h-64 overflow-auto rounded-md border border-gray-200 bg-white shadow"
+            role="listbox"
+            aria-label="Підказки категорій"
+          >
+            <li
+              v-for="item in categorySuggestions"
+              :key="item.id"
+              class="border-b border-gray-100 last:border-b-0"
+            >
+              <button
+                type="button"
+                class="w-full text-left px-3 py-2 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                @click="pickSuggestedCategory(item)"
+              >
+                <div class="text-sm text-gray-900">{{ item.path || item.name }}</div>
+                <div class="text-[11px] text-gray-500">Натисніть, щоб застосувати фільтр</div>
+              </button>
+            </li>
+          </ul>
+
+          <select
+            id="catalog-category"
+            v-model="form.category_id"
+            class="mt-2 w-full rounded-md border-gray-300"
+            @change="submit"
+          >
             <option value="">Усі</option>
             <option
               v-for="c in flatCategories"
