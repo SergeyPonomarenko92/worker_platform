@@ -46,9 +46,8 @@ const closeModal = () => {
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Once your account is deleted, all of its resources and data will
-                be permanently deleted. Before deleting your account, please
-                download any data or information that you wish to retain.
+                Після видалення акаунта всі пов’язані ресурси та дані буде остаточно видалено.
+                Перед видаленням, за потреби, збережіть інформацію, яку хочете залишити.
             </p>
         </header>
 
@@ -63,9 +62,8 @@ const closeModal = () => {
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Please enter your password to
-                    confirm you would like to permanently delete your account.
+                    Після видалення акаунта всі пов’язані ресурси та дані буде остаточно видалено.
+                    Введіть пароль, щоб підтвердити видалення акаунта.
                 </p>
 
                 <div class="mt-6">

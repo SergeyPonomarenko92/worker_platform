@@ -39,7 +39,7 @@ const form = useForm({
             class="mt-6 space-y-6"
         >
             <div>
-                <InputLabel for="name" value="ÐÐ¼’Ñ" />
+                <InputLabel for="name" value="Ім’я" />
 
                 <TextInput
                     id="name"
@@ -103,7 +103,7 @@ const form = useForm({
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600"
                     >
-                        Saved.
+                        Збережено.
                     </p>
                 </Transition>
             </div>

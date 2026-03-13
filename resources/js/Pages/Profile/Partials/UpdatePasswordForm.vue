@@ -41,8 +41,7 @@ const updatePassword = () => {
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Ensure your account is using a long, random password to stay
-                secure.
+                Використовуйте довгий, випадковий пароль, щоб краще захистити акаунт.
             </p>
         </header>
 
@@ -113,7 +112,7 @@ const updatePassword = () => {
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600"
                     >
-                        Saved.
+                        Збережено.
                     </p>
                 </Transition>
             </div>
