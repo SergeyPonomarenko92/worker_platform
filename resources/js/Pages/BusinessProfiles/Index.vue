@@ -4,10 +4,34 @@ import PrimaryButton from '@/Components/PrimaryButton.vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import Breadcrumbs from '@/Components/Breadcrumbs.vue'
 import { Head, Link } from '@inertiajs/vue3'
+import { ref } from 'vue'
 
 const props = defineProps({
     profiles: Array,
 })
+
+const copiedId = ref(null)
+
+const copyPublicUrl = async (profile) => {
+    const relative = route('providers.show', profile.slug)
+
+    let text = relative
+    try {
+        text = new URL(relative, window.location.origin).toString()
+    } catch (e) {
+        // ignore
+    }
+
+    try {
+        await navigator.clipboard.writeText(text)
+        copiedId.value = profile.id
+        window.setTimeout(() => {
+            if (copiedId.value === profile.id) copiedId.value = null
+        }, 1500)
+    } catch (e) {
+        // Clipboard API can be unavailable; graceful no-op.
+    }
+}
 </script>
 
 <template>
@@ -58,7 +82,18 @@ const props = defineProps({
                                         {{ p.is_active ? 'Активний' : 'Неактивний' }}
                                     </span>
                                 </div>
-                                <div class="text-sm text-gray-600">/providers/{{ p.slug }}</div>
+                                <div class="text-sm text-gray-600 flex items-center gap-2 flex-wrap">
+                                    <span>/providers/{{ p.slug }}</span>
+                                    <button
+                                        type="button"
+                                        class="text-xs text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                                        :aria-label="`Скопіювати посилання на публічну сторінку профілю: ${p.name}`"
+                                        :title="`Скопіювати посилання на публічну сторінку профілю: ${p.name}`"
+                                        @click="copyPublicUrl(p)"
+                                    >
+                                        {{ copiedId === p.id ? 'Скопійовано' : 'Копіювати' }}
+                                    </button>
+                                </div>
                             </div>
                             <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm">
                                 <Link
