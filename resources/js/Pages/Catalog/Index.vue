@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3'
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import { offerTypeLabel, formatNumber, formatPrice, formatCategoryPath } from '@/lib/formatters'
 
@@ -293,6 +293,11 @@ let cityDebounceTimer = null
 let providerDebounceTimer = null
 let priceDebounceTimer = null
 
+// City autocomplete (datalist suggestions)
+const citySuggestions = ref([])
+let citySuggestTimer = null
+let citySuggestAbortController = null
+
 // When we programmatically update multiple fields (reset / chip removal), we want
 // to avoid extra debounced submits (double network requests).
 let suspendAutoSubmit = false
@@ -312,6 +317,49 @@ watch(
     if (suspendAutoSubmit) return
     if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
     cityDebounceTimer = setTimeout(() => submit(), 400)
+  },
+)
+
+watch(
+  () => form.city,
+  () => {
+    if (suspendAutoSubmit) return
+
+    if (citySuggestTimer) clearTimeout(citySuggestTimer)
+
+    const q = normalizeWhitespace(form.city)
+
+    if (!q || q.length < 2) {
+      citySuggestions.value = []
+      if (citySuggestAbortController) citySuggestAbortController.abort()
+      citySuggestAbortController = null
+      return
+    }
+
+    citySuggestTimer = setTimeout(async () => {
+      try {
+        if (citySuggestAbortController) citySuggestAbortController.abort()
+        citySuggestAbortController = new AbortController()
+
+        const res = await fetch(`/api/cities?q=${encodeURIComponent(q)}`, {
+          headers: { Accept: 'application/json' },
+          signal: citySuggestAbortController.signal,
+        })
+
+        if (!res.ok) {
+          citySuggestions.value = []
+          return
+        }
+
+        const data = await res.json()
+        citySuggestions.value = Array.isArray(data) ? data : []
+      } catch (e) {
+        // Ignore aborted requests; clear suggestions on real errors.
+        if (e?.name !== 'AbortError') {
+          citySuggestions.value = []
+        }
+      }
+    }, 250)
   },
 )
 
@@ -348,12 +396,18 @@ function onSearch(e) {
   if (cityDebounceTimer) clearTimeout(cityDebounceTimer)
   if (providerDebounceTimer) clearTimeout(providerDebounceTimer)
   if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
+  if (citySuggestTimer) clearTimeout(citySuggestTimer)
   submit()
 }
 
 function resetFilters() {
   suspendAutoSubmit = true
   clearDebounceTimers()
+
+  if (citySuggestTimer) clearTimeout(citySuggestTimer)
+  if (citySuggestAbortController) citySuggestAbortController.abort()
+  citySuggestAbortController = null
+  citySuggestions.value = []
 
   form.q = ''
   form.type = ''
@@ -520,11 +574,15 @@ function goFirstPage() {
             inputmode="search"
             enterkeyhint="search"
             autocomplete="address-level2"
+            list="catalog-city-suggestions"
             class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. Київ"
             @keydown.enter.prevent="onSearch"
             @blur="normalizeTextField('city')"
           />
+          <datalist id="catalog-city-suggestions">
+            <option v-for="c in citySuggestions" :key="c" :value="c" />
+          </datalist>
         </div>
 
         <div>
