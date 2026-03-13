@@ -104,6 +104,33 @@ class DealsTest extends TestCase
         ]);
     }
 
+    public function test_owner_can_create_deal_when_client_email_has_unicode_spaces(): void
+    {
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        // NBSP + narrow NBSP around the email/currency.
+        $this->actingAs($provider)
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => "\u{00A0}CLIENT@Example.com\u{202F}",
+                'offer_id' => null,
+                'status' => 'draft',
+                'currency' => "\u{00A0}uah\u{202F}",
+                'agreed_price' => '',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('deals', [
+            'business_profile_id' => $profile->id,
+            'client_user_id' => $client->id,
+            'status' => 'draft',
+            'agreed_price' => null,
+            'currency' => 'UAH',
+        ]);
+    }
+
     public function test_owner_cannot_create_deal_with_offer_from_another_business_profile(): void
     {
         $provider = User::factory()->create();

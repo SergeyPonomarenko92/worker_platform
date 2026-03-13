@@ -7,6 +7,7 @@ use App\Mail\DealCreatedForClientMail;
 use App\Models\BusinessProfile;
 use App\Models\Deal;
 use App\Models\User;
+use App\Support\QueryParamNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -59,10 +60,10 @@ class DealController extends Controller
         $request->merge([
             // Be robust to copy/paste and different casing.
             // (exists:users,email) is usually case-sensitive depending on collation.
-            'client_email' => mb_strtolower(trim((string) $request->input('client_email')), 'UTF-8'),
+            'client_email' => mb_strtolower(QueryParamNormalizer::text((string) $request->input('client_email')), 'UTF-8'),
             'offer_id' => $request->input('offer_id') ?: null,
             'agreed_price' => $request->input('agreed_price') === '' ? null : $request->input('agreed_price'),
-            'currency' => strtoupper(trim((string) $request->input('currency'))),
+            'currency' => strtoupper(QueryParamNormalizer::text((string) $request->input('currency'))),
         ]);
 
         $data = $request->validate([
