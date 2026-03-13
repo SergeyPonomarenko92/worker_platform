@@ -65,6 +65,7 @@ const props = defineProps({
                                     :href="route('providers.show', p.slug)"
                                     class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
                                     target="_blank"
+                                    referrerpolicy="no-referrer"
                                     rel="noopener noreferrer nofollow"
                                     :title="`Відкрити публічну сторінку профілю: ${p.name}`"
                                     :aria-label="`Відкрити публічну сторінку профілю: ${p.name}`"
