@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import BusinessProfileSectionNav from '@/Components/BusinessProfileSectionNav.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -48,8 +49,14 @@ const submit = () => {
                         Нова угода — {{ businessProfile.name }}
                     </h2>
                 </div>
-                <div class="flex gap-3">
-                    <Link :href="route('dashboard.deals.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">До угод</Link>
+                <div class="flex items-center gap-3 flex-wrap justify-end">
+                    <BusinessProfileSectionNav :business-profile="businessProfile" active="deals" />
+                    <Link
+                        :href="route('dashboard.deals.index', businessProfile.id)"
+                        class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                    >
+                        До угод
+                    </Link>
                 </div>
             </div>
         </template>
@@ -83,7 +90,7 @@ const submit = () => {
                                 <InputLabel for="currency" value="Валюта" />
                                 <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" @blur="normalizeCurrency" />
                                 <InputError class="mt-2" :message="form.errors.currency" />
-                            <div class="mt-1 text-xs text-gray-500">Напр.: UAH</div>
+                                <div class="mt-1 text-xs text-gray-500">Напр.: UAH</div>
                             </div>
                         </div>
 

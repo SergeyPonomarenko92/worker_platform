@@ -4,6 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import BusinessProfileSectionNav from '@/Components/BusinessProfileSectionNav.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -70,8 +71,14 @@ const markCancelled = () => {
                         Угода #{{ deal.id }} — {{ businessProfile.name }}
                     </h2>
                 </div>
-                <div class="flex gap-3">
-                    <Link :href="route('dashboard.deals.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">До угод</Link>
+                <div class="flex items-center gap-3 flex-wrap justify-end">
+                    <BusinessProfileSectionNav :business-profile="businessProfile" active="deals" />
+                    <Link
+                        :href="route('dashboard.deals.index', businessProfile.id)"
+                        class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                    >
+                        До угод
+                    </Link>
                 </div>
             </div>
         </template>
