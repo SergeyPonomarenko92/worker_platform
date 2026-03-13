@@ -73,7 +73,13 @@ const props = defineProps({
                                     <span class="font-medium text-gray-800">{{ formatPrice(offer) }}</span>
                                 </div>
                             </div>
-                            <Link :href="route('dashboard.offers.edit', [businessProfile.id, offer.id])" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Редагувати</Link>
+                            <Link
+                                :href="route('dashboard.offers.edit', [businessProfile.id, offer.id])"
+                                :aria-label="`Редагувати пропозицію: ${offer.title}`"
+                                class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+                            >
+                                Редагувати
+                            </Link>
                         </li>
                     </ul>
                 </div>
