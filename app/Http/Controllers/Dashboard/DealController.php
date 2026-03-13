@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Dashboard\StoreDealRequest;
 use App\Mail\DealCreatedForClientMail;
 use App\Models\BusinessProfile;
 use App\Models\Deal;
 use App\Models\User;
-use App\Support\QueryParamNormalizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -52,27 +51,11 @@ class DealController extends Controller
         ]);
     }
 
-    public function store(Request $request, BusinessProfile $businessProfile): RedirectResponse
+    public function store(StoreDealRequest $request, BusinessProfile $businessProfile): RedirectResponse
     {
         $this->authorize('update', $businessProfile);
 
-        // Normalize optional numeric/select fields from HTML forms ("" -> null)
-        $request->merge([
-            // Be robust to copy/paste and different casing.
-            // (exists:users,email) is usually case-sensitive depending on collation.
-            'client_email' => mb_strtolower(QueryParamNormalizer::text((string) $request->input('client_email')), 'UTF-8'),
-            'offer_id' => $request->input('offer_id') ?: null,
-            'agreed_price' => $request->input('agreed_price') === '' ? null : $request->input('agreed_price'),
-            'currency' => strtoupper(QueryParamNormalizer::text((string) $request->input('currency'))),
-        ]);
-
-        $data = $request->validate([
-            'client_email' => ['required', 'email', 'exists:users,email'],
-            'offer_id' => ['nullable', 'integer', 'exists:offers,id'],
-            'agreed_price' => ['nullable', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'size:3', Rule::in(['UAH', 'USD', 'EUR'])],
-            'status' => ['required', 'in:draft,in_progress,completed,cancelled'],
-        ]);
+        $data = $request->validated();
 
         $clientId = User::query()->where('email', $data['client_email'])->value('id');
 
