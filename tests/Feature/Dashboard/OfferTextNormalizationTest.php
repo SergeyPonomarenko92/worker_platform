@@ -208,4 +208,61 @@ class OfferTextNormalizationTest extends TestCase
         $offer->refresh();
         $this->assertSame('UAH', $offer->currency);
     }
+
+    public function test_offer_type_is_case_insensitive_and_trimmed_on_store(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $category = Category::factory()->create();
+
+        $this->actingAs($user)
+            ->post(route('dashboard.offers.store', [$profile]), [
+                'category_id' => $category->id,
+                'type' => "  SeRvIcE\u{00A0}",
+                'title' => 'Test Offer',
+                'description' => 'desc',
+                'price_from' => '',
+                'price_to' => '',
+                'currency' => 'uah',
+                'is_active' => 1,
+            ])
+            ->assertRedirect(route('dashboard.offers.index', [$profile]))
+            ->assertSessionHas('success');
+
+        $offer = Offer::query()->where('business_profile_id', $profile->id)->latest('id')->firstOrFail();
+        $this->assertSame('service', $offer->type);
+    }
+
+    public function test_offer_type_is_case_insensitive_and_trimmed_on_update(): void
+    {
+        $user = User::factory()->create();
+
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $offer = Offer::factory()->for($profile)->create([
+            'type' => 'product',
+        ]);
+
+        $this->actingAs($user)
+            ->patch(route('dashboard.offers.update', [$profile, $offer]), [
+                'category_id' => $offer->category_id,
+                'type' => "\u{202F} PrOdUcT ",
+                'title' => $offer->title,
+                'description' => $offer->description,
+                'price_from' => $offer->price_from,
+                'price_to' => $offer->price_to,
+                'currency' => $offer->currency,
+                'is_active' => $offer->is_active ? 1 : 0,
+            ])
+            ->assertRedirect();
+
+        $offer->refresh();
+        $this->assertSame('product', $offer->type);
+    }
 }

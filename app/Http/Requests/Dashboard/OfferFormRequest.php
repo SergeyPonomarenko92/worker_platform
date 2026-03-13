@@ -33,6 +33,10 @@ abstract class OfferFormRequest extends FormRequest
         // - text: trim/collapse whitespace + NBSP
         // - optional numeric/select: "" -> null
         $this->merge([
+            'type' => is_string($this->input('type'))
+                ? strtolower(trim(QueryParamNormalizer::text($this->input('type'))))
+                : $this->input('type'),
+
             'title' => QueryParamNormalizer::text($this->input('title')),
             'description' => QueryParamNormalizer::text($this->input('description')),
 
