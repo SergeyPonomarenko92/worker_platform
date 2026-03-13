@@ -15,7 +15,7 @@ const props = defineProps({
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
                 <div>
                     <Breadcrumbs :items="[
                         { label: 'Кабінет', href: route('dashboard') },

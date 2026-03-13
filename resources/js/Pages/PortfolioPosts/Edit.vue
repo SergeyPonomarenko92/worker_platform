@@ -45,7 +45,7 @@ const destroy = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
                 <div>
                     <Breadcrumbs :items="[
                         { label: 'Кабінет', href: route('dashboard') },
@@ -58,7 +58,7 @@ const destroy = () => {
                         Редагувати пост — {{ businessProfile.name }}
                     </h2>
                 </div>
-                <div class="flex gap-3">
+                <div class="flex gap-3 flex-wrap justify-end">
                     <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">До портфоліо</Link>
                 </div>
             </div>
