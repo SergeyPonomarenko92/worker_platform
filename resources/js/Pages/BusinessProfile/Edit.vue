@@ -5,7 +5,8 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-import { Head, useForm, Link } from '@inertiajs/vue3';
+import BusinessProfileSectionNav from '@/Components/BusinessProfileSectionNav.vue'
+import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
     profile: Object,
@@ -43,13 +44,7 @@ const submit = () => {
                         Профіль бізнесу
                     </h2>
                 </div>
-                <div class="flex gap-3 flex-wrap justify-end">
-                    <Link :href="route('dashboard.offers.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Пропозиції</Link>
-                    <Link :href="route('dashboard.portfolio-posts.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Портфоліо</Link>
-                    <Link :href="route('dashboard.stories.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Історії</Link>
-                    <Link :href="route('dashboard.deals.index', props.profile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">Угоди</Link>
-                    <Link :href="route('dashboard.business-profiles.index')" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">До списку</Link>
-                </div>
+                <BusinessProfileSectionNav :business-profile="props.profile" active="profile" />
             </div>
         </template>
 
