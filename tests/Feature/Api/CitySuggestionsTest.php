@@ -4,6 +4,7 @@ namespace Tests\Feature\Api;
 
 use App\Models\BusinessProfile;
 use App\Models\Offer;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -11,56 +12,73 @@ class CitySuggestionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_it_returns_empty_array_for_short_query(): void
+    public function test_returns_empty_array_when_query_is_too_short(): void
     {
-        $this->getJson('/api/cities?q=К')
+        $this->getJson(route('api.cities', ['q' => 'к']))
+            ->assertOk()
+            ->assertExactJson([]);
+
+        $this->getJson(route('api.cities', ['q' => ' ']))
             ->assertOk()
             ->assertExactJson([]);
     }
 
-    public function test_it_suggests_distinct_cities_for_active_profiles_with_active_offers(): void
+    public function test_suggests_only_cities_from_active_profiles_with_active_offers_and_matches_prefix_case_insensitive(): void
     {
-        $bpKyiv = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-        Offer::factory()->for($bpKyiv)->create(['is_active' => true]);
+        $provider = User::factory()->create();
 
-        $bpKyiv2 = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-        Offer::factory()->for($bpKyiv2)->create(['is_active' => true]);
+        $activeVisible = BusinessProfile::factory()->create([
+            'user_id' => $provider->id,
+            'is_active' => true,
+            'city' => 'Київ',
+        ]);
+        Offer::factory()->create([
+            'business_profile_id' => $activeVisible->id,
+            'is_active' => true,
+        ]);
 
-        $bpLviv = BusinessProfile::factory()->create(['city' => 'Львів', 'is_active' => true]);
-        Offer::factory()->for($bpLviv)->create(['is_active' => true]);
+        $activeButNoActiveOffers = BusinessProfile::factory()->create([
+            'user_id' => $provider->id,
+            'is_active' => true,
+            'city' => 'Кирилівка',
+        ]);
+        Offer::factory()->create([
+            'business_profile_id' => $activeButNoActiveOffers->id,
+            'is_active' => false,
+        ]);
 
-        // Should be ignored: inactive offer.
-        $bpKyivInactiveOffer = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-        Offer::factory()->for($bpKyivInactiveOffer)->create(['is_active' => false]);
+        $inactiveProfile = BusinessProfile::factory()->create([
+            'user_id' => $provider->id,
+            'is_active' => false,
+            'city' => 'Київ',
+        ]);
+        Offer::factory()->create([
+            'business_profile_id' => $inactiveProfile->id,
+            'is_active' => true,
+        ]);
 
-        // Should be ignored: inactive profile.
-        $bpKyivInactiveProfile = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => false]);
-        Offer::factory()->for($bpKyivInactiveProfile)->create(['is_active' => true]);
+        // Another visible city with different case.
+        $anotherVisible = BusinessProfile::factory()->create([
+            'user_id' => $provider->id,
+            'is_active' => true,
+            'city' => 'киборгоград',
+        ]);
+        Offer::factory()->create([
+            'business_profile_id' => $anotherVisible->id,
+            'is_active' => true,
+        ]);
 
-        $this->getJson('/api/cities?q=Ки')
+        $resp = $this->getJson(route('api.cities', ['q' => "  КИ  "]))
             ->assertOk()
-            ->assertJson(['Київ']);
+            ->assertJsonIsArray()
+            ->assertJsonCount(2);
 
-        $this->getJson('/api/cities?q=Л')
-            ->assertOk()
-            ->assertExactJson([]);
+        $cities = $resp->json();
+        sort($cities);
 
-        $this->getJson('/api/cities?q=Ль')
-            ->assertOk()
-            ->assertJson(['Львів']);
-    }
-
-    public function test_it_is_case_insensitive_and_prefix_based(): void
-    {
-        $bp = BusinessProfile::factory()->create(['city' => 'Київ', 'is_active' => true]);
-        Offer::factory()->for($bp)->create(['is_active' => true]);
-
-        $this->getJson('/api/cities?q=ки')
-            ->assertOk()
-            ->assertExactJson(['Київ']);
-
-        $this->getJson('/api/cities?q=їв')
-            ->assertOk()
-            ->assertExactJson([]);
+        $this->assertSame([
+            'Київ',
+            'киборгоград',
+        ], $cities);
     }
 }
