@@ -2,7 +2,8 @@
 import { onMounted, ref } from 'vue';
 
 const model = defineModel({
-    type: String,
+    // Used across the app for both string and numeric inputs (via v-model.number).
+    // Keep it permissive to avoid Vue type warnings for number/nullable fields.
     required: true,
 });
 
