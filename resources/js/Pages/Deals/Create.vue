@@ -67,7 +67,14 @@ const submit = () => {
                     <form @submit.prevent="submit" novalidate class="space-y-6">
                         <div>
                             <InputLabel for="client_email" value="Email клієнта (має бути зареєстрований)" />
-                            <TextInput id="client_email" v-model="form.client_email" type="email" class="mt-1 block w-full" />
+                            <TextInput
+                                id="client_email"
+                                v-model="form.client_email"
+                                type="email"
+                                autocomplete="email"
+                                inputmode="email"
+                                class="mt-1 block w-full"
+                            />
                             <InputError class="mt-2" :message="form.errors.client_email" />
                         </div>
 
@@ -83,12 +90,32 @@ const submit = () => {
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
                                 <InputLabel for="agreed_price" value="Узгоджена ціна (необов'язково)" />
-                                <TextInput id="agreed_price" v-model.number="form.agreed_price" type="number" min="0" step="1" class="mt-1 block w-full" />
+                                <TextInput
+                                    id="agreed_price"
+                                    v-model.number="form.agreed_price"
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    inputmode="numeric"
+                                    autocomplete="off"
+                                    class="mt-1 block w-full"
+                                />
                                 <InputError class="mt-2" :message="form.errors.agreed_price" />
                             </div>
                             <div>
                                 <InputLabel for="currency" value="Валюта" />
-                                <TextInput id="currency" v-model="form.currency" type="text" class="mt-1 block w-full" minlength="3" maxlength="3" @blur="normalizeCurrency" />
+                                <TextInput
+                                    id="currency"
+                                    v-model="form.currency"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    minlength="3"
+                                    maxlength="3"
+                                    autocomplete="off"
+                                    autocapitalize="characters"
+                                    spellcheck="false"
+                                    @blur="normalizeCurrency"
+                                />
                                 <InputError class="mt-2" :message="form.errors.currency" />
                                 <div class="mt-1 text-xs text-gray-500">Напр.: UAH</div>
                             </div>
