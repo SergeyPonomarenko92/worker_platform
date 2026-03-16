@@ -6,6 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import BusinessProfileSectionNav from '@/Components/BusinessProfileSectionNav.vue';
+import { normalizeCurrencyCode } from '@/lib/normalizers';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -25,7 +26,7 @@ const form = useForm({
 });
 
 const normalizeCurrency = () => {
-    form.currency = (form.currency ?? '').toString().toUpperCase().replace(/\s+/gu, '').slice(0, 3);
+    form.currency = normalizeCurrencyCode(form.currency);
 };
 
 const submit = () => {
