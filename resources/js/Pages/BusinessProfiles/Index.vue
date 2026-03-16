@@ -12,6 +12,36 @@ const props = defineProps({
 
 const copiedId = ref(null)
 
+const fallbackCopyText = (text) => {
+    try {
+        const el = document.createElement('textarea')
+        el.value = text
+
+        // Avoid scrolling to bottom on iOS.
+        el.setAttribute('readonly', '')
+        el.style.position = 'absolute'
+        el.style.left = '-9999px'
+        el.style.top = '0'
+
+        document.body.appendChild(el)
+        el.select()
+        el.setSelectionRange(0, el.value.length)
+
+        const ok = document.execCommand('copy')
+        document.body.removeChild(el)
+        return ok
+    } catch (e) {
+        return false
+    }
+}
+
+const markCopied = (profileId) => {
+    copiedId.value = profileId
+    window.setTimeout(() => {
+        if (copiedId.value === profileId) copiedId.value = null
+    }, 1500)
+}
+
 const copyPublicUrl = async (profile) => {
     const relative = route('providers.show', profile.slug)
 
@@ -24,12 +54,12 @@ const copyPublicUrl = async (profile) => {
 
     try {
         await navigator.clipboard.writeText(text)
-        copiedId.value = profile.id
-        window.setTimeout(() => {
-            if (copiedId.value === profile.id) copiedId.value = null
-        }, 1500)
+        markCopied(profile.id)
     } catch (e) {
-        // Clipboard API can be unavailable; graceful no-op.
+        // Clipboard API can be unavailable (non-secure context, permissions, older browsers).
+        if (fallbackCopyText(text)) {
+            markCopied(profile.id)
+        }
     }
 }
 </script>
