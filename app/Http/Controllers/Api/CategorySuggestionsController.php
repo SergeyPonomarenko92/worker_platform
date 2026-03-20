@@ -26,7 +26,8 @@ class CategorySuggestionsController
             ->whereHas('offers', fn ($offers) => $offers->active())
             ->whereRaw("lower(name) like ? escape '!'", ["%{$qLike}%"])
             ->with('parent.parent.parent.parent.parent')
-            ->orderBy('name')
+            // Ensure stable case-insensitive ordering.
+            ->orderByRaw('lower(name)')
             ->limit(10)
             ->get()
             ->map(function (Category $category) {

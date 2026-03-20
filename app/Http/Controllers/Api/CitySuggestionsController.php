@@ -29,8 +29,9 @@ class CitySuggestionsController
             // Suggest only cities that are actually visible in the catalog.
             ->whereHas('offers', fn ($offers) => $offers->active())
             ->whereRaw("lower(city) like ? escape '!'", ["{$qLike}%"])
-            ->distinct()
-            ->orderBy('city')
+            // Use GROUP BY for a stable distinct list while allowing case-insensitive ordering.
+            ->groupBy('city')
+            ->orderByRaw('lower(city)')
             ->limit(10)
             ->pluck('city')
             ->values();
