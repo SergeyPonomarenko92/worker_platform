@@ -100,6 +100,49 @@ class QueryParamNormalizer
     }
 
     /**
+     * Normalize an email-like input.
+     *
+     * Be tolerant to common copy/paste formats, for example:
+     * - "user@example.com"
+     * - "User Name <user@example.com>"
+     * - "mailto:user@example.com"
+     *
+     * Returns a lowercased string (or an empty string when nothing usable is found).
+     */
+    public static function email(?string $input): string
+    {
+        $value = self::text($input);
+
+        if ($value === '') {
+            return '';
+        }
+
+        // Strip leading mailto: prefix.
+        if (str_starts_with(mb_strtolower($value, 'UTF-8'), 'mailto:')) {
+            $value = substr($value, 7);
+            $value = self::text($value);
+        }
+
+        // If it looks like "Name <email@domain>", prefer the part inside angle brackets.
+        if (preg_match('/<\s*([^>]+)\s*>/u', $value, $m) === 1) {
+            $candidate = self::text($m[1] ?? '');
+            if ($candidate !== '') {
+                $value = $candidate;
+            }
+        }
+
+        // Fallback: pick the first email-like substring.
+        if (preg_match('/[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}/i', $value, $m) === 1) {
+            $value = $m[0];
+        }
+
+        // Trim outer punctuation that sometimes wraps copied values.
+        $value = trim($value, " \t\n\r\0\x0B\"'.,;:()[]{}<>");
+
+        return mb_strtolower($value, 'UTF-8');
+    }
+
+    /**
      * Normalize a provider slug passed via query string.
      *
      * Accepts:

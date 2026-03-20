@@ -88,6 +88,23 @@ class QueryParamNormalizerTest extends TestCase
     }
 
     #[Test]
+    public function it_normalizes_emails_from_common_copy_paste_formats(): void
+    {
+        $this->assertSame('user@example.com', QueryParamNormalizer::email('user@example.com'));
+        $this->assertSame('user@example.com', QueryParamNormalizer::email('USER@EXAMPLE.COM'));
+
+        $this->assertSame('user@example.com', QueryParamNormalizer::email('User Name <user@example.com>'));
+        $this->assertSame('user@example.com', QueryParamNormalizer::email('mailto:user@example.com'));
+
+        // Be robust to unicode whitespace/invisible chars around pasted values.
+        $this->assertSame('user@example.com', QueryParamNormalizer::email("\u{00A0}user@example.com\u{200B}"));
+
+        // When nothing usable found: empty string.
+        $this->assertSame('', QueryParamNormalizer::email(null));
+        $this->assertSame('', QueryParamNormalizer::email("\u{00A0}  \n\t"));
+    }
+
+    #[Test]
     public function it_normalizes_provider_slug_from_plain_or_url_inputs(): void
     {
         $this->assertSame('demo-provider', QueryParamNormalizer::providerSlug('demo-provider'));

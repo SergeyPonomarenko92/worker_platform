@@ -20,7 +20,7 @@ class StoreDealRequest extends FormRequest
         $this->merge([
             // Be robust to copy/paste and different casing.
             // (exists:users,email) is usually case-sensitive depending on collation.
-            'client_email' => mb_strtolower(QueryParamNormalizer::text((string) $this->input('client_email')), 'UTF-8'),
+            'client_email' => QueryParamNormalizer::email((string) $this->input('client_email')),
             'offer_id' => $this->input('offer_id') ?: null,
             'agreed_price' => $this->input('agreed_price') === '' ? null : $this->input('agreed_price'),
             'currency' => strtoupper(QueryParamNormalizer::text((string) $this->input('currency'))),
