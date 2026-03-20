@@ -29,7 +29,7 @@ const linkClass = (key) => {
 </script>
 
 <template>
-    <div class="flex gap-3 flex-wrap justify-end">
+    <nav aria-label="Розділи бізнес-профілю" class="flex gap-3 flex-wrap justify-end">
         <Link
             :href="route('dashboard.business-profiles.index')"
             :class="linkClass('profiles')"
@@ -77,5 +77,5 @@ const linkClass = (key) => {
         >
             Угоди
         </Link>
-    </div>
+    </nav>
 </template>
