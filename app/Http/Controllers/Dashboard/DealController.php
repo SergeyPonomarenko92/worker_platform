@@ -152,6 +152,9 @@ class DealController extends Controller
 
         $deal->update([
             'status' => 'cancelled',
+            // Robustness: keep timestamps consistent if a deal is cancelled after being completed mistakenly,
+            // or if data is edited manually.
+            'completed_at' => null,
         ]);
 
         return back()->with('success', 'Угоду скасовано.');

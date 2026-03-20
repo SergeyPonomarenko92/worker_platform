@@ -78,6 +78,30 @@ class DealsTest extends TestCase
         $this->assertNotNull($deal2->completed_at);
     }
 
+    public function test_cancelled_deal_clears_completed_at_timestamp(): void
+    {
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        $deal = Deal::factory()->create([
+            'business_profile_id' => $profile->id,
+            'client_user_id' => $client->id,
+            'status' => 'in_progress',
+            // Simulate inconsistent data (manual edits / legacy bug): completed_at set for non-completed deal.
+            'completed_at' => now(),
+        ]);
+
+        $this->actingAs($provider)
+            ->patch(route('dashboard.deals.cancelled', [$profile, $deal]))
+            ->assertRedirect();
+
+        $deal->refresh();
+        $this->assertSame('cancelled', $deal->status);
+        $this->assertNull($deal->completed_at);
+    }
+
     public function test_owner_can_create_deal_when_client_email_has_spaces_or_uppercase(): void
     {
         $provider = User::factory()->create();
