@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import { computed, onMounted, ref } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import Card from '@/Components/Card.vue'
+import ExternalLink from '@/Components/ExternalLink.vue'
 import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk, formatCategoryPath } from '@/lib/formatters'
 import { providerShowUrl } from '@/lib/providerShowUrl'
 
@@ -309,19 +310,16 @@ onMounted(() => {
           </div>
 
           <div v-if="provider.address || provider.city">
-            <a
+            <ExternalLink
               v-if="mapsHref"
               class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
               :href="mapsHref"
-              target="_blank"
-              referrerpolicy="no-referrer"
-              rel="noopener noreferrer nofollow"
               :aria-label="`Відкрити адресу на мапі: ${[provider.city, provider.address].filter(Boolean).join(', ')}`"
               :title="`Відкрити адресу на мапі: ${[provider.city, provider.address].filter(Boolean).join(', ')}`"
             >
               <span aria-hidden="true">📍</span>
               {{ [provider.city, provider.address].filter(Boolean).join(', ') }}
-            </a>
+            </ExternalLink>
             <span v-else>
               <span aria-hidden="true">📍</span>
               {{ [provider.city, provider.address].filter(Boolean).join(', ') }}
@@ -329,17 +327,14 @@ onMounted(() => {
           </div>
 
           <div v-if="normalizedWebsiteHref" class="min-w-0">
-            <a
+            <ExternalLink
               class="text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded inline-block max-w-full truncate"
               :href="normalizedWebsiteHref"
-              target="_blank"
-              referrerpolicy="no-referrer"
-              rel="noopener noreferrer nofollow"
               :title="websiteDisplayText || normalizedWebsiteHref"
               :aria-label="`Відкрити сайт провайдера: ${websiteDisplayText || normalizedWebsiteHref}`"
             >
               {{ websiteDisplayText }}
-            </a>
+            </ExternalLink>
           </div>
         </div>
       </Card>
@@ -349,13 +344,10 @@ onMounted(() => {
         <h2 class="text-lg font-semibold">Історії</h2>
 
         <div v-if="provider.stories?.length" class="mt-3 flex gap-3 overflow-x-auto">
-          <a
+          <ExternalLink
             v-for="story in provider.stories"
             :key="story.id"
             :href="storyMediaUrl(story.media_path)"
-            target="_blank"
-            referrerpolicy="no-referrer"
-            rel="noopener noreferrer nofollow"
             class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-full border border-gray-300 bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             :title="story.caption || ''"
             :aria-label="story.caption ? `Історія: ${story.caption}` : 'Історія'"
@@ -367,7 +359,7 @@ onMounted(() => {
               decoding="async"
               class="h-full w-full object-cover"
             />
-          </a>
+          </ExternalLink>
         </div>
 
         <div v-else class="mt-3">
