@@ -103,7 +103,7 @@ const markCancelled = () => {
                         </div>
 
                         <div class="text-sm text-gray-700 space-y-1">
-                            <div v-if="deal.agreed_price">
+                            <div v-if="deal.agreed_price !== null">
                                 <span class="font-medium">Ціна:</span>
                                 <span class="ml-1">{{ deal.agreed_price }} {{ deal.currency }}</span>
                             </div>
