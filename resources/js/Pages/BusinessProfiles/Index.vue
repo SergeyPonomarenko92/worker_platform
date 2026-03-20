@@ -68,6 +68,11 @@ const copyPublicUrl = async (profile) => {
     <Head title="Профілі бізнесу" />
 
     <AuthenticatedLayout>
+        <!-- Screen reader announcement (copy link) -->
+        <div class="sr-only" aria-live="polite">
+            {{ copiedId ? 'Посилання на публічну сторінку скопійовано.' : '' }}
+        </div>
+
         <template #header>
             <div class="flex items-center justify-between gap-4 flex-wrap">
                 <div>
