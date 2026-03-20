@@ -247,6 +247,28 @@ class DealsTest extends TestCase
         });
     }
 
+    public function test_owner_cannot_create_deal_with_decimal_agreed_price(): void
+    {
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        $this->actingAs($provider)
+            ->from(route('dashboard.deals.create', $profile))
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => $client->email,
+                'offer_id' => null,
+                'status' => 'draft',
+                'currency' => 'UAH',
+                'agreed_price' => 99.99,
+            ])
+            ->assertRedirect(route('dashboard.deals.create', $profile))
+            ->assertSessionHasErrors(['agreed_price']);
+
+        $this->assertDatabaseCount('deals', 0);
+    }
+
     public function test_owner_cannot_create_deal_with_unknown_currency(): void
     {
         $provider = User::factory()->create();

@@ -32,7 +32,8 @@ class StoreDealRequest extends FormRequest
         return [
             'client_email' => ['required', 'email', 'exists:users,email'],
             'offer_id' => ['nullable', 'integer', 'exists:offers,id'],
-            'agreed_price' => ['nullable', 'numeric', 'min:0'],
+            // Stored as unsignedInteger in DB, so decimals are not allowed.
+            'agreed_price' => ['nullable', 'integer', 'min:0'],
             'currency' => ['required', 'string', 'size:3', Rule::in(['UAH', 'USD', 'EUR'])],
             'status' => ['required', 'in:draft,in_progress,completed,cancelled'],
         ];
