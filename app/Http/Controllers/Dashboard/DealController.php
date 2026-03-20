@@ -81,7 +81,12 @@ class DealController extends Controller
 
         // MVP: notify client via email that a provider created a deal.
         // Queue it to avoid slowing down the request (sync queue will still send immediately).
-        Mail::to($data['client_email'])->queue(new DealCreatedForClientMail($deal));
+        // Robustness: do not fail the whole request if email sending fails.
+        try {
+            Mail::to($data['client_email'])->queue(new DealCreatedForClientMail($deal));
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return redirect()
             ->route('dashboard.deals.show', [$businessProfile, $deal])
