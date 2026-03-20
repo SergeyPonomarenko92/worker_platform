@@ -24,6 +24,8 @@ class CitySuggestionsController
             ->select(['city'])
             ->active()
             ->whereNotNull('city')
+            // Be defensive: legacy/manual data edits can leave empty/whitespace-only cities in DB.
+            ->whereRaw("btrim(city) <> ''")
             // Suggest only cities that are actually visible in the catalog.
             ->whereHas('offers', fn ($offers) => $offers->active())
             ->whereRaw("lower(city) like ? escape '!'", ["{$qLike}%"])

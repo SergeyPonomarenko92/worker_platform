@@ -57,6 +57,17 @@ class CitySuggestionsTest extends TestCase
             'is_active' => true,
         ]);
 
+        // Legacy/invalid city values should never be suggested.
+        $emptyCityProfile = BusinessProfile::factory()->create([
+            'user_id' => $provider->id,
+            'is_active' => true,
+            'city' => "   ",
+        ]);
+        Offer::factory()->create([
+            'business_profile_id' => $emptyCityProfile->id,
+            'is_active' => true,
+        ]);
+
         // Another visible city with different case.
         $anotherVisible = BusinessProfile::factory()->create([
             'user_id' => $provider->id,
