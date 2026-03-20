@@ -216,7 +216,7 @@ class DealsTest extends TestCase
 
             $this->assertStringContainsString('Нова угода створена', $html);
             $this->assertStringContainsString('Demo Provider', $html);
-            $this->assertStringContainsString('draft', $html);
+            $this->assertStringContainsString('Чернетка', $html);
             $this->assertStringContainsString('100 UAH', $html);
 
             return true;

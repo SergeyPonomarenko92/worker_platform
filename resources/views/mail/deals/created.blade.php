@@ -6,7 +6,7 @@
 Провайдер **{{ $businessProfile->name ?? '—' }}** створив(-ла) угоду.
 
 @component('mail::panel')
-**Статус:** {{ $deal->status }}  
+**Статус:** {{ $deal->statusLabel() }}  
 @if($offer)
 **Пропозиція:** {{ $offer->title }}  
 @endif

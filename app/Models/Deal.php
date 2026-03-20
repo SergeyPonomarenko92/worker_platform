@@ -11,6 +11,18 @@ class Deal extends Model
 {
     use HasFactory;
 
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_CANCELLED = 'cancelled';
+
+    public const STATUS_LABELS_UK = [
+        self::STATUS_DRAFT => 'Чернетка',
+        self::STATUS_IN_PROGRESS => 'В процесі',
+        self::STATUS_COMPLETED => 'Завершено',
+        self::STATUS_CANCELLED => 'Скасовано',
+    ];
+
     protected $fillable = [
         'client_user_id',
         'business_profile_id',
@@ -43,5 +55,10 @@ class Deal extends Model
     public function review(): HasOne
     {
         return $this->hasOne(Review::class);
+    }
+
+    public function statusLabel(): string
+    {
+        return self::STATUS_LABELS_UK[$this->status] ?? $this->status;
     }
 }
