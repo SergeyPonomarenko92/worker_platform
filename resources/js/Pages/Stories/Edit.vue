@@ -73,7 +73,7 @@ const destroy = () => {
 
                         <div>
                             <InputLabel for="caption" value="Підпис" />
-                            <textarea id="caption" v-model="form.caption" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="4" />
+                            <textarea id="caption" v-model="form.caption" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="4"></textarea>
                             <InputError class="mt-2" :message="form.errors.caption" />
                         </div>
 

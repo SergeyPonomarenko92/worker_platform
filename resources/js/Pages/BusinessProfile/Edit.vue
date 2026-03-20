@@ -60,7 +60,7 @@ const submit = () => {
 
                         <div>
                             <InputLabel for="about" value="Про нас" />
-                            <textarea id="about" v-model="form.about" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="5" />
+                            <textarea id="about" v-model="form.about" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="5"></textarea>
                             <InputError class="mt-2" :message="form.errors.about" />
                         </div>
 

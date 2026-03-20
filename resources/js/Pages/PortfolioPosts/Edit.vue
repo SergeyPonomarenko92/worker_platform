@@ -76,7 +76,7 @@ const destroy = () => {
 
                         <div>
                             <InputLabel for="body" value="Текст" />
-                            <textarea id="body" v-model="form.body" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="8" />
+                            <textarea id="body" v-model="form.body" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="8"></textarea>
                             <InputError class="mt-2" :message="form.errors.body" />
                         </div>
 
