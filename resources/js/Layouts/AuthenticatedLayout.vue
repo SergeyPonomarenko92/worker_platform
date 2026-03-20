@@ -14,6 +14,13 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
+            <a
+                href="#main-content"
+                class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-gray-800 focus:shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+                Перейти до вмісту
+            </a>
+
             <nav
                 class="border-b border-gray-100 bg-white"
             >
@@ -203,7 +210,7 @@ const showingNavigationDropdown = ref(false);
             </header>
 
             <!-- Page Content -->
-            <main>
+            <main id="main-content" tabindex="-1">
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
                     <FlashMessages />
                 </div>
