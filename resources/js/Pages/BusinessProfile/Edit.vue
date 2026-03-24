@@ -6,6 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import BusinessProfileSectionNav from '@/Components/BusinessProfileSectionNav.vue'
+import { normalizeCountryCode } from '@/lib/normalizers';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -23,7 +24,12 @@ const form = useForm({
     is_active: !!props.profile.is_active,
 });
 
+const normalizeCountry = () => {
+    form.country_code = normalizeCountryCode(form.country_code);
+};
+
 const submit = () => {
+    normalizeCountry();
     form.patch(route('dashboard.business-profiles.update', props.profile.id));
 };
 </script>
@@ -67,7 +73,7 @@ const submit = () => {
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
                                 <InputLabel for="country_code" value="Код країни" />
-                                <TextInput id="country_code" v-model="form.country_code" type="text" inputmode="text" autocomplete="country" autocapitalize="characters" class="mt-1 block w-full" />
+                                <TextInput id="country_code" v-model="form.country_code" type="text" inputmode="text" autocomplete="country" autocapitalize="characters" class="mt-1 block w-full" maxlength="2" @blur="normalizeCountry" />
                                 <p class="mt-1 text-xs text-gray-500">Напр.: <span class="font-medium">UA</span> (значення буде нормалізовано до ISO-коду).</p>
                                 <InputError class="mt-2" :message="form.errors.country_code" />
                             </div>

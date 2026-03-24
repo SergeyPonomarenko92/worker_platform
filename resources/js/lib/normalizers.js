@@ -12,6 +12,21 @@ export const normalizeCurrencyCode = (value) => {
 }
 
 /**
+ * Normalize country code input to ISO-3166-1 alpha-2-like form (e.g. " ua " → "UA").
+ * Keeps only letters and returns at most 2 chars.
+ */
+export const normalizeCountryCode = (value) => {
+    return (value ?? '')
+        .toString()
+        .toUpperCase()
+        // remove all unicode whitespace
+        .replace(/\s+/gu, '')
+        // keep letters only
+        .replace(/[^A-Z]/gu, '')
+        .slice(0, 2)
+}
+
+/**
  * Normalize free-text inputs / query params.
  *
  * - Trims
