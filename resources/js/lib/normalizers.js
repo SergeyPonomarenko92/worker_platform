@@ -10,3 +10,19 @@ export const normalizeCurrencyCode = (value) => {
         .replace(/\s+/gu, '')
         .slice(0, 3)
 }
+
+/**
+ * Normalize free-text inputs / query params.
+ *
+ * - Trims
+ * - Collapses whitespace (incl. NBSP / thin spaces)
+ * - Removes some invisible characters that can sneak in via copy/paste
+ */
+export const normalizeText = (value) => {
+    return (value ?? '')
+        .toString()
+        // BOM, zero-width space, LTR/RTL marks, soft hyphen
+        .replace(/[\uFEFF\u200B\u200E\u200F\u00AD]/gu, '')
+        .replace(/\s+/gu, ' ')
+        .trim()
+}

@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/vue3'
 import { computed, reactive, ref, watch } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import { offerTypeLabel, formatNumber, formatPrice, formatCategoryPath } from '@/lib/formatters'
+import { normalizeText } from '@/lib/normalizers'
 
 const props = defineProps({
   offers: Object,
@@ -23,9 +24,8 @@ const form = reactive({
 })
 
 function normalizeWhitespace(value) {
-  return String(value ?? '')
-    .replace(/\s+/g, ' ')
-    .trim()
+  // Backward-compatible wrapper (kept as a local name to minimize diff).
+  return normalizeText(value)
 }
 
 function normalizeProviderInputToSlug(value) {
