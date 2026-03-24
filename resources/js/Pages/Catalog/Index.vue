@@ -199,6 +199,21 @@ function pickSuggestedCategory(item) {
   }, 0)
 }
 
+function onCategorySelectChanged() {
+  suspendAutoSubmit = true
+  clearDebounceTimers()
+
+  // Keep the search field aligned with selected category (UX).
+  categorySuggestions.value = []
+  categoryQuery.value = form.category_id ? categoryLabel(form.category_id) : ''
+
+  submit()
+
+  setTimeout(() => {
+    suspendAutoSubmit = false
+  }, 0)
+}
+
 const providerSlug = computed(() => normalizeProviderInputToSlug(form.provider))
 
 const chipValue = (value) => normalizeWhitespace(value)
@@ -320,6 +335,11 @@ const categoryQuery = ref('')
 const categorySuggestions = ref([])
 let categorySuggestTimer = null
 let categorySuggestAbortController = null
+
+// Init: if category is already selected from query params, show its label in the search field
+if (form.category_id) {
+  categoryQuery.value = categoryLabel(form.category_id)
+}
 
 // When we programmatically update multiple fields (reset / chip removal), we want
 // to avoid extra debounced submits (double network requests).
@@ -664,7 +684,7 @@ function goFirstPage() {
             id="catalog-category"
             v-model="form.category_id"
             class="mt-2 w-full rounded-md border-gray-300"
-            @change="submit"
+            @change="onCategorySelectChanged"
           >
             <option value="">Усі</option>
             <option
