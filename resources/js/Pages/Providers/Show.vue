@@ -199,7 +199,7 @@ onMounted(() => {
 
   <main class="py-8">
     <div class="mx-auto max-w-6xl px-4">
-      <div class="flex items-start justify-between gap-4">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div class="text-sm text-gray-500">Провайдер</div>
           <h1 class="text-2xl font-semibold">{{ provider.name }}</h1>
@@ -268,7 +268,7 @@ onMounted(() => {
             <div v-if="ratingText">Рейтинг: <span class="font-medium text-gray-800">{{ ratingText }}/5</span></div>
           </div>
         </div>
-        <div class="flex gap-3">
+        <div class="flex flex-wrap gap-3 sm:justify-end">
           <Link
             href="/catalog"
             class="text-sm text-blue-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
