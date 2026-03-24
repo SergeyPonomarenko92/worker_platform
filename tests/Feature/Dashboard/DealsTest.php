@@ -247,6 +247,36 @@ class DealsTest extends TestCase
         });
     }
 
+    public function test_deal_creation_does_not_fail_when_email_sending_fails(): void
+    {
+        // Robustness: Deal creation should succeed even if email sending fails.
+        \Illuminate\Support\Facades\Mail::shouldReceive('to->queue')
+            ->once()
+            ->andThrow(new \RuntimeException('SMTP down'));
+
+        $provider = User::factory()->create();
+        $client = User::factory()->create(['email' => 'client@example.com']);
+
+        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id]);
+
+        $this->actingAs($provider)
+            ->post(route('dashboard.deals.store', $profile), [
+                'client_email' => $client->email,
+                'offer_id' => null,
+                'status' => 'draft',
+                'currency' => 'UAH',
+                'agreed_price' => 100,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('deals', [
+            'business_profile_id' => $profile->id,
+            'status' => 'draft',
+            'currency' => 'UAH',
+            'agreed_price' => 100,
+        ]);
+    }
+
     public function test_owner_cannot_create_deal_with_decimal_agreed_price(): void
     {
         $provider = User::factory()->create();
