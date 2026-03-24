@@ -25,6 +25,11 @@ const statusLabel = (status) => {
             return status
     }
 }
+
+const formatDateTime = (value) => {
+    if (!value) return '—'
+    return new Date(value).toLocaleString('uk-UA')
+}
 </script>
 
 <template>
@@ -77,6 +82,14 @@ const statusLabel = (status) => {
                                     Статус: {{ statusLabel(deal.status) }}
                                     <span v-if="deal.client"> · Клієнт: {{ deal.client.name }} ({{ deal.client.email }})</span>
                                     <span v-if="deal.offer"> · Офер: {{ deal.offer.title }}</span>
+                                    <span v-if="deal.created_at" class="text-gray-400"> ·</span>
+                                    <time
+                                        v-if="deal.created_at"
+                                        :datetime="deal.created_at"
+                                        class="text-gray-600"
+                                    >
+                                        Створено: {{ formatDateTime(deal.created_at) }}
+                                    </time>
                                 </div>
                             </div>
                             <Link
