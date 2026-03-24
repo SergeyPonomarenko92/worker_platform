@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import Breadcrumbs from '@/Components/Breadcrumbs.vue'
+import ExternalLink from '@/Components/ExternalLink.vue'
 import { Head, Link } from '@inertiajs/vue3'
 import { ref } from 'vue'
 
@@ -131,17 +132,14 @@ const copyPublicUrl = async (profile) => {
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm">
-                                <Link
+                                <ExternalLink
                                     :href="route('providers.show', p.slug)"
                                     class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
-                                    target="_blank"
-                                    referrerpolicy="no-referrer"
-                                    rel="noopener noreferrer nofollow"
                                     :title="`Відкрити публічну сторінку профілю: ${p.name}`"
                                     :aria-label="`Відкрити публічну сторінку профілю: ${p.name}`"
                                 >
                                     Публічна сторінка
-                                </Link>
+                                </ExternalLink>
                                 <Link
                                     :href="route('dashboard.offers.index', p.id)"
                                     class="text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
