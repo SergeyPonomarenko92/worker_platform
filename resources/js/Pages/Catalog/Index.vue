@@ -389,7 +389,7 @@ watch(
         if (citySuggestAbortController) citySuggestAbortController.abort()
         citySuggestAbortController = new AbortController()
 
-        const res = await fetch(`/api/cities?q=${encodeURIComponent(q)}`, {
+        const res = await fetch(`/catalog/cities?q=${encodeURIComponent(q)}`, {
           headers: { Accept: 'application/json' },
           signal: citySuggestAbortController.signal,
         })

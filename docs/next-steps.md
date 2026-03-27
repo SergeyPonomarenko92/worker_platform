@@ -2,6 +2,7 @@
 
 ## Changelog (коротко)
 - 2026-03-27: Catalog — додано JSON endpoint для підказок міст (autocomplete): `GET /catalog/cities?q=...` + feature tests.
+- 2026-03-27: Catalog UI — підказки міст тепер використовують `GET /catalog/cities` (узгоджено з новим endpoint).
 - 2026-02-12: Stage 3 (Content) — CRUD PortfolioPost/Story у кабінеті + фільтрація портфоліо на public provider page + статуси в UI.
 - 2026-02-12: Tests — додано feature happy-path тести для PortfolioPost/Story.
 - 2026-02-12: Stage 4 (Deals) — додано кабінет угод (створення вручну + зміна статусів) + тести.
