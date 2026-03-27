@@ -80,7 +80,7 @@ const submit = () => {
 
                         <div>
                             <InputLabel for="offer_id" value="Офер (необов'язково)" />
-                            <select id="offer_id" v-model="form.offer_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <select id="offer_id" v-model="form.offer_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option :value="null">—</option>
                                 <option v-for="o in offers" :key="o.id" :value="o.id">{{ o.title }}</option>
                             </select>
@@ -123,7 +123,7 @@ const submit = () => {
 
                         <div>
                             <InputLabel for="status" value="Початковий статус" />
-                            <select id="status" v-model="form.status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <select id="status" v-model="form.status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="draft">Чернетка</option>
                                 <option value="in_progress">В процесі</option>
                                 <option value="completed">Завершено</option>
