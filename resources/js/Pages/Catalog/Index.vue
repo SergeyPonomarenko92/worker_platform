@@ -330,6 +330,11 @@ const citySuggestions = ref([])
 let citySuggestTimer = null
 let citySuggestAbortController = null
 
+// Provider autocomplete (datalist suggestions)
+const providerSuggestions = ref([])
+let providerSuggestTimer = null
+let providerSuggestAbortController = null
+
 // Category autocomplete (API suggestions)
 const categoryQuery = ref('')
 const categorySuggestions = ref([])
@@ -458,6 +463,48 @@ watch(
 )
 
 watch(
+  () => form.provider,
+  () => {
+    if (suspendAutoSubmit) return
+
+    if (providerSuggestTimer) clearTimeout(providerSuggestTimer)
+
+    const q = normalizeWhitespace(form.provider)
+
+    if (!q || q.length < 2) {
+      providerSuggestions.value = []
+      if (providerSuggestAbortController) providerSuggestAbortController.abort()
+      providerSuggestAbortController = null
+      return
+    }
+
+    providerSuggestTimer = setTimeout(async () => {
+      try {
+        if (providerSuggestAbortController) providerSuggestAbortController.abort()
+        providerSuggestAbortController = new AbortController()
+
+        const res = await fetch(`/api/providers?q=${encodeURIComponent(q)}`, {
+          headers: { Accept: 'application/json' },
+          signal: providerSuggestAbortController.signal,
+        })
+
+        if (!res.ok) {
+          providerSuggestions.value = []
+          return
+        }
+
+        const data = await res.json()
+        providerSuggestions.value = Array.isArray(data) ? data : []
+      } catch (e) {
+        if (e?.name !== 'AbortError') {
+          providerSuggestions.value = []
+        }
+      }
+    }, 250)
+  },
+)
+
+watch(
   () => [form.price_from, form.price_to, form.include_no_price],
   () => {
     if (suspendAutoSubmit) return
@@ -482,6 +529,7 @@ function onSearch(e) {
   if (providerDebounceTimer) clearTimeout(providerDebounceTimer)
   if (priceDebounceTimer) clearTimeout(priceDebounceTimer)
   if (citySuggestTimer) clearTimeout(citySuggestTimer)
+  if (providerSuggestTimer) clearTimeout(providerSuggestTimer)
   if (categorySuggestTimer) clearTimeout(categorySuggestTimer)
   submit()
 }
@@ -494,6 +542,11 @@ function resetFilters() {
   if (citySuggestAbortController) citySuggestAbortController.abort()
   citySuggestAbortController = null
   citySuggestions.value = []
+
+  if (providerSuggestTimer) clearTimeout(providerSuggestTimer)
+  if (providerSuggestAbortController) providerSuggestAbortController.abort()
+  providerSuggestAbortController = null
+  providerSuggestions.value = []
 
   if (categorySuggestTimer) clearTimeout(categorySuggestTimer)
   if (categorySuggestAbortController) categorySuggestAbortController.abort()
@@ -728,6 +781,7 @@ function goFirstPage() {
             autocomplete="off"
             autocapitalize="none"
             spellcheck="false"
+            list="catalog-provider-suggestions"
             class="mt-1 w-full rounded-md border-gray-300"
             placeholder="напр. demo-provider"
             :title="'Slug береться з URL профілю провайдера: /providers/{slug}'"
@@ -736,6 +790,9 @@ function goFirstPage() {
             @blur="normalizeProviderField"
           />
           <div id="catalog-provider-hint" class="mt-1 text-[11px] text-gray-400">Підказка: slug = частина URL профілю провайдера (<span class="font-mono">/providers/{slug}</span>).</div>
+          <datalist id="catalog-provider-suggestions">
+            <option v-for="p in providerSuggestions" :key="p.slug" :value="p.slug" :label="p.name" />
+          </datalist>
         </div>
 
         <div>
