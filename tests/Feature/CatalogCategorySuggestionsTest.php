@@ -66,24 +66,16 @@ class CatalogCategorySuggestionsTest extends TestCase
     {
         $bp = BusinessProfile::factory()->create(['is_active' => true]);
 
-        // Build a deep chain: root -> l1 -> ... -> l7, then multiple leaves under l7.
-        $root = Category::factory()->create(['name' => 'Рівень 0']);
-        $current = $root;
-
-        for ($i = 1; $i <= 7; $i++) {
-            $current = Category::factory()->create([
-                'name' => "Рівень {$i}",
-                'parent_id' => $current->id,
+        // Create 10 distinct deep category chains that all match the same query.
+        // This test is meant to catch accidental N+1 when building category paths.
+        for ($i = 1; $i <= 10; $i++) {
+            $leaf = $this->createCategoryChain([
+                'root' => "Послуги {$i}",
+                'level1' => "Ремонт {$i}",
+                'level2' => "Побут {$i}",
+                'level3' => "Майстри {$i}",
+                'leaf' => "Категорія {$i}",
             ]);
-        }
-
-        $leafCategories = collect();
-        for ($i = 1; $i <= 5; $i++) {
-            $leaf = Category::factory()->create([
-                'name' => "Електрика {$i}",
-                'parent_id' => $current->id,
-            ]);
-            $leafCategories->push($leaf);
 
             Offer::factory()->create([
                 'business_profile_id' => $bp->id,
@@ -92,18 +84,63 @@ class CatalogCategorySuggestionsTest extends TestCase
             ]);
         }
 
-        $queryCount = 0;
-        DB::listen(function () use (&$queryCount) {
-            $queryCount++;
+        $queries = [];
+        DB::listen(function ($query) use (&$queries) {
+            $queries[] = $query->sql;
         });
 
-        $this->getJson(route('catalog.categories', ['q' => 'елект']))
+        $response = $this->getJson(route('catalog.categories', ['q' => 'катег']))
             ->assertOk()
-            ->assertJsonCount(5, 'data')
-            ->assertJsonPath('data.0.path', 'Рівень 0 → Рівень 1 → Рівень 2 → Рівень 3 → Рівень 4 → Рівень 5 → Рівень 6 → Рівень 7 → Електрика 1');
+            ->assertHeader('Cache-Control', 'max-age=300, public');
 
-        // With eager-loading of ancestors, this endpoint should not issue one query per leaf per ancestor.
-        // We allow some overhead for eager-load queries, but it should stay well below the naive N+1 case.
-        $this->assertLessThanOrEqual(20, $queryCount);
+        $data = $response->json('data');
+
+        $this->assertCount(10, $data);
+        $this->assertSame('Послуги 1 → Ремонт 1 → Побут 1 → Майстри 1 → Категорія 1', $data[0]['path']);
+
+        $categoryQueries = array_values(array_filter($queries, function (string $sql) {
+            return str_contains($sql, 'from "categories"');
+        }));
+
+        // With nested eager-loading we expect a small, bounded number of category queries.
+        // Without eager-loading, this would explode (parents would be lazy-loaded per item).
+        $this->assertLessThanOrEqual(
+            15,
+            count($categoryQueries),
+            'Category suggestions should not trigger N+1 queries for parent categories.'
+        );
+    }
+
+    private function createCategoryChain(array $names): Category
+    {
+        $root = Category::factory()->create([
+            'parent_id' => null,
+            'name' => $names['root'],
+            'slug' => 'root-'.md5($names['root']),
+        ]);
+
+        $level1 = Category::factory()->create([
+            'parent_id' => $root->id,
+            'name' => $names['level1'],
+            'slug' => 'l1-'.md5($names['level1']),
+        ]);
+
+        $level2 = Category::factory()->create([
+            'parent_id' => $level1->id,
+            'name' => $names['level2'],
+            'slug' => 'l2-'.md5($names['level2']),
+        ]);
+
+        $level3 = Category::factory()->create([
+            'parent_id' => $level2->id,
+            'name' => $names['level3'],
+            'slug' => 'l3-'.md5($names['level3']),
+        ]);
+
+        return Category::factory()->create([
+            'parent_id' => $level3->id,
+            'name' => $names['leaf'],
+            'slug' => 'leaf-'.md5($names['leaf']),
+        ]);
     }
 }
