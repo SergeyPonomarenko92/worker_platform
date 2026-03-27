@@ -233,10 +233,25 @@ class CatalogController extends Controller
         $pattern = "%{$qLike}%";
 
         $categories = Category::query()
+            ->select(['id', 'parent_id', 'name', 'slug'])
+            // Suggest only categories that are actually visible in the catalog.
+            ->whereHas('offers', fn ($offers) => $offers
+                ->active()
+                ->whereHas('businessProfile', fn ($bp) => $bp->active())
+            )
             ->whereRaw("lower(name) like ? escape '!'", [$pattern])
             ->orderBy('name')
             ->limit(10)
-            ->get(['id', 'name'])
+            ->with('parent.parent.parent.parent.parent')
+            ->get()
+            ->map(function (Category $category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'path' => self::categoryPath($category),
+                ];
+            })
             ->values();
 
         return response()
@@ -245,5 +260,21 @@ class CatalogController extends Controller
             ])
             // Safe caching: categories change rarely, but keep TTL modest.
             ->header('Cache-Control', 'max-age=300, public');
+    }
+
+    private static function categoryPath(Category $category): string
+    {
+        $names = [$category->name];
+
+        $current = $category;
+        $guard = 0;
+
+        while ($current->parent && $guard < 10) {
+            $current = $current->parent;
+            array_unshift($names, $current->name);
+            $guard++;
+        }
+
+        return implode(' → ', $names);
     }
 }
