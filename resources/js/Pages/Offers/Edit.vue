@@ -9,12 +9,16 @@ import Breadcrumbs from '@/Components/Breadcrumbs.vue';
 import BusinessProfileSectionNav from '@/Components/BusinessProfileSectionNav.vue';
 import { normalizeCurrencyCode } from '@/lib/normalizers';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     businessProfile: Object,
     offer: Object,
     categories: Array,
 });
+
+const TITLE_MAX = 255;
+const DESCRIPTION_MAX = 5000;
 
 const form = useForm({
     category_id: props.offer.category_id ?? null,
@@ -26,6 +30,9 @@ const form = useForm({
     currency: props.offer.currency ?? 'UAH',
     is_active: !!props.offer.is_active,
 });
+
+const titleLength = computed(() => (form.title ?? '').length);
+const descriptionLength = computed(() => (form.description ?? '').length);
 
 const normalizeCurrency = () => {
     form.currency = normalizeCurrencyCode(form.currency);
@@ -80,7 +87,10 @@ const destroy = () => {
 
                         <div>
                             <InputLabel for="title" value="Назва" />
-                            <TextInput id="title" v-model="form.title" type="text" class="mt-1 block w-full" />
+                            <TextInput id="title" v-model="form.title" type="text" class="mt-1 block w-full" maxlength="255" aria-describedby="title-counter" />
+                            <div id="title-counter" class="mt-1 text-xs text-gray-500" aria-live="polite">
+                                {{ titleLength }} / {{ TITLE_MAX }}
+                            </div>
                             <InputError class="mt-2" :message="form.errors.title" />
                         </div>
 
@@ -100,7 +110,12 @@ const destroy = () => {
                                 v-model="form.description"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 rows="5"
+                                maxlength="5000"
+                                aria-describedby="description-counter"
                             ></textarea>
+                            <div id="description-counter" class="mt-1 text-xs text-gray-500" aria-live="polite">
+                                {{ descriptionLength }} / {{ DESCRIPTION_MAX }}
+                            </div>
                             <InputError class="mt-2" :message="form.errors.description" />
                         </div>
 
