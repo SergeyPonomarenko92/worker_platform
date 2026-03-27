@@ -51,4 +51,19 @@ class CatalogCitySuggestionsTest extends TestCase
                 'data' => ['Ки%їв'],
             ]);
     }
+
+    public function test_city_suggestions_normalizes_unicode_whitespace_in_query(): void
+    {
+        BusinessProfile::factory()->create(['is_active' => true, 'city' => 'Київ']);
+
+        // QueryParamNormalizer::text() should trim/collapse unicode whitespace.
+        // Ensure suggestions still work for copy/paste inputs.
+        $q = "\u{00A0}  Ки\u{00A0}"; // NBSP + spaces + trailing NBSP
+
+        $this->getJson(route('catalog.cities', ['q' => $q]))
+            ->assertOk()
+            ->assertJson([
+                'data' => ['Київ'],
+            ]);
+    }
 }
