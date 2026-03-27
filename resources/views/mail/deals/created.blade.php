@@ -15,6 +15,12 @@
 @endif
 @endcomponent
 
+@if(!empty($providerUrl))
+@component('mail::button', ['url' => $providerUrl])
+Переглянути сторінку провайдера
+@endcomponent
+@endif
+
 > Поки що це MVP‑повідомлення. Далі ми додамо зручний перегляд угоди та можливість залишити відгук після завершення.
 
 Дякуємо, що користуєтесь {{ config('app.name') }}.

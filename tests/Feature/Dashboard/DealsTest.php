@@ -217,7 +217,11 @@ class DealsTest extends TestCase
         $provider = User::factory()->create();
         $client = User::factory()->create(['email' => 'client@example.com']);
 
-        $profile = BusinessProfile::factory()->create(['user_id' => $provider->id, 'name' => 'Demo Provider']);
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $provider->id,
+            'name' => 'Demo Provider',
+            'slug' => 'demo-provider',
+        ]);
 
         $this->actingAs($provider)
             ->post(route('dashboard.deals.store', $profile), [
@@ -242,6 +246,7 @@ class DealsTest extends TestCase
             $this->assertStringContainsString('Demo Provider', $html);
             $this->assertStringContainsString('Чернетка', $html);
             $this->assertStringContainsString('100 UAH', $html);
+            $this->assertStringContainsString('/providers/demo-provider', $html);
 
             return true;
         });

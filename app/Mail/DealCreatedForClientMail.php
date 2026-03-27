@@ -34,6 +34,11 @@ class DealCreatedForClientMail extends Mailable implements ShouldQueue
 
     public function content(): Content
     {
+        $providerUrl = null;
+        if ($this->deal->businessProfile?->slug) {
+            $providerUrl = route('providers.show', $this->deal->businessProfile->slug);
+        }
+
         return new Content(
             markdown: 'mail.deals.created',
             with: [
@@ -41,6 +46,7 @@ class DealCreatedForClientMail extends Mailable implements ShouldQueue
                 'businessProfile' => $this->deal->businessProfile,
                 'offer' => $this->deal->offer,
                 'client' => $this->deal->client,
+                'providerUrl' => $providerUrl,
             ],
         );
     }
