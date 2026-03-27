@@ -209,8 +209,11 @@ class CatalogController extends Controller
             ->pluck('city')
             ->values();
 
-        return response()->json([
-            'data' => $cities,
-        ]);
+        return response()
+            ->json([
+                'data' => $cities,
+            ])
+            // Safe caching: city suggestions change rarely, but keep TTL modest.
+            ->header('Cache-Control', 'max-age=300, public');
     }
 }
