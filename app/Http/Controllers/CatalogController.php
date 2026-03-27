@@ -183,4 +183,34 @@ class CatalogController extends Controller
             'offers' => $offers,
         ]);
     }
+
+    public function citySuggestions(Request $request)
+    {
+        $q = \App\Support\QueryParamNormalizer::text((string) $request->query('q', ''));
+
+        // Lightweight endpoint for UI autocomplete (safe defaults, no auth required).
+        if (mb_strlen($q, 'UTF-8') < 2) {
+            return response()->json([
+                'data' => [],
+            ]);
+        }
+
+        $qLower = mb_strtolower($q, 'UTF-8');
+        $qLike = \App\Support\SqlLikeEscaper::escape($qLower);
+
+        $cities = \App\Models\BusinessProfile::query()
+            ->where('is_active', true)
+            ->whereNotNull('city')
+            ->whereRaw("lower(city) like ? escape '!'", ["{$qLike}%"])
+            ->select('city')
+            ->distinct()
+            ->orderBy('city')
+            ->limit(10)
+            ->pluck('city')
+            ->values();
+
+        return response()->json([
+            'data' => $cities,
+        ]);
+    }
 }
