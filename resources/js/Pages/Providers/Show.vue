@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import EmptyStateCard from '@/Components/EmptyStateCard.vue'
 import Card from '@/Components/Card.vue'
 import ExternalLink from '@/Components/ExternalLink.vue'
+import Breadcrumbs from '@/Components/Breadcrumbs.vue'
 import { offerTypeLabel, formatPrice, normalizeWebsite, formatAvgRatingUk, formatCategoryPath } from '@/lib/formatters'
 import { providerShowUrl } from '@/lib/providerShowUrl'
 
@@ -199,6 +200,11 @@ onMounted(() => {
 
   <main class="py-8">
     <div class="mx-auto max-w-6xl px-4">
+      <Breadcrumbs :items="[
+        { label: 'Каталог', href: '/catalog' },
+        { label: provider.name, current: true },
+      ]" />
+
       <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div class="text-sm text-gray-500">Провайдер</div>
