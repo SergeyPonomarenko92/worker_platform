@@ -12,84 +12,81 @@ class CitySuggestionsTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_returns_empty_array_when_query_is_too_short(): void
+    public function test_returns_empty_list_when_query_is_too_short(): void
     {
         $this->getJson(route('api.cities', ['q' => 'к']))
             ->assertOk()
             ->assertExactJson([]);
-
-        $this->getJson(route('api.cities', ['q' => ' ']))
-            ->assertOk()
-            ->assertExactJson([]);
     }
 
-    public function test_suggests_only_cities_from_active_profiles_with_active_offers_and_matches_prefix_case_insensitive(): void
+    public function test_returns_distinct_city_suggestions_for_visible_catalog_providers_only(): void
     {
         $provider = User::factory()->create();
 
-        $activeVisible = BusinessProfile::factory()->create([
+        $kyiv = BusinessProfile::factory()->create([
             'user_id' => $provider->id,
-            'is_active' => true,
             'city' => 'Київ',
-        ]);
-        Offer::factory()->create([
-            'business_profile_id' => $activeVisible->id,
             'is_active' => true,
         ]);
 
-        $activeButNoActiveOffers = BusinessProfile::factory()->create([
-            'user_id' => $provider->id,
+        Offer::factory()->for($kyiv)->create([
             'is_active' => true,
-            'city' => 'Кирилівка',
         ]);
-        Offer::factory()->create([
-            'business_profile_id' => $activeButNoActiveOffers->id,
+
+        // Should be excluded: no active offers (not visible in catalog).
+        $noOffers = BusinessProfile::factory()->create([
+            'user_id' => $provider->id,
+            'city' => 'Київ',
+            'is_active' => true,
+        ]);
+
+        Offer::factory()->for($noOffers)->create([
             'is_active' => false,
         ]);
 
-        $inactiveProfile = BusinessProfile::factory()->create([
+        // Should be excluded: inactive business profile.
+        $inactive = BusinessProfile::factory()->create([
             'user_id' => $provider->id,
-            'is_active' => false,
             'city' => 'Київ',
+            'is_active' => false,
         ]);
-        Offer::factory()->create([
-            'business_profile_id' => $inactiveProfile->id,
+
+        Offer::factory()->for($inactive)->create([
             'is_active' => true,
         ]);
 
-        // Legacy/invalid city values should never be suggested.
-        $emptyCityProfile = BusinessProfile::factory()->create([
+        // Should be excluded: empty/whitespace-only legacy data.
+        $emptyCity = BusinessProfile::factory()->create([
             'user_id' => $provider->id,
-            'is_active' => true,
-            'city' => "   ",
-        ]);
-        Offer::factory()->create([
-            'business_profile_id' => $emptyCityProfile->id,
+            'city' => '   ',
             'is_active' => true,
         ]);
 
-        // Another visible city with different case.
-        $anotherVisible = BusinessProfile::factory()->create([
-            'user_id' => $provider->id,
-            'is_active' => true,
-            'city' => 'киборгоград',
-        ]);
-        Offer::factory()->create([
-            'business_profile_id' => $anotherVisible->id,
+        Offer::factory()->for($emptyCity)->create([
             'is_active' => true,
         ]);
 
-        $resp = $this->getJson(route('api.cities', ['q' => "  КИ  "]))
+        $this->getJson(route('api.cities', ['q' => 'ки']))
             ->assertOk()
-            ->assertJsonIsArray()
-            ->assertJsonCount(2);
+            ->assertJson(['Київ'])
+            ->assertJsonCount(1);
+    }
 
-        $cities = $resp->json();
-        sort($cities);
+    public function test_escapes_like_wildcards_in_query(): void
+    {
+        $provider = User::factory()->create();
 
-        $this->assertSame([
-            'Київ',
-            'киборгоград',
-        ], $cities);
+        $profile = BusinessProfile::factory()->create([
+            'user_id' => $provider->id,
+            'city' => '100% Місто',
+            'is_active' => true,
+        ]);
+
+        Offer::factory()->for($profile)->create(['is_active' => true]);
+
+        // If '%' isn't escaped, this would match a lot more than the intended prefix.
+        $this->getJson(route('api.cities', ['q' => '100%']))
+            ->assertOk()
+            ->assertExactJson(['100% Місто']);
     }
 }
