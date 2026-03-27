@@ -242,7 +242,7 @@ class CatalogController extends Controller
             ->whereRaw("lower(name) like ? escape '!'", [$pattern])
             ->orderBy('name')
             ->limit(10)
-            ->with('parent.parent.parent.parent.parent')
+            ->with(self::parentWithDepth(10))
             ->get()
             ->map(function (Category $category) {
                 return [
@@ -260,6 +260,19 @@ class CatalogController extends Controller
             ])
             // Safe caching: categories change rarely, but keep TTL modest.
             ->header('Cache-Control', 'max-age=300, public');
+    }
+
+    private static function parentWithDepth(int $depth): string
+    {
+        $depth = max(1, min($depth, 10));
+
+        // Build a dotted eager-load path like "parent.parent.parent".
+        $path = 'parent';
+        for ($i = 1; $i < $depth; $i++) {
+            $path .= '.parent';
+        }
+
+        return $path;
     }
 
     private static function categoryPath(Category $category): string

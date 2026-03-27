@@ -1,6 +1,7 @@
 # Next steps
 
 ## Changelog (коротко)
+- 2026-03-27: Catalog — category suggestions: eager-load ancestors to avoid N+1 when building deep category paths + regression test.
 - 2026-03-27: Catalog — додано JSON endpoint для підказок міст (autocomplete): `GET /catalog/cities?q=...` + feature tests.
 - 2026-03-27: Catalog UI — підказки міст тепер використовують `GET /catalog/cities` (узгоджено з новим endpoint).
 - 2026-02-12: Stage 3 (Content) — CRUD PortfolioPost/Story у кабінеті + фільтрація портфоліо на public provider page + статуси в UI.
