@@ -39,6 +39,7 @@ class CatalogCategorySuggestionsTest extends TestCase
         // Too short query => empty.
         $this->getJson(route('catalog.categories', ['q' => 'е']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertJson([
                 'data' => [],
             ]);

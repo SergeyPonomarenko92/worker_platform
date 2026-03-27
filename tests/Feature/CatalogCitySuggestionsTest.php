@@ -27,6 +27,7 @@ class CatalogCitySuggestionsTest extends TestCase
 
         $this->getJson(route('catalog.cities', ['q' => 'К']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertJson([
                 'data' => [],
             ]);

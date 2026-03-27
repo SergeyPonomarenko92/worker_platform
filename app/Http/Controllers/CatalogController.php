@@ -190,9 +190,12 @@ class CatalogController extends Controller
 
         // Lightweight endpoint for UI autocomplete (safe defaults, no auth required).
         if (mb_strlen($q, 'UTF-8') < 2) {
-            return response()->json([
-                'data' => [],
-            ]);
+            return response()
+                ->json([
+                    'data' => [],
+                ])
+                // Safe caching: city suggestions change rarely, but keep TTL modest.
+                ->header('Cache-Control', 'max-age=300, public');
         }
 
         $qLower = mb_strtolower($q, 'UTF-8');
@@ -223,9 +226,12 @@ class CatalogController extends Controller
 
         // Lightweight endpoint for UI autocomplete (safe defaults, no auth required).
         if (mb_strlen($q, 'UTF-8') < 2) {
-            return response()->json([
-                'data' => [],
-            ]);
+            return response()
+                ->json([
+                    'data' => [],
+                ])
+                // Safe caching: categories change rarely, but keep TTL modest.
+                ->header('Cache-Control', 'max-age=300, public');
         }
 
         $qLower = mb_strtolower($q, 'UTF-8');
