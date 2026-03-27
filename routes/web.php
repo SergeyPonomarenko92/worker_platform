@@ -123,6 +123,7 @@ Route::get('/sitemap.xml', function () {
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
 Route::get('/catalog/cities', [CatalogController::class, 'citySuggestions'])->name('catalog.cities');
+Route::get('/catalog/categories', [CatalogController::class, 'categorySuggestions'])->name('catalog.categories');
 Route::get('/providers/{slug}', [ProviderController::class, 'show'])->name('providers.show');
 
 Route::get('/dashboard', function () {

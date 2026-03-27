@@ -216,4 +216,34 @@ class CatalogController extends Controller
             // Safe caching: city suggestions change rarely, but keep TTL modest.
             ->header('Cache-Control', 'max-age=300, public');
     }
+
+    public function categorySuggestions(Request $request)
+    {
+        $q = \App\Support\QueryParamNormalizer::text((string) $request->query('q', ''));
+
+        // Lightweight endpoint for UI autocomplete (safe defaults, no auth required).
+        if (mb_strlen($q, 'UTF-8') < 2) {
+            return response()->json([
+                'data' => [],
+            ]);
+        }
+
+        $qLower = mb_strtolower($q, 'UTF-8');
+        $qLike = \App\Support\SqlLikeEscaper::escape($qLower);
+        $pattern = "%{$qLike}%";
+
+        $categories = Category::query()
+            ->whereRaw("lower(name) like ? escape '!'", [$pattern])
+            ->orderBy('name')
+            ->limit(10)
+            ->get(['id', 'name'])
+            ->values();
+
+        return response()
+            ->json([
+                'data' => $categories,
+            ])
+            // Safe caching: categories change rarely, but keep TTL modest.
+            ->header('Cache-Control', 'max-age=300, public');
+    }
 }
