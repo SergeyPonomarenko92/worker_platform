@@ -16,6 +16,7 @@ class ProviderSuggestionsTest extends TestCase
     {
         $this->getJson(route('api.providers', ['q' => 'д']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertExactJson([]);
     }
 
@@ -54,6 +55,7 @@ class ProviderSuggestionsTest extends TestCase
 
         $this->getJson(route('api.providers', ['q' => 'demo']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertExactJson([
                 ['name' => 'Demo Provider', 'slug' => 'demo-provider'],
             ]);
@@ -74,6 +76,7 @@ class ProviderSuggestionsTest extends TestCase
 
         $this->getJson(route('api.providers', ['q' => '100%']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertExactJson([
                 ['name' => '100% Майстер', 'slug' => '100%-master'],
             ]);

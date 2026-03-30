@@ -16,6 +16,7 @@ class CitySuggestionsTest extends TestCase
     {
         $this->getJson(route('api.cities', ['q' => 'к']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertExactJson([]);
     }
 
@@ -68,6 +69,7 @@ class CitySuggestionsTest extends TestCase
 
         $this->getJson(route('api.cities', ['q' => 'ки']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertJson(['Київ'])
             ->assertJsonCount(1);
     }
@@ -87,6 +89,7 @@ class CitySuggestionsTest extends TestCase
         // If '%' isn't escaped, this would match a lot more than the intended prefix.
         $this->getJson(route('api.cities', ['q' => '100%']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertExactJson(['100% Місто']);
     }
 }

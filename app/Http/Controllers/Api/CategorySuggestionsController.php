@@ -14,7 +14,8 @@ class CategorySuggestionsController
         $q = QueryParamNormalizer::text($request->query('q'));
 
         if (mb_strlen($q, 'UTF-8') < 2) {
-            return response()->json([]);
+            return response()->json([])
+                ->header('Cache-Control', 'max-age=300, public');
         }
 
         $qLower = mb_strtolower($q, 'UTF-8');
@@ -40,7 +41,8 @@ class CategorySuggestionsController
             })
             ->values();
 
-        return response()->json($categories);
+        return response()->json($categories)
+            ->header('Cache-Control', 'max-age=300, public');
     }
 
     private static function path(Category $category): string

@@ -14,7 +14,8 @@ class ProviderSuggestionsController
         $q = QueryParamNormalizer::text($request->query('q'));
 
         if (mb_strlen($q, 'UTF-8') < 2) {
-            return response()->json([]);
+            return response()->json([])
+                ->header('Cache-Control', 'max-age=300, public');
         }
 
         $qLower = mb_strtolower($q, 'UTF-8');
@@ -43,6 +44,7 @@ class ProviderSuggestionsController
             ])
             ->values();
 
-        return response()->json($providers);
+        return response()->json($providers)
+            ->header('Cache-Control', 'max-age=300, public');
     }
 }

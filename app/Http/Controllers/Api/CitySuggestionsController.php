@@ -14,7 +14,8 @@ class CitySuggestionsController
         $q = QueryParamNormalizer::text($request->query('q'));
 
         if (mb_strlen($q, 'UTF-8') < 2) {
-            return response()->json([]);
+            return response()->json([])
+                ->header('Cache-Control', 'max-age=300, public');
         }
 
         $qLower = mb_strtolower($q, 'UTF-8');
@@ -36,6 +37,7 @@ class CitySuggestionsController
             ->pluck('city')
             ->values();
 
-        return response()->json($cities);
+        return response()->json($cities)
+            ->header('Cache-Control', 'max-age=300, public');
     }
 }

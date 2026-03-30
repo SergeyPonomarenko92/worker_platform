@@ -17,6 +17,7 @@ class CategorySuggestionsTest extends TestCase
     {
         $this->getJson(route('api.categories', ['q' => 'р']))
             ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public')
             ->assertExactJson([]);
     }
 
@@ -48,7 +49,8 @@ class CategorySuggestionsTest extends TestCase
         ]);
 
         $resp = $this->getJson(route('api.categories', ['q' => 'рем']))
-            ->assertOk();
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'max-age=300, public');
 
         $json = $resp->json();
 
