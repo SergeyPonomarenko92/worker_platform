@@ -399,8 +399,18 @@ watch(
           return
         }
 
-        const data = await res.json()
-        citySuggestions.value = Array.isArray(data) ? data : []
+        const json = await res.json()
+
+        // Backward/forward compatible parsing:
+        // - /catalog/cities returns { data: [...] }
+        // - older versions / custom endpoints might return the array directly
+        if (Array.isArray(json)) {
+          citySuggestions.value = json
+        } else if (Array.isArray(json?.data)) {
+          citySuggestions.value = json.data
+        } else {
+          citySuggestions.value = []
+        }
       } catch (e) {
         // Ignore aborted requests; clear suggestions on real errors.
         if (e?.name !== 'AbortError') {
