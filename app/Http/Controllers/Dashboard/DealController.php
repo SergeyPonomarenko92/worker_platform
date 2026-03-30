@@ -27,6 +27,8 @@ class DealController extends Controller
                 'client_user_id',
                 'offer_id',
                 'status',
+                'agreed_price',
+                'currency',
                 'created_at',
             ])
             ->with(['client:id,name,email', 'offer:id,title'])

@@ -82,6 +82,11 @@ const formatDateTime = (value) => {
                                     Статус: {{ statusLabel(deal.status) }}
                                     <span v-if="deal.client"> · Клієнт: {{ deal.client.name }} ({{ deal.client.email }})</span>
                                     <span v-if="deal.offer"> · Офер: {{ deal.offer.title }}</span>
+                                    <span class="text-gray-400"> ·</span>
+                                    <span v-if="deal.agreed_price !== null" class="text-gray-600">
+                                        Ціна: <span class="font-medium text-gray-800">{{ deal.agreed_price }} {{ deal.currency }}</span>
+                                    </span>
+                                    <span v-else class="text-gray-500">Ціна: —</span>
                                     <span v-if="deal.created_at" class="text-gray-400"> ·</span>
                                     <time
                                         v-if="deal.created_at"
