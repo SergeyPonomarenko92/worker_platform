@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Breadcrumbs from '@/Components/Breadcrumbs.vue';
+import BusinessProfileSectionNav from '@/Components/BusinessProfileSectionNav.vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -51,6 +52,7 @@ const submit = () => {
                     </h2>
                 </div>
                 <div class="flex gap-3 flex-wrap justify-end">
+                    <BusinessProfileSectionNav :business-profile="businessProfile" active="portfolio" />
                     <Link :href="route('dashboard.portfolio-posts.index', businessProfile.id)" class="text-sm text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded">До портфоліо</Link>
                 </div>
             </div>
