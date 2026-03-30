@@ -65,7 +65,21 @@ const props = defineProps({
                     <ul v-else class="divide-y divide-gray-200">
                         <li v-for="offer in offers" :key="offer.id" class="py-3 flex items-center justify-between">
                             <div>
-                                <div class="font-medium text-gray-900">{{ offer.title }}</div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <div class="font-medium text-gray-900">{{ offer.title }}</div>
+                                    <span
+                                        v-if="offer.is_active"
+                                        class="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"
+                                    >
+                                        Активна
+                                    </span>
+                                    <span
+                                        v-else
+                                        class="inline-flex items-center rounded-full bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/20"
+                                    >
+                                        Неактивна
+                                    </span>
+                                </div>
                                 <div class="text-sm text-gray-600">
                                     {{ offerTypeLabel(offer.type) }}
                                     <span v-if="offer.category">· {{ offer.category.name }}</span>
